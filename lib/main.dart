@@ -1,7 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:kovalen/init_dependencies.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = 'id_ID';
+  initializeDateFormatting('id_ID', '');
+
+  await initDependencies();
+
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
+        BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
+        BlocProvider(create: (_) => serviceLocator<DashboardBloc>()),
+        BlocProvider(create: (_) => serviceLocator<TodayBloc>()),
+        BlocProvider(create: (_) => serviceLocator<HistoryBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ReportBloc>()),
+        BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()),
+        BlocProvider(create: (_) => BottomNavCubit()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
