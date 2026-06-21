@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kovalen/core/theme/theme.dart';
 import 'package:kovalen/init_dependencies.dart';
-import 'package:kovalen/main_page.dart';
+import 'package:kovalen/presentation/pages/home_page.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/pages/login_page.dart';
@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const MainPage();
+            return const HomePage();
           }
           return const LoginPage();
         },
