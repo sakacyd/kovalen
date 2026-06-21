@@ -5,7 +5,7 @@ import 'package:kovalen/data/datasources/auth_remote_data_source.dart';
 import 'package:kovalen/data/repositories/auth_repository_impl.dart';
 import 'package:kovalen/domain/repository/auth_repository.dart';
 import 'package:kovalen/domain/usecases/current_user.dart';
-import 'package:kovalen/domain/usecases/user_login.dart';
+import 'package:kovalen/domain/usecases/user_sign_in.dart';
 import 'package:kovalen/domain/usecases/user_sign_up.dart';
 import 'package:kovalen/domain/usecases/user_sign_out.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';

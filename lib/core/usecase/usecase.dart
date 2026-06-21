@@ -1,4 +1,4 @@
-import 'package:indotech_teknisi_app/core/error/failures.dart';
+import 'package:kovalen/core/error/failures.dart';
 import 'package:fpdart/fpdart.dart';
 
 abstract interface class UseCase<SuccessType, Params> {

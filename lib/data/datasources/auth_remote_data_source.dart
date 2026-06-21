@@ -9,7 +9,7 @@ abstract interface class AuthRemoteDataSource {
     required String email,
     required String password,
   });
-  Future<UserModel> loginWithEmailAndPassword({
+  Future<UserModel> signInWithEmailAndPassword({
     required String email,
     required String password,
   });
@@ -28,23 +28,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Session? get currentUserSession => supabaseClient.auth.currentSession;
 
   @override
-  Future<UserModel> loginWithEmailAndPassword({
+  Future<UserModel> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
+      print('==== 3.1 MENGIRIM PAYLOAD KE SUPABASE ====');
       final response = await supabaseClient.auth.signInWithPassword(
         email: email,
         password: password,
       );
-
+      
+      print('==== 3.2 DAPAT BALASAN DARI SUPABASE ====');
       if (response.user == null) {
         throw ServerException('User is null!');
       }
+      
+      print('==== 3.3 PARSING JSON KE USERMODEL ====');
       return UserModel.fromJson(response.user!.toJson());
     } on AuthException catch (e) {
+      print('==== 3.X AUTH EXCEPTION: ${e.message} ====');
       throw ServerException(e.message);
     } catch (e) {
+      print('==== 3.X GENERAL EXCEPTION: $e ====');
       throw ServerException(e.toString());
     }
   }
@@ -82,7 +88,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       if (currentUserSession != null) {
         final userData = await supabaseClient
-            .from('technicians')
+            .from('users')
             .select()
             .eq('id', currentUserSession!.user.id);
         return UserModel.fromJson(userData.first).copyWith(

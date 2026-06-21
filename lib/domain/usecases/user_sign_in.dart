@@ -4,24 +4,24 @@ import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UserLogin implements UseCase<User, UserLoginParams> {
+class UserSignIn implements UseCase<User, UserSignInParams> {
   final AuthRepository authRepository;
 
-  UserLogin(this.authRepository);
+  UserSignIn(this.authRepository);
   @override
-  Future<Either<Failure, User>> call(UserLoginParams params) async {
-    return await authRepository.loginWithEmailAndPassword(
+  Future<Either<Failure, User>> call(UserSignInParams params) async {
+    return await authRepository.signInWithEmailAndPassword(
       email: params.email,
       password: params.password,
     );
   }
 }
 
-class UserLoginParams {
+class UserSignInParams {
   final String email;
   final String password;
 
-  UserLoginParams({
+  UserSignInParams({
     required this.email,
     required this.password,
   });

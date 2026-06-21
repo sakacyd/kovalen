@@ -40,14 +40,14 @@ void _initAuth() {
     )
     //usecases
     ..registerFactory(() => UserSignUp(serviceLocator()))
-    ..registerFactory(() => UserLogin(serviceLocator()))
+    ..registerFactory(() => UserSignIn(serviceLocator()))
     ..registerFactory(() => UserSignOut(serviceLocator()))
     ..registerFactory(() => CurrentUser(serviceLocator()))
     //bloc
     ..registerLazySingleton(
       () => AuthBloc(
         userSignUp: serviceLocator(),
-        userLogin: serviceLocator(),
+        userSignIn: serviceLocator(),
         userSignOut: serviceLocator(),
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
@@ -144,5 +144,5 @@ void _initReport() {
         uploadInspectionItem: serviceLocator(),
         uploadSurveyReport: serviceLocator(),
       ),
-    ); */
-}
+    );
+} */

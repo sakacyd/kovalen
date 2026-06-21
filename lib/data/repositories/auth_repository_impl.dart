@@ -16,12 +16,12 @@ class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this.authRemoteDataSource, this.connectionChecker);
 
   @override
-  Future<Either<Failure, User>> loginWithEmailAndPassword({
+  Future<Either<Failure, User>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     return _getUser(
-      () async => await authRemoteDataSource.loginWithEmailAndPassword(
+      () async => await authRemoteDataSource.signInWithEmailAndPassword(
         email: email,
         password: password,
       ),
@@ -90,13 +90,25 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
-      if (!await connectionChecker.isConnected) {
+      print('==== 2.1 MASUK REPOSITORY: MULAI CEK KONEKSI ====');
+      final hasConnection = await connectionChecker.isConnected;
+      print('==== 2.2 HASIL CEK KONEKSI: $hasConnection ====');
+      
+      if (!hasConnection) {
         return left(Failure(Constants.noConnectionMessage));
       }
+
+      print('==== 2.3 KONEKSI AMAN, JALANKAN FUNGSI SUPABASE ====');
       final user = await fn();
+      
+      print('==== 2.4 FUNGSI SUPABASE SELESAI ====');
       return right(user);
     } on ServerException catch (e) {
+      print('==== 2.X ERROR DARI SUPABASE: ${e.message} ====');
       return left(Failure(e.message));
+    } catch (e) {
+      print('==== 2.X ERROR TIDAK TERDUGA: $e ====');
+      return left(Failure(e.toString()));
     }
   }
 

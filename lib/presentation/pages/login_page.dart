@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../core/theme/app_pallete.dart';
 import '../bloc/auth_bloc.dart';
-import '../bloc/auth_event.dart';
-import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
+import 'package:kovalen/main_page.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const LoginPage());
+  const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,152 +35,165 @@ class LoginPage extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(32.0),
             decoration: BoxDecoration(
-              color: AppTheme.surface,
+              color: AppPallete.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.stroke),
+              border: Border.all(color: AppPallete.stroke),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.school, color: AppTheme.primary, size: 40),
-                const SizedBox(height: 16),
-                Text(
-                  'Kovalen',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.displayLarge?.copyWith(color: AppTheme.primary),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Silakan masuk menggunakan kredensial universitas Anda.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.textSecondary,
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.school, color: AppPallete.primary, size: 40),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Kovalen',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: AppPallete.primary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 32),
-
-                const CustomTextField(
-                  label: 'Email Institusi',
-                  hint: 'nama@kampus.ac.id',
-                  icon: Icons.mail_outline,
-                  infoText: 'Gunakan email dengan domain .ac.id atau .edu',
-                ),
-                const SizedBox(height: 24),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Kata Sandi',
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                    Text(
-                      'Lupa sandi?',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.labelLarge?.copyWith(color: AppTheme.primary),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const CustomTextField(
-                  label: '',
-                  hint: '••••••••',
-                  icon: Icons.lock_outline,
-                  isPassword: true,
-                ),
-                const SizedBox(height: 32),
-
-                BlocConsumer<AuthBloc, AuthState>(
-                  listener: (context, state) {
-                    if (state is AuthError) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(state.message)));
-                    } else if (state is AuthAuthenticated) {
-                      // Navigator.pushReplacementNamed(context, '/main'); // Arahkan ke Halaman Utama
-                    }
-                  },
-                  builder: (context, state) {
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: state is AuthLoading
-                            ? null
-                            : () {
-                                context.read<AuthBloc>().add(
-                                  LoginSubmitted(
-                                    email: 'test@kampus.ac.id',
-                                    password: 'password',
-                                  ),
-                                );
-                              },
-                        child: state is AuthLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Masuk',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(color: Colors.white),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Icon(
-                                    Icons.login,
-                                    size: 18,
-                                    color: Colors.white,
-                                  ),
-                                ],
-                              ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-                Divider(color: AppTheme.stroke),
-                const SizedBox(height: 16),
-                RichText(
-                  text: TextSpan(
+                  const SizedBox(height: 8),
+                  Text(
+                    'Silakan masuk menggunakan kredensial universitas Anda.',
+                    textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textSecondary,
+                      color: AppPallete.textSecondary,
                     ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  CustomTextField(
+                    label: 'Email Institusi',
+                    hint: 'nama@kampus.ac.id',
+                    controller: emailController,
+                    icon: Icons.mail_outline,
+                    infoText: 'Gunakan email dengan domain .ac.id atau .edu',
+                  ),
+                  const SizedBox(height: 24),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const TextSpan(text: 'Belum memiliki profil akademik? '),
-                      TextSpan(
-                        text: 'Daftar sekarang',
+                      Text(
+                        'Kata Sandi',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                      Text(
+                        'Lupa sandi?',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: AppTheme.primary,
+                          color: AppPallete.primary,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    label: '',
+                    hint: '••••••••',
+                    controller: passwordController,
+                    icon: Icons.lock_outline,
+                    isPassword: true,
+                  ),
+                  const SizedBox(height: 32),
+
+                  BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthFailure) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
+                      } else if (state is AuthSuccess) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MainPage.route(),
+                          (route) => false,
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppPallete.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          onPressed: state is AuthLoading
+                              ? null
+                              : () {
+                                  if (formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                      AuthSignIn(
+                                        email: emailController.text.trim(),
+                                        password: passwordController.text
+                                            .trim(),
+                                      ),
+                                    );
+                                  }
+                                },
+                          child: state is AuthLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Masuk',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(color: Colors.white),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    const Icon(
+                                      Icons.login,
+                                      size: 18,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  Divider(color: AppPallete.stroke),
+                  const SizedBox(height: 16),
+                  RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppPallete.textSecondary,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: 'Belum memiliki profil akademik? ',
+                        ),
+                        TextSpan(
+                          text: 'Daftar sekarang',
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(color: AppPallete.primary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
