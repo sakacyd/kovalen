@@ -16,5 +16,6 @@ class AppPallete {
   static const Color stroke = Color(0xFFE5E7EB);
   static const Color success = Color(0xFF059669);
   static const Color secondaryContainer = Color(0xFFFEBB8D);
-  static const Color errorColor = Colors.redAccent; // Ditambahkan untuk errorBorder
+  static const Color errorColor =
+      Colors.redAccent; // Ditambahkan untuk errorBorder
 }

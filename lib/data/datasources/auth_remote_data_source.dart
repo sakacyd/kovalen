@@ -5,10 +5,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class AuthRemoteDataSource {
   Session? get currentUserSession;
   Future<UserModel> signUpWithEmailAndPassword({
-    required String name,
+    required String fullName,
     required String email,
     required String password,
   });
+
   Future<UserModel> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -33,31 +34,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      print('==== 3.1 MENGIRIM PAYLOAD KE SUPABASE ====');
       final response = await supabaseClient.auth.signInWithPassword(
         email: email,
         password: password,
       );
-      
-      print('==== 3.2 DAPAT BALASAN DARI SUPABASE ====');
+
       if (response.user == null) {
         throw ServerException('User is null!');
       }
-      
-      print('==== 3.3 PARSING JSON KE USERMODEL ====');
+
       return UserModel.fromJson(response.user!.toJson());
     } on AuthException catch (e) {
-      print('==== 3.X AUTH EXCEPTION: ${e.message} ====');
       throw ServerException(e.message);
     } catch (e) {
-      print('==== 3.X GENERAL EXCEPTION: $e ====');
       throw ServerException(e.toString());
     }
   }
 
   @override
   Future<UserModel> signUpWithEmailAndPassword({
-    required String name,
+    required String fullName,
     required String email,
     required String password,
   }) async {
@@ -65,7 +61,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await supabaseClient.auth.signUp(
         password: password,
         email: email,
-        data: {'name': name},
+        data: {'full_name': fullName},
       );
 
       if (response.user == null) {

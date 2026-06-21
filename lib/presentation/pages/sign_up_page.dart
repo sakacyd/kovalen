@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
 import 'package:kovalen/presentation/pages/home_page.dart';
 
-class LoginPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const LoginPage());
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  static route() => MaterialPageRoute(builder: (context) => const SignUpPage());
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
+  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   void dispose() {
+    fullNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
@@ -61,13 +64,21 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Silakan masuk menggunakan kredensial universitas Anda.',
+                    'Silakan daftar menggunakan kredensial universitas Anda.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppPallete.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 32),
+
+                  CustomTextField(
+                    label: 'Nama Lengkap',
+                    hint: 'John Doe',
+                    controller: fullNameController,
+                    icon: Icons.person_outline,
+                  ),
+                  const SizedBox(height: 24),
 
                   CustomTextField(
                     label: 'Email Institusi',
@@ -78,24 +89,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 24),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Kata Sandi',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      Text(
-                        'Lupa sandi?',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: AppPallete.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
                   CustomTextField(
-                    label: '',
+                    label: 'Password',
                     hint: '••••••••',
                     controller: passwordController,
                     icon: Icons.lock_outline,
@@ -133,7 +128,8 @@ class _LoginPageState extends State<LoginPage> {
                               : () {
                                   if (formKey.currentState!.validate()) {
                                     context.read<AuthBloc>().add(
-                                      AuthSignIn(
+                                      AuthSignUp(
+                                        fullName: fullNameController.text,
                                         email: emailController.text.trim(),
                                         password: passwordController.text
                                             .trim(),
@@ -154,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Masuk',
+                                      'Daftar',
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelLarge
@@ -162,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                     const SizedBox(width: 8),
                                     const Icon(
-                                      Icons.login,
+                                      Icons.person_add,
                                       size: 18,
                                       color: Colors.white,
                                     ),
@@ -181,13 +177,18 @@ class _LoginPageState extends State<LoginPage> {
                         color: AppPallete.textSecondary,
                       ),
                       children: [
-                        const TextSpan(
-                          text: 'Belum memiliki profil akademik? ',
+                        TextSpan(
+                          text: 'Sudah memiliki profil akademik? ',
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
                         TextSpan(
-                          text: 'Daftar sekarang',
+                          text: 'Masuk sekarang',
                           style: Theme.of(context).textTheme.labelLarge
                               ?.copyWith(color: AppPallete.primary),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pop(context);
+                            },
                         ),
                       ],
                     ),

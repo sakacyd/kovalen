@@ -7,7 +7,7 @@ import 'package:kovalen/init_dependencies.dart';
 import 'package:kovalen/presentation/pages/home_page.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
-import 'package:kovalen/presentation/pages/login_page.dart';
+import 'package:kovalen/presentation/pages/sign_in_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
           if (isLoggedIn) {
             return const HomePage();
           }
-          return const LoginPage();
+          return const SignInPage();
         },
       ),
     );

@@ -30,6 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        _currentUser = currentUser,
        _appUserCubit = appUserCubit,
        super(AuthInitial()) {
+    on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthSignIn>(_onAuthSignIn);
     on<AuthSignOut>(_onAuthSignOut);
@@ -44,7 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       UserSignUpParams(
         email: event.email,
         password: event.password,
-        name: event.name,
+        fullName: event.fullName,
       ),
     );
     res.fold(
@@ -57,31 +58,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthSignIn event,
     Emitter<AuthState> emit,
   ) async {
-    print('==== 1. PROSES LOGIN DIMULAI ====');
-    emit(AuthLoading()); // Mengubah tombol jadi loading
-
-    try {
-      print('==== 2. MENGIRIM REQUEST KE SUPABASE ====');
-      final res = await _userSignIn(
-        UserSignInParams(email: event.email, password: event.password),
-      );
-
-      print('==== 3. DAPAT RESPON DARI BLoC/USECASE ====');
-      res.fold(
-        (l) {
-          print('==== 4. BLoC EMIT FAILURE: ${l.message} ====');
-          emit(AuthFailure(l.message));
-        },
-        (r) {
-          print('==== 4. BLoC EMIT SUCCESS ====');
-          _emitAuthSuccess(r, emit);
-        },
-      );
-    } catch (e) {
-      // Menangkap error liar yang mungkin tidak ter-cover oleh Either<Failure, User>
-      print('==== FATAL ERROR BLoC: $e ====');
-      emit(AuthFailure('Terjadi kesalahan sistem: $e'));
-    }
+    final res = await _userSignIn(
+      UserSignInParams(email: event.email, password: event.password),
+    );
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) => _emitAuthSuccess(r, emit),
+    );
   }
 
   FutureOr<void> _isUserLoggedIn(

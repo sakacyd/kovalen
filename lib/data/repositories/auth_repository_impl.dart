@@ -30,13 +30,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User>> signUpWithEmailAndPassword({
-    required String name,
+    required String fullName,
     required String email,
     required String password,
   }) async {
     return _getUser(
       () async => await authRemoteDataSource.signUpWithEmailAndPassword(
-        name: name,
+        fullName: fullName,
         email: email,
         password: password,
       ),
@@ -59,11 +59,13 @@ class AuthRepositoryImpl implements AuthRepository {
             fullName: /* session.user.userMetadata['full_name'] ??  */ '',
             phoneNumber: /* session.user.userMetadata['phone_number'] ?? */ '',
             avatarUrl: /* session.user.userMetadata['avatar_url'] ??  */ '',
-            studyProgram: /* session.user.userMetadata['study_program'] ?? */ '',
+            studyProgram: /* session.user.userMetadata['study_program'] ?? */
+                '',
             semester: /* session.user.userMetadata['semester'] ?? */ '',
             latitude: /* session.user.userMetadata['latitude'] ?? */ '',
             longitude: /* session.user.userMetadata['longitude'] ?? */ '',
-            lastLocationUpdate: /* session.user.userMetadata['last_location_update'] ?? */ '',
+            lastLocationUpdate: /* session.user.userMetadata['last_location_update'] ?? */
+                '',
           ),
         );
       }
@@ -77,7 +79,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(Failure(e.message));
     }
   }
-  
+
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
@@ -90,26 +92,19 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
-      print('==== 2.1 MASUK REPOSITORY: MULAI CEK KONEKSI ====');
       final hasConnection = await connectionChecker.isConnected;
-      print('==== 2.2 HASIL CEK KONEKSI: $hasConnection ====');
-      
+
       if (!hasConnection) {
         return left(Failure(Constants.noConnectionMessage));
       }
 
-      print('==== 2.3 KONEKSI AMAN, JALANKAN FUNGSI SUPABASE ====');
       final user = await fn();
-      
-      print('==== 2.4 FUNGSI SUPABASE SELESAI ====');
+
       return right(user);
     } on ServerException catch (e) {
-      print('==== 2.X ERROR DARI SUPABASE: ${e.message} ====');
       return left(Failure(e.message));
     } catch (e) {
-      print('==== 2.X ERROR TIDAK TERDUGA: $e ====');
       return left(Failure(e.toString()));
     }
   }
-
 }
