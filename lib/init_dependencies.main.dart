@@ -21,6 +21,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => supabase.client);
   //core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(() => BottomNavCubit());
 
   serviceLocator.registerFactory(() => InternetConnection());
   serviceLocator.registerFactory<ConnectionChecker>(

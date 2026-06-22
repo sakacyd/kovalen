@@ -14,9 +14,9 @@ class Constants {
   ];
 
   static const List<String> pages = [
-    'Dashboard',
-    'Assignments',
-    'History',
+    'Home',
+    'Matchmaking',
+    'Messages',
     'Profile',
   ];
 

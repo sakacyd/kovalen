@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
         // Anda bisa menambahkan aksi atau tombol di sini nantinya
       ),
       body: const Center(
-        child: Text('Halaman Homepage Kosong', style: TextStyle(fontSize: 18)),
+        child: Text('Halaman Beranda', style: TextStyle(fontSize: 18)),
       ),
     );
   }

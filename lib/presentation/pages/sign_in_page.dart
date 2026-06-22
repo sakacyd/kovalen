@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
-import 'package:kovalen/presentation/pages/home_page.dart';
+import 'package:kovalen/main_page.dart';
 import 'package:kovalen/presentation/pages/sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
@@ -117,7 +117,7 @@ class _SignInPageState extends State<SignInPage> {
                       } else if (state is AuthSuccess) {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          HomePage.route(),
+                          MainPage.route(),
                           (route) => false,
                         );
                       }

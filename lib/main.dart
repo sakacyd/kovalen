@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kovalen/core/theme/theme.dart';
 import 'package:kovalen/init_dependencies.dart';
-import 'package:kovalen/presentation/pages/home_page.dart';
+import 'package:kovalen/main_page.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
+import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 
@@ -25,8 +26,8 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<TodayBloc>()),
         BlocProvider(create: (_) => serviceLocator<HistoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<ReportBloc>()),
-        BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()),
-        BlocProvider(create: (_) => BottomNavCubit()), */
+        BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()), */
+        BlocProvider(create: (_) => BottomNavCubit()),
       ],
       child: const MyApp(),
     ),
@@ -60,7 +61,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
-            return const HomePage();
+            return const MainPage();
           }
           return const SignInPage();
         },

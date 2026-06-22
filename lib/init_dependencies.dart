@@ -1,4 +1,11 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
+import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/core/network/connection_checker.dart';
 import 'package:kovalen/core/secrets/app_secrets.dart';
 import 'package:kovalen/data/datasources/auth_remote_data_source.dart';
@@ -9,11 +16,5 @@ import 'package:kovalen/domain/usecases/user_sign_in.dart';
 import 'package:kovalen/domain/usecases/user_sign_up.dart';
 import 'package:kovalen/domain/usecases/user_sign_out.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_it/get_it.dart';
-import 'package:hive/hive.dart';
-import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'init_dependencies.main.dart';
