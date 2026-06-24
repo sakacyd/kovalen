@@ -6,6 +6,7 @@ Future<void> initDependencies() async {
   await dotenv.load(fileName: ".env");
 
   _initAuth();
+  _initHome();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
     throw Exception('Supabase credentials not found');
@@ -19,6 +20,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => Hive.box('assignments'));
 
   serviceLocator.registerLazySingleton(() => supabase.client);
+  
   //core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => BottomNavCubit());
@@ -83,31 +85,25 @@ void _initAuth() {
     ..registerLazySingleton(
       () => HistoryBloc(getPreviousAssignments: serviceLocator()),
     );
-}
+} */
 
-void _initDashboard() {
+void _initHome() {
   serviceLocator
     // datasource
-    ..registerFactory<DashboardRemoteDataSource>(
-      () => DashboardRemoteDataSourceImpl(serviceLocator()),
+    ..registerFactory<HomeRemoteDataSource>(
+      () => HomeRemoteDataSourceImpl(serviceLocator()),
     )
     // repository
-    ..registerFactory<DashboardRepository>(
-      () => DashboardRepositoryImpl(serviceLocator(), serviceLocator()),
+    ..registerFactory<HomeRepository>(
+      () => HomeRepositoryImpl(serviceLocator(), serviceLocator()),
     )
     // usecases
-    ..registerFactory(() => GetNearestAssignment(serviceLocator()))
     ..registerFactory(() => GetCurrentUser(serviceLocator()))
     // bloc
-    ..registerLazySingleton(
-      () => DashboardBloc(
-        getNearestAssignment: serviceLocator(),
-        getCurrentUser: serviceLocator(),
-      ),
-    );
+    ..registerLazySingleton(() => HomeBloc(getCurrentUser: serviceLocator()));
 }
 
-void _initReport() {
+/* void _initReport() {
   serviceLocator
     // datasource
     ..registerFactory<ReportRemoteDataSource>(

@@ -5,9 +5,9 @@ class User {
   final String phoneNumber;
   final String avatarUrl;
   final String studyProgram;
-  final String semester;
-  final String latitude;
-  final String longitude;
+  final int semester;
+  final double latitude;
+  final double longitude;
   final String lastLocationUpdate;
 
   User({

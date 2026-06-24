@@ -1,7 +1,18 @@
 import 'package:kovalen/core/common/entities/user.dart';
 
 class UserModel extends User {
-  UserModel({required super.id, required super.fullName, required super.email, required super.avatarUrl, required super.phoneNumber, required super.studyProgram, required super.semester, required super.latitude, required super.longitude, required super.lastLocationUpdate});
+  UserModel({
+    required super.id,
+    required super.fullName,
+    required super.email,
+    required super.avatarUrl,
+    required super.phoneNumber,
+    required super.studyProgram,
+    required super.semester,
+    required super.latitude,
+    required super.longitude,
+    required super.lastLocationUpdate,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -11,11 +22,26 @@ class UserModel extends User {
       phoneNumber: json['phone_number'] ?? '',
       avatarUrl: json['avatar_url'] ?? '',
       studyProgram: json['study_program'] ?? '',
-      semester: json['semester'] ?? '',
-      latitude: json['latitude'] ?? '',
-      longitude: json['longitude'] ?? '',
+      semester: json['semester'] as int? ?? 0,
+      latitude: json['latitude'] as double? ?? 0.0,
+      longitude: json['longitude'] as double? ?? 0.0,
       lastLocationUpdate: json['last_location_update'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'full_name': fullName,
+      'phone_number': phoneNumber,
+      'avatar_url': avatarUrl,
+      'study_program': studyProgram,
+      'semester': semester,
+      'latitude': latitude,
+      'longitude': longitude,
+      'last_location_update': lastLocationUpdate,
+    };
   }
 
   UserModel copyWith({
@@ -25,9 +51,9 @@ class UserModel extends User {
     String? phoneNumber,
     String? avatarUrl,
     String? studyProgram,
-    String? semester,
-    String? latitude,
-    String? longitude,
+    int? semester,
+    double? latitude,
+    double? longitude,
     String? lastLocationUpdate,
   }) {
     return UserModel(
@@ -43,5 +69,4 @@ class UserModel extends User {
       lastLocationUpdate: lastLocationUpdate ?? this.lastLocationUpdate,
     );
   }
-
 }

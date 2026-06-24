@@ -61,9 +61,9 @@ class AuthRepositoryImpl implements AuthRepository {
             avatarUrl: /* session.user.userMetadata['avatar_url'] ??  */ '',
             studyProgram: /* session.user.userMetadata['study_program'] ?? */
                 '',
-            semester: /* session.user.userMetadata['semester'] ?? */ '',
-            latitude: /* session.user.userMetadata['latitude'] ?? */ '',
-            longitude: /* session.user.userMetadata['longitude'] ?? */ '',
+            semester: /* session.user.userMetadata['semester'] ?? */ 0,
+            latitude: /* session.user.userMetadata['latitude'] ?? */ 0.0,
+            longitude: /* session.user.userMetadata['longitude'] ?? */ 0.0,
             lastLocationUpdate: /* session.user.userMetadata['last_location_update'] ?? */
                 '',
           ),
