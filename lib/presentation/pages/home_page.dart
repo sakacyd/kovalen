@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
+import 'package:kovalen/presentation/widgets/stats_card.dart';
+import 'package:kovalen/presentation/widgets/group_item.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,7 +33,9 @@ class _HomePageState extends State<HomePage> {
           children: [
             const CircleAvatar(
               radius: 16,
-              backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=11'),
+              backgroundImage: NetworkImage(
+                'https://media.licdn.com/dms/image/v2/D4E03AQEAaljZW5GfGA/profile-displayphoto-shrink_800_800/B4EZTv2HgUGgAc-/0/1739190730588?e=1784160000&v=beta&t=GssgASVk2ADNUgTa1MFqrDejDRJEEiJ7RJUvTND5VrI',
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -67,7 +71,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         const TextSpan(text: 'Selamat datang, '),
                         TextSpan(
-                          text: state.user.fullName,
+                          text: state.user.fullName.trim().split(' ').first,
                           style: const TextStyle(color: AppPallete.primary),
                         ),
                       ],
@@ -86,104 +90,20 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppPallete.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppPallete.stroke),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.groups,
-                                    size: 20,
-                                    color: AppPallete.textSecondary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'GRUP AKTIF',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.labelSmall,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              /* Text(
-                                '${state.user.activeGroupsCount}',
-                                style: Theme.of(context).textTheme.displayLarge,
-                              ), */
-                            ],
-                          ),
+                        child: StatsCard(
+                          logo: Icons.groups,
+                          title: 'Grup Aktif',
+                          value: '${state.user.semester}',
+                          secondValue: '',
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppPallete.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppPallete.stroke),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.handshake,
-                                    size: 20,
-                                    color: AppPallete.textSecondary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'MATCH HARI INI',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.labelSmall,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  /* Text(
-                                    '${state.user.matchesTodayCount}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayLarge
-                                        ?.copyWith(color: AppPallete.primary),
-                                  ), */
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppPallete.success.withOpacity(
-                                        0.1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                    /* child: Text(
-                                      '+${state.user.newMatchesCount} Baru',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall
-                                          ?.copyWith(color: AppPallete.success),
-                                    ), */
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        child: StatsCard(
+                          logo: Icons.handshake,
+                          title: 'Match Hari Ini',
+                          value: '${state.user.semester}',
+                          secondValue: '${state.user.semester}',
                         ),
                       ),
                     ],
@@ -199,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: AppPallete.primary.withOpacity(0.25),
+                          color: AppPallete.primary.withValues(alpha: 0.25),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -222,7 +142,9 @@ class _HomePageState extends State<HomePage> {
                                 'Algoritma & Struktur Data membutuhkan partner.',
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                     ),
                               ),
                             ],
@@ -232,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.search, color: Colors.white),

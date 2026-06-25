@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class AppPallete {
   // Brand Colors
   static const Color primary = Color(0xFF003FB1);
-    static const Color primaryDark = Color(0xFF21005D);
+  static const Color primaryDark = Color(0xFF21005D);
   static const Color primaryLight = Color(0xFFD0BCFF);
   static const Color primaryContainer = Color(0xFF1A56DB);
   static const Color background = Color(0xFFF8F9FA);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceLightPurple = Color(0xFFF3EDF7);
+  static const Color surfaceVariant = Color(0xFFE8DEF8);
   static const Color accentPink = Color(0xFFFFD8E4);
   static const Color accentDark = Color(0xFF31111D);
-
 
   // Text Colors
   static const Color textPrimary = Color(0xFF111827);
@@ -22,6 +22,6 @@ class AppPallete {
   static const Color stroke = Color(0xFFE5E7EB);
   static const Color success = Color(0xFF059669);
   static const Color secondaryContainer = Color(0xFFFEBB8D);
-  static const Color errorColor =
-      Colors.redAccent; // Ditambahkan untuk errorBorder
+  static const Color errorColor = Colors.redAccent;
+  static const Color errorContainer = Color(0xFFFFDAD6);
 }

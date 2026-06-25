@@ -7,6 +7,7 @@ Future<void> initDependencies() async {
 
   _initAuth();
   _initHome();
+  _initProfile();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
     throw Exception('Supabase credentials not found');
@@ -20,7 +21,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => Hive.box('assignments'));
 
   serviceLocator.registerLazySingleton(() => supabase.client);
-  
+
   //core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
   serviceLocator.registerLazySingleton(() => BottomNavCubit());
@@ -101,6 +102,22 @@ void _initHome() {
     ..registerFactory(() => GetCurrentUser(serviceLocator()))
     // bloc
     ..registerLazySingleton(() => HomeBloc(getCurrentUser: serviceLocator()));
+}
+
+void _initProfile() {
+  serviceLocator
+    // datasource
+    ..registerFactory<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<ProfileRepository>(
+      () => ProfileRepositoryImpl(serviceLocator(), serviceLocator()),
+    )
+    // bloc
+    ..registerLazySingleton(
+      () => ProfileBloc(getCurrentUser: serviceLocator()),
+    );
 }
 
 /* void _initReport() {
