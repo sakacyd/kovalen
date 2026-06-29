@@ -4,6 +4,7 @@ import '../../core/theme/app_pallete.dart';
 import '../bloc/matchmaking_bloc.dart';
 import '../widgets/view_toggle.dart';
 import '../widgets/matchmaking_card.dart';
+import '../widgets/custom_app_bar.dart';
 
 class MatchmakingPage extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -25,49 +26,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppPallete.surface,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: AppPallete.stroke,
-            height: 1.0,
-          ),
-        ),
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppPallete.stroke),
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuDWRzl8gFXuHrRChlm3fL_BIHNN5fxyKpo9mM9Vqb7j8TmRijU7B-0lNLhXfD92t32Ok5YmwtRC6bEm2ZvHo7BMo58RM-m4wBdZZy4mQ14eq5EJoZMln81X0T29qOCOgtRo5JSl977ZpqxeDGRjtyXHJI0nBWSwJQUPpfVKv6Ic1MaCKfd9y0tUoMQYgKx7COwmegmc1P1aS6ihJluRQVDbor2cDQlkAQK25rvQCN4VrBhFj5AX6xVncLy5zMj2HCgMPJmPGn1DIOQd',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Kovalen',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                color: AppPallete.primary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: AppPallete.primary),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      appBar: const CustomAppBar(),
       body: Column(
         children: [
           Padding(

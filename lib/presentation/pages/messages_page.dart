@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_pallete.dart';
 import '../bloc/messages_bloc.dart';
 import '../widgets/chat_list_item.dart';
+import '../widgets/custom_app_bar.dart';
 
 class MessagesPage extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -30,48 +31,7 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppPallete.surface,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: AppPallete.stroke,
-            height: 1.0,
-          ),
-        ),
-        title: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NetworkImage(
-                    'https://lh3.googleusercontent.com/aida-public/AB6AXuA6_8ztsLxf2Z3wE8lVk4oCeZJu4O9ZeXP0EBNHkP9DnjR48r0uVG-u8yPqdrYi96rRBL8N7u1BtvOroR7SQ1FzUuqpSDEqBovbs-N6w9Ib28x9rOzNw0kYvG8lwJkAFqHSx5WO5whMY8uUD2l8iLtyNB2DKhrakSshngwdeHQWYqY8kvdiirwgD5HttE3zJZrodA600Jotxqrkf5D9ec5Bn4gH11I3hSVICNxbtVrIfiLXiILYnx_YYasnpPHzjPTJE-4nQ2kLAatv',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Kovalen',
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                color: AppPallete.primary,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: AppPallete.primary),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      appBar: const CustomAppBar(),
       body: SafeArea(
         child: Column(
           children: [

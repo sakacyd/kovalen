@@ -4,6 +4,7 @@ import 'package:kovalen/main_page.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/selectable_pill.dart';
+import '../widgets/custom_app_bar.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -56,12 +57,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: CustomAppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Row(
+        titleWidget: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildProgressIndicator(true),

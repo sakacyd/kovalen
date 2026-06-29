@@ -8,6 +8,7 @@ import '../widgets/academic_info_grid.dart';
 import '../widgets/interests_section.dart';
 import '../widgets/profile_actions.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
+import '../widgets/custom_app_bar.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -28,46 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor:
           AppPallete.background, // Menerapkan Clean Minimalism theme background
-      appBar: AppBar(
-        backgroundColor: AppPallete.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Row(
-          children: [
-            const CircleAvatar(
-              radius: 16,
-              backgroundImage: NetworkImage(
-                "https://media.licdn.com/dms/image/v2/D4E03AQEAaljZW5GfGA/profile-displayphoto-shrink_800_800/B4EZTv2HgUGgAc-/0/1739190730588?e=1784160000&v=beta&t=GssgASVk2ADNUgTa1MFqrDejDRJEEiJ7RJUvTND5VrI",
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Kovalen',
-              style: TextStyle(
-                color: AppPallete.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_outlined,
-              color: AppPallete.primary,
-            ),
-            onPressed: () {},
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(
-            color: AppPallete.stroke.withValues(alpha: 0.3),
-            height: 1,
-          ),
-        ),
-      ),
+      appBar: const CustomAppBar(),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           // Menangkap momen ketika user berhasil keluar (state kembali ke Initial)

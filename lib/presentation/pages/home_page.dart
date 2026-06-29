@@ -5,6 +5,7 @@ import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
 import 'package:kovalen/presentation/widgets/group_item.dart';
+import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,41 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppPallete.surface,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppPallete.stroke, height: 1),
-        ),
-        title: Row(
-          children: [
-            const CircleAvatar(
-              radius: 16,
-              backgroundImage: NetworkImage(
-                'https://media.licdn.com/dms/image/v2/D4E03AQEAaljZW5GfGA/profile-displayphoto-shrink_800_800/B4EZTv2HgUGgAc-/0/1739190730588?e=1784160000&v=beta&t=GssgASVk2ADNUgTa1MFqrDejDRJEEiJ7RJUvTND5VrI',
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'Kovalen',
-              style: Theme.of(
-                context,
-              ).textTheme.displayMedium?.copyWith(color: AppPallete.primary),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.notifications_none,
-              color: AppPallete.textSecondary,
-            ),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
+      appBar: const CustomAppBar(),
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           if (state is HomeSuccess) {
