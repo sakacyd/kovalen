@@ -62,15 +62,18 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Kovalen',
       theme: AppTheme.lightThemeMode,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
+      home: BlocBuilder<AppUserCubit, AppUserState>(
+        builder: (context, state) {
+          if (state is AppUserLoggedIn) {
             return const MainPage();
+          } else if (state is AppUserLoggedOut) {
+            return const SignInPage();
           }
-          return const SignInPage();
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         },
       ),
     );

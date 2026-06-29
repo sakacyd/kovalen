@@ -74,6 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _currentUser(NoParams());
 
     res.fold((l) {
+      _appUserCubit.updateUser(null);
       emit(AuthFailure(l.message));
     }, (r) => _emitAuthSuccess(r, emit));
   }
