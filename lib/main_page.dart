@@ -5,7 +5,6 @@ import 'package:kovalen/presentation/pages/home_page.dart';
 import 'package:kovalen/presentation/pages/matchmaking_page.dart';
 import 'package:kovalen/presentation/pages/messages_page.dart';
 import 'package:kovalen/presentation/pages/profile_page.dart';
-import 'package:kovalen/core/theme/app_pallete.dart'; // Pastikan ini di-import
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
