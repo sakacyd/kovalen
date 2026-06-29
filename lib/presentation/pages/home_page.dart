@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
@@ -150,14 +151,24 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppPallete.onPrimary.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
+                        GestureDetector(
+                          onTap: () {
+                            context.read<BottomNavCubit>().changeTab(1);
+                          },
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: AppPallete.onPrimary.withValues(
+                                alpha: 0.2,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.search,
+                              color: AppPallete.onPrimary,
+                            ),
                           ),
-                          child: const Icon(Icons.search, color: AppPallete.onPrimary),
                         ),
                       ],
                     ),
