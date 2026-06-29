@@ -23,10 +23,10 @@ class AcademicInfoGrid extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppPallete.surface,
         borderRadius: BorderRadius.circular(24), // Sesuai tema Clean Minimalism
-        border: Border.all(color: AppPallete.stroke.withOpacity(0.3)),
+        border: Border.all(color: AppPallete.stroke.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

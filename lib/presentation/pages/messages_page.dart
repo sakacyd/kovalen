@@ -82,7 +82,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: AppPallete.onSurface.withOpacity(0.04),
+                      color: AppPallete.onSurface.withValues(alpha: 0.04),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -128,7 +128,7 @@ class _MessagesPageState extends State<MessagesPage> {
                     border: Border.all(color: AppPallete.stroke),
                     boxShadow: [
                       BoxShadow(
-                        color: AppPallete.onSurface.withOpacity(0.04),
+                        color: AppPallete.onSurface.withValues(alpha: 0.04),
                         offset: const Offset(0, 2),
                         blurRadius: 8,
                       ),

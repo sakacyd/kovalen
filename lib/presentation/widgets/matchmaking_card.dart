@@ -30,7 +30,7 @@ class MatchmakingCard extends StatelessWidget {
         border: Border.all(color: AppPallete.stroke),
         boxShadow: [
           BoxShadow(
-            color: AppPallete.onSurface.withOpacity(0.08),
+            color: AppPallete.onSurface.withValues(alpha: 0.08),
             offset: const Offset(0, 4),
             blurRadius: 16,
           )
@@ -58,8 +58,8 @@ class MatchmakingCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppPallete.onSurface.withOpacity(0.7),
-                          AppPallete.onSurface.withOpacity(0.2),
+                          AppPallete.onSurface.withValues(alpha: 0.7),
+                          AppPallete.onSurface.withValues(alpha: 0.2),
                           Colors.transparent,
                         ],
                         begin: Alignment.bottomCenter,
@@ -115,7 +115,7 @@ class MatchmakingCard extends StatelessWidget {
                       Text(
                         'Semester $semester',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppPallete.surface.withOpacity(0.9),
+                          color: AppPallete.surface.withValues(alpha: 0.9),
                         ),
                       ),
                     ],
@@ -172,10 +172,10 @@ class MatchmakingCard extends StatelessWidget {
                       return Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppPallete.secondaryContainer.withOpacity(0.2),
+                          color: AppPallete.secondaryContainer.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: AppPallete.secondaryContainer.withOpacity(0.3),
+                            color: AppPallete.secondaryContainer.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(

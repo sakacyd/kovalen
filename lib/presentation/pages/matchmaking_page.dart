@@ -124,7 +124,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                 border: Border.all(color: AppPallete.stroke),
                 boxShadow: [
                   BoxShadow(
-                    color: AppPallete.onSurface.withOpacity(0.04),
+                    color: AppPallete.onSurface.withValues(alpha: 0.04),
                     offset: const Offset(0, 2),
                     blurRadius: 8,
                   )

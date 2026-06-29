@@ -97,7 +97,7 @@ void _initProfile() {
 void _initMatchmaking() {
   serviceLocator
     // bloc
-    ..registerLazySingleton(
+    .registerLazySingleton(
       () => MatchmakingBloc(),
     );
 }
@@ -105,7 +105,7 @@ void _initMatchmaking() {
 void _initMessages() {
   serviceLocator
     // bloc
-    ..registerLazySingleton(
+    .registerLazySingleton(
       () => MessagesBloc(),
     );
 }
@@ -113,7 +113,7 @@ void _initMessages() {
 void _initOnboarding() {
   serviceLocator
     // bloc
-    ..registerLazySingleton(
+    .registerLazySingleton(
       () => OnboardingBloc(),
     );
 }

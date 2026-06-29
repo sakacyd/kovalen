@@ -18,7 +18,7 @@ class ProfileActions extends StatelessWidget {
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: AppPallete.stroke.withOpacity(0.3)),
+              side: BorderSide(color: AppPallete.stroke.withValues(alpha: 0.3)),
             ),
             padding: const EdgeInsets.symmetric(vertical: 16),
             minimumSize: const Size(double.infinity, 56),

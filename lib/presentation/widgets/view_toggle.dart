@@ -33,7 +33,7 @@ class ViewToggle extends StatelessWidget {
                   boxShadow: isCardView
                       ? [
                           BoxShadow(
-                            color: AppPallete.onSurface.withOpacity(0.05),
+                            color: AppPallete.onSurface.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           )
@@ -71,7 +71,7 @@ class ViewToggle extends StatelessWidget {
                   boxShadow: !isCardView
                       ? [
                           BoxShadow(
-                            color: AppPallete.onSurface.withOpacity(0.05),
+                            color: AppPallete.onSurface.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           )
