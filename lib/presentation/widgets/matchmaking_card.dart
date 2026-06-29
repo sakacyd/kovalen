@@ -30,7 +30,7 @@ class MatchmakingCard extends StatelessWidget {
         border: Border.all(color: AppPallete.stroke),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: AppPallete.onSurface.withOpacity(0.08),
             offset: const Offset(0, 4),
             blurRadius: 16,
           )
@@ -58,8 +58,8 @@ class MatchmakingCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.7),
-                          Colors.black.withOpacity(0.2),
+                          AppPallete.onSurface.withOpacity(0.7),
+                          AppPallete.onSurface.withOpacity(0.2),
                           Colors.transparent,
                         ],
                         begin: Alignment.bottomCenter,
@@ -78,7 +78,7 @@ class MatchmakingCard extends StatelessWidget {
                       color: AppPallete.primary,
                       borderRadius: BorderRadius.circular(100),
                       border: Border.all(
-                        color: AppPallete.primaryLight.withOpacity(0.2),
+                        color: AppPallete.primaryContainer,
                       ),
                     ),
                     child: Row(
@@ -107,7 +107,7 @@ class MatchmakingCard extends StatelessWidget {
                       Text(
                         name,
                         style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: Colors.white,
+                          color: AppPallete.surface,
                           fontSize: 24, // Adjusted for card size
                         ),
                       ),
@@ -115,7 +115,7 @@ class MatchmakingCard extends StatelessWidget {
                       Text(
                         'Semester $semester',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withOpacity(0.9),
+                          color: AppPallete.surface.withOpacity(0.9),
                         ),
                       ),
                     ],

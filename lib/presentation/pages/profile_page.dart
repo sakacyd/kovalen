@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const Text(
               'Kovalen',
               style: TextStyle(
-                color: AppPallete.primaryDark,
+                color: AppPallete.primary,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(
               Icons.notifications_outlined,
-              color: AppPallete.primaryDark,
+              color: AppPallete.primary,
             ),
             onPressed: () {},
           ),

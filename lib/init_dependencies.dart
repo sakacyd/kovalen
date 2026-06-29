@@ -25,5 +25,8 @@ import 'package:kovalen/domain/usecases/get_current_user.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
 import 'package:kovalen/presentation/bloc/profile_bloc.dart';
+import 'package:kovalen/presentation/bloc/matchmaking_bloc.dart';
+import 'package:kovalen/presentation/bloc/messages_bloc.dart';
+import 'package:kovalen/presentation/bloc/onboarding_bloc.dart';
 
 part 'init_dependencies.main.dart';

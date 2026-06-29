@@ -8,6 +8,9 @@ Future<void> initDependencies() async {
   _initAuth();
   _initHome();
   _initProfile();
+  _initMatchmaking();
+  _initMessages();
+  _initOnboarding();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
     throw Exception('Supabase credentials not found');
@@ -59,35 +62,6 @@ void _initAuth() {
     );
 }
 
-/* void _initAssignment() {
-  serviceLocator
-    // datasource
-    ..registerFactory<AssignmentRemoteDataSource>(
-      () => AssignmentRemoteDataSourceImpl(serviceLocator()),
-    )
-    ..registerFactory<AssignmentLocalDataSource>(
-      () => AssignmentLocalDataSourceImpl(serviceLocator()),
-    )
-    // repository
-    ..registerFactory<AssignmentRepository>(
-      () => AssignmentRepositoryImpl(
-        serviceLocator(),
-        serviceLocator(),
-        serviceLocator(),
-      ),
-    )
-    // usecases
-    ..registerFactory(() => GetTodayAssignments(serviceLocator()))
-    ..registerFactory(() => GetPreviousAssignments(serviceLocator()))
-    // bloc
-    ..registerLazySingleton(
-      () => TodayBloc(getTodayAssignments: serviceLocator()),
-    )
-    ..registerLazySingleton(
-      () => HistoryBloc(getPreviousAssignments: serviceLocator()),
-    );
-} */
-
 void _initHome() {
   serviceLocator
     // datasource
@@ -119,6 +93,59 @@ void _initProfile() {
       () => ProfileBloc(getCurrentUser: serviceLocator()),
     );
 }
+
+void _initMatchmaking() {
+  serviceLocator
+    // bloc
+    ..registerLazySingleton(
+      () => MatchmakingBloc(),
+    );
+}
+
+void _initMessages() {
+  serviceLocator
+    // bloc
+    ..registerLazySingleton(
+      () => MessagesBloc(),
+    );
+}
+
+void _initOnboarding() {
+  serviceLocator
+    // bloc
+    ..registerLazySingleton(
+      () => OnboardingBloc(),
+    );
+}
+
+/* void _initAssignment() {
+  serviceLocator
+    // datasource
+    ..registerFactory<AssignmentRemoteDataSource>(
+      () => AssignmentRemoteDataSourceImpl(serviceLocator()),
+    )
+    ..registerFactory<AssignmentLocalDataSource>(
+      () => AssignmentLocalDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<AssignmentRepository>(
+      () => AssignmentRepositoryImpl(
+        serviceLocator(),
+        serviceLocator(),
+        serviceLocator(),
+      ),
+    )
+    // usecases
+    ..registerFactory(() => GetTodayAssignments(serviceLocator()))
+    ..registerFactory(() => GetPreviousAssignments(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => TodayBloc(getTodayAssignments: serviceLocator()),
+    )
+    ..registerLazySingleton(
+      () => HistoryBloc(getPreviousAssignments: serviceLocator()),
+    );
+} */
 
 /* void _initReport() {
   serviceLocator

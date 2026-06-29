@@ -7,11 +7,11 @@ class AcademicInfoGrid extends StatelessWidget {
   final int ipk;
 
   const AcademicInfoGrid({
-    Key? key,
+    super.key,
     required this.programStudi,
     required this.semester,
     required this.ipk,
-  }) : super(key: key);
+  });
 
   Widget _buildInfoCard({
     required String title,
@@ -37,14 +37,14 @@ class AcademicInfoGrid extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: AppPallete.primaryDark),
+              Icon(icon, size: 16, color: AppPallete.primary),
               const SizedBox(width: 6),
               Text(
                 title.toUpperCase(),
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: AppPallete.primaryDark,
+                  color: AppPallete.primary,
                   letterSpacing: 0.5,
                 ),
               ),

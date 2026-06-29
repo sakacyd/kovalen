@@ -4,7 +4,7 @@ import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 
 class ProfileActions extends StatelessWidget {
-  const ProfileActions({Key? key}) : super(key: key);
+  const ProfileActions({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class ProfileActions extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppPallete.surface,
-            foregroundColor: AppPallete.errorColor,
+            foregroundColor: AppPallete.error,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),

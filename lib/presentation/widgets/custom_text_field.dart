@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_pallete.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -40,29 +39,29 @@ class CustomTextField extends StatelessWidget {
             hintText: hint,
             hintStyle: Theme.of(
               context,
-            ).textTheme.bodyMedium?.copyWith(color: AppPallete.textOutline),
-            prefixIcon: Icon(icon, color: AppPallete.textOutline, size: 20),
+            ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline),
+            prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.outline, size: 20),
             suffixIcon: isPassword
-                ? const Icon(
+                ? Icon(
                     Icons.visibility_off,
-                    color: AppPallete.textOutline,
+                    color: Theme.of(context).colorScheme.outline,
                     size: 20,
                   )
                 : null,
             filled: true,
-            fillColor: AppPallete.surface,
+            fillColor: Theme.of(context).colorScheme.surface,
             contentPadding: const EdgeInsets.symmetric(vertical: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.stroke),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.stroke),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.primary),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
             ),
           ),
         ),
@@ -70,10 +69,10 @@ class CustomTextField extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline,
                 size: 14,
-                color: AppPallete.textOutline,
+                color: Theme.of(context).colorScheme.outline,
               ),
               const SizedBox(width: 4),
               Text(infoText!, style: Theme.of(context).textTheme.labelSmall),

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_pallete.dart';
+import '../bloc/messages_bloc.dart';
 import '../widgets/chat_list_item.dart';
 
 class MessagesPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const MessagesPage());
+  static route() => MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => MessagesBloc()..add(LoadMessagesData()),
+          child: const MessagesPage(),
+        ),
+      );
   const MessagesPage({super.key});
 
   @override
@@ -12,6 +19,12 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +45,9 @@ class _MessagesPageState extends State<MessagesPage> {
             Container(
               width: 32,
               height: 32,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                image: const DecorationImage(
+                image: DecorationImage(
                   image: NetworkImage(
                     'https://lh3.googleusercontent.com/aida-public/AB6AXuA6_8ztsLxf2Z3wE8lVk4oCeZJu4O9ZeXP0EBNHkP9DnjR48r0uVG-u8yPqdrYi96rRBL8N7u1BtvOroR7SQ1FzUuqpSDEqBovbs-N6w9Ib28x9rOzNw0kYvG8lwJkAFqHSx5WO5whMY8uUD2l8iLtyNB2DKhrakSshngwdeHQWYqY8kvdiirwgD5HttE3zJZrodA600Jotxqrkf5D9ec5Bn4gH11I3hSVICNxbtVrIfiLXiILYnx_YYasnpPHzjPTJE-4nQ2kLAatv',
                   ),
@@ -69,7 +82,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: AppPallete.onSurface.withOpacity(0.04),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -115,43 +128,42 @@ class _MessagesPageState extends State<MessagesPage> {
                     border: Border.all(color: AppPallete.stroke),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
+                        color: AppPallete.onSurface.withOpacity(0.04),
                         offset: const Offset(0, 2),
                         blurRadius: 8,
                       ),
                     ],
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: ListView(
-                    children: const [
-                      ChatListItem(
-                        name: 'Sarah Jenkins',
-                        time: '10:42 AM',
-                        messagePreview: 'Are we still on for the study group at the library later?',
-                        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD4SQCp0Q6FfYQqTc0bnv186gHtHpSe1STE3uAu-kcMSFIwVuMKn2fxXxURu2zemTA6lsytWcmlW7WB-KSxRFtRwUtYuep7dCc7xlhTSjg3PTSs0smMxfq7RsFUSTKd8Yf2yeuPxtAX8nXI7MNYhvH4xyJmxcIh7v_9lv6WoGX1Dkr9Dd7w0ZywiGa-uTNPvPp4bEZ_Xn25OFlaUeVHdCvJnvw-iQL5Zf_y4Opg0fZVHpnyrf6eakGp4__KIFw08wVrEUdyIkdkMtYt',
-                        unreadCount: 2,
-                        isOnline: true,
-                      ),
-                      ChatListItem(
-                        name: 'David Chen',
-                        time: 'Yesterday',
-                        messagePreview: 'Thanks for sharing those lecture notes, they were really helpful for the assignment.',
-                        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBwHW0i8_2cPNjBrpzd3k-vUWpRkyqi-4h7rA-ysCoedFw5u7b68Qv2JqWvNoCIF7pB2CpRdww-I6AxnJ_s4CS2Rw6Q8LI-OzpyehKYcAQpl5ojrt6zzIPp2Av9auoyEPko5vxNHCR1avybi_TE_lFcDGhRzmqq0IWZy37y2tQLPsCsMxU-L7N5vPPNFCJ1ciz27TvWK1OHWnLnTRV82sW_7jnw-QfPAwDSYKOP5YyL75w-xL_WL-BOnwwh0IG83dUOMjKFVLlZkGB5',
-                      ),
-                      ChatListItem(
-                        name: 'Emily Rodriguez',
-                        time: 'Mon',
-                        messagePreview: 'Sounds like a plan. See you then!',
-                        imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBd2FRF9Mlg651nUSo-SOYDH714kdqXYLl4Bqh3qlvfgIsiUWhR0IOTymxSKiY1xSDN0RRi2n1e1F-bNtRHW1MxbdZ1Vj4Vc2fOqBYJh9a6klwlVzJ7nP-AoNLmdcEb8NbN-E-u06BNJDQblUhwleid17fFiHWleROORVEbNPgim1Y_E5DPic-N9JUqGCDPBFEwHpu9PaGtwMXRITLhfTWnwYuhPpVTiXqPI2f9CrKTp0O095EcflFWngZFWCMbT8bCBH8pmbmf3ctj',
-                        isRead: true,
-                      ),
-                      ChatListItem(
-                        name: 'Michael Johnson',
-                        time: 'Oct 12',
-                        messagePreview: 'I uploaded the final draft to the shared drive.',
-                        initials: 'MJ',
-                      ),
-                    ],
+                  child: BlocBuilder<MessagesBloc, MessagesState>(
+                    builder: (context, state) {
+                      if (state is MessagesLoading) {
+                        return const Center(child: CircularProgressIndicator(color: AppPallete.primary));
+                      } else if (state is MessagesFailure) {
+                        return Center(child: Text(state.message));
+                      } else if (state is MessagesSuccess) {
+                        if (state.messages.isEmpty) {
+                          return const Center(child: Text('No messages'));
+                        }
+                        return ListView.builder(
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            final msg = state.messages[index];
+                            return ChatListItem(
+                              name: msg.name,
+                              time: msg.time,
+                              messagePreview: msg.preview,
+                              imageUrl: msg.imageUrl,
+                              initials: msg.initials,
+                              unreadCount: msg.unreadCount,
+                              isOnline: msg.isOnline,
+                              isRead: msg.isRead,
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
                   ),
                 ),
               ),

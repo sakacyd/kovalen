@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/main_page.dart';
-import '../../core/theme/app_pallete.dart';
+import '../bloc/onboarding_bloc.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/selectable_pill.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
   static route() =>
-      MaterialPageRoute(builder: (context) => const OnboardingPage());
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (_) => OnboardingBloc(),
+          child: const OnboardingPage(),
+        ),
+      );
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -52,7 +58,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppPallete.textPrimary),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Row(
@@ -82,14 +88,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Text(
                       'Profil Akademik',
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: AppPallete.primary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Bantu kami mencocokkan Anda dengan partner belajar yang memiliki ritme dan fokus serupa.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppPallete.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -144,7 +150,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           setState(() => _selectedSemester = val),
                     ),
                     const SizedBox(height: 32),
-                    const Divider(color: AppPallete.stroke),
+                    Divider(color: Theme.of(context).colorScheme.outlineVariant),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,8 +167,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               ?.copyWith(
                                 color:
                                     _selectedInterests.length == _maxInterests
-                                    ? AppPallete.primary
-                                    : AppPallete.textOutline,
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.outline,
                               ),
                         ),
                       ],
@@ -171,7 +177,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Text(
                       'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppPallete.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 14,
                       ),
                     ),
@@ -194,44 +200,71 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Container(
               padding: const EdgeInsets.all(24.0),
               decoration: BoxDecoration(
-                color: AppPallete.background,
+                color: Theme.of(context).colorScheme.surface,
                 border: Border(
-                  top: BorderSide(color: AppPallete.stroke.withOpacity(0.5)),
+                  top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     offset: const Offset(0, -8),
                     blurRadius: 24,
                   ),
                 ],
               ),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context, MainPage.route());
+              child: BlocConsumer<OnboardingBloc, OnboardingState>(
+                listener: (context, state) {
+                  if (state is OnboardingFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message)),
+                    );
+                  } else if (state is OnboardingSuccess) {
+                    Navigator.pushReplacement(context, MainPage.route());
+                  }
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppPallete.primary,
-                  foregroundColor: AppPallete.surface,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  minimumSize: const Size(double.infinity, 56),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Lanjutkan',
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        color: AppPallete.surface,
+                builder: (context, state) {
+                  return ElevatedButton(
+                    onPressed: state is OnboardingLoading ? null : () {
+                      if (_selectedProgram == null || _selectedSemester == null || _selectedInterests.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Lengkapi semua data')),
+                        );
+                        return;
+                      }
+                      context.read<OnboardingBloc>().add(
+                        OnboardingSubmit(
+                          program: _selectedProgram!,
+                          semester: _selectedSemester!,
+                          interests: _selectedInterests.toList(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      minimumSize: const Size(double.infinity, 56),
                     ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward, size: 20),
-                  ],
-                ),
+                    child: state is OnboardingLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Lanjutkan',
+                                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.arrow_forward, size: 20),
+                            ],
+                          ),
+                  );
+                }
               ),
             ),
           ],
@@ -245,7 +278,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 6,
       width: 32,
       decoration: BoxDecoration(
-        color: isActive ? AppPallete.primary : AppPallete.surfaceVariant,
+        color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(100),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_pallete.dart';
 
 class CustomDropdown<T> extends StatelessWidget {
   final String label;
@@ -28,26 +27,26 @@ class CustomDropdown<T> extends StatelessWidget {
           value: value,
           onChanged: onChanged,
           items: items,
-          icon: const Icon(Icons.expand_more, color: AppPallete.textOutline),
+          icon: Icon(Icons.expand_more, color: Theme.of(context).colorScheme.outline),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppPallete.textOutline,
+              color: Theme.of(context).colorScheme.outline,
             ),
             filled: true,
-            fillColor: AppPallete.surface,
+            fillColor: Theme.of(context).colorScheme.surface,
             contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.stroke),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.stroke),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppPallete.primary),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
             ),
           ),
           style: Theme.of(context).textTheme.bodyMedium,

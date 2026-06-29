@@ -10,6 +10,9 @@ import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
 import 'package:kovalen/presentation/bloc/profile_bloc.dart';
+import 'package:kovalen/presentation/bloc/matchmaking_bloc.dart';
+import 'package:kovalen/presentation/bloc/messages_bloc.dart';
+import 'package:kovalen/presentation/bloc/onboarding_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 
 void main() async {
@@ -26,9 +29,10 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
         BlocProvider(create: (_) => serviceLocator<HomeBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProfileBloc>()),
+        BlocProvider(create: (_) => serviceLocator<MatchmakingBloc>()),
+        BlocProvider(create: (_) => serviceLocator<MessagesBloc>()),
+        BlocProvider(create: (_) => serviceLocator<OnboardingBloc>()),
         /*
-        BlocProvider(create: (_) => serviceLocator<HistoryBloc>()),
-        BlocProvider(create: (_) => serviceLocator<ReportBloc>()),
         BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()), */
         BlocProvider(create: (_) => BottomNavCubit()),
       ],

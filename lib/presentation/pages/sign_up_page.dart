@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
 import 'package:kovalen/presentation/pages/onboarding_page.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
@@ -38,9 +37,9 @@ class _SignUpPageState extends State<SignUpPage> {
             width: double.infinity,
             padding: const EdgeInsets.all(32.0),
             decoration: BoxDecoration(
-              color: AppPallete.surface,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppPallete.stroke),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -54,12 +53,12 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.school, color: AppPallete.primary, size: 40),
+                  Icon(Icons.school, color: Theme.of(context).colorScheme.primary, size: 40),
                   const SizedBox(height: 16),
                   Text(
                     'Kovalen',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: AppPallete.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -67,7 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     'Silakan daftar menggunakan kredensial universitas Anda.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppPallete.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -118,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 48,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppPallete.primary,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -169,12 +168,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                   ),
                   const SizedBox(height: 24),
-                  Divider(color: AppPallete.stroke),
+                  Divider(color: Theme.of(context).colorScheme.outlineVariant),
                   const SizedBox(height: 16),
                   RichText(
                     text: TextSpan(
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppPallete.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       children: [
                         TextSpan(
@@ -184,7 +183,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         TextSpan(
                           text: 'Masuk sekarang',
                           style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: AppPallete.primary),
+                              ?.copyWith(color: Theme.of(context).colorScheme.primary),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Navigator.pop(context);

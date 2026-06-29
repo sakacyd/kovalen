@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_pallete.dart';
+import '../bloc/matchmaking_bloc.dart';
 import '../widgets/view_toggle.dart';
 import '../widgets/matchmaking_card.dart';
 
 class MatchmakingPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const MatchmakingPage());
+  static route() => MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (context) => MatchmakingBloc()..add(LoadMatchmakingData()),
+          child: const MatchmakingPage(),
+        ),
+      );
   const MatchmakingPage({super.key});
 
   @override
@@ -75,14 +82,31 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
             ),
           ),
           Expanded(
-            child: _isCardView ? _buildCardView() : _buildMapView(),
+            child: BlocBuilder<MatchmakingBloc, MatchmakingState>(
+              builder: (context, state) {
+                if (state is MatchmakingLoading) {
+                  return const Center(child: CircularProgressIndicator(color: AppPallete.primary));
+                } else if (state is MatchmakingFailure) {
+                  return Center(child: Text(state.message));
+                } else if (state is MatchmakingSuccess) {
+                  if (state.matches.isEmpty) {
+                    return const Center(child: Text('No matches found'));
+                  }
+                  return _isCardView ? _buildCardView(state.matches) : _buildMapView();
+                }
+                return const SizedBox.shrink();
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCardView() {
+  Widget _buildCardView(List<MatchProfile> matches) {
+    // For simplicity, showing just the first match in the UI, or could use PageView
+    final match = matches.first;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Stack(
@@ -100,7 +124,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                 border: Border.all(color: AppPallete.stroke),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: AppPallete.onSurface.withOpacity(0.04),
                     offset: const Offset(0, 2),
                     blurRadius: 8,
                   )
@@ -109,16 +133,16 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
             ),
           ),
           // Active Card
-          const Positioned.fill(
+          Positioned.fill(
             bottom: 16,
             child: MatchmakingCard(
-              name: 'Nadia Larasati',
-              semester: '5',
-              major: 'Ilmu Komputer',
-              distance: '0.8 km (Fakultas MIPA)',
-              matchPercentage: 85,
-              imageUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBIFwWqJqSSmmCcJ3gXyskISvdu3eWF1s8X4z0ODVa39VvL9JcmBKoO4AaNXX4w8STFkQkh0XwHNg1ya7yR27QgAly8d-A_C7WAFmQ-6kgoLy127TLJFozN9ffmjchGieCqm3FVsPBA6bxE3AEPlijuO7mHOV-YzwkNfuOI9sqbgbmcd_3OPTAK_4f1VOBdv2VopIjMdMhpIzSOGOtp11EU9XN3KYqR1Wx1jOJjxUiAbFyL2vqDUydTMM7vebra_S140Rf1dv88tnG1',
-              interests: ['Machine Learning', 'UI/UX Design', 'Data Science'],
+              name: match.name,
+              semester: match.semester,
+              major: match.major,
+              distance: match.distance,
+              matchPercentage: match.matchPercentage,
+              imageUrl: match.imageUrl,
+              interests: match.interests,
             ),
           ),
         ],

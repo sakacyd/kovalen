@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/app_pallete.dart';
 
 class SelectablePill extends StatelessWidget {
   final String label;
@@ -22,17 +21,17 @@ class SelectablePill extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected 
-              ? AppPallete.primary 
-              : AppPallete.secondaryContainer.withOpacity(0.2),
+              ? Theme.of(context).colorScheme.primary 
+              : Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: isSelected ? AppPallete.primary : Colors.transparent,
+            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
           ),
         ),
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: isSelected ? AppPallete.surface : AppPallete.textSecondary,
+            color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),

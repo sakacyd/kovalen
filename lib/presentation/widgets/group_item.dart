@@ -32,15 +32,15 @@ class GroupItem extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               color: isAccentColors
-                  ? AppPallete.accentPink
+                  ? AppPallete.secondaryContainer
                   : AppPallete.primaryContainer,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
               Icons.group_outlined,
               color: isAccentColors
-                  ? AppPallete.accentDark
-                  : AppPallete.primaryDark,
+                  ? AppPallete.onSecondaryContainer
+                  : AppPallete.onPrimaryContainer,
             ),
           ),
           const SizedBox(width: 16),
@@ -71,7 +71,7 @@ class GroupItem extends StatelessWidget {
             time,
             style: const TextStyle(
               fontSize: 12,
-              color: AppPallete.primaryDark,
+              color: AppPallete.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

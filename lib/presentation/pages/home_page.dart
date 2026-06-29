@@ -135,14 +135,14 @@ class _HomePageState extends State<HomePage> {
                               Text(
                                 'Cari Rekan Belajar',
                                 style: Theme.of(context).textTheme.displaySmall
-                                    ?.copyWith(color: Colors.white),
+                                    ?.copyWith(color: AppPallete.onPrimary),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Algoritma & Struktur Data membutuhkan partner.',
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
-                                      color: Colors.white.withValues(
+                                      color: AppPallete.onPrimary.withValues(
                                         alpha: 0.9,
                                       ),
                                     ),
@@ -154,10 +154,10 @@ class _HomePageState extends State<HomePage> {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: AppPallete.onPrimary.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.search, color: Colors.white),
+                          child: const Icon(Icons.search, color: AppPallete.onPrimary),
                         ),
                       ],
                     ),
@@ -182,85 +182,22 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  /* SizedBox(
-                    height: 170,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: state.user.activeStudyGroups.length,
-                      itemBuilder: (context, index) {
-                        final group = state.user.activeStudyGroups[index];
-                        return Container(
-                          width: 280,
-                          margin: const EdgeInsets.only(right: 16),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: AppPallete.surface,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppPallete.stroke),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: Color(group['color']),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        group['initial'],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displaySmall
-                                            ?.copyWith(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppPallete.background,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      group['time'],
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.labelSmall,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                group['title'],
-                                style: Theme.of(context).textTheme.displaySmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                group['desc'],
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: AppPallete.textSecondary),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ), */
+                  Column(
+                    children: [
+                      const GroupItem(
+                        title: 'Algoritma & Struktur Data',
+                        subtitle: '3/4 Anggota - Online',
+                        time: 'Hari ini, 19:00',
+                        isAccentColors: false,
+                      ),
+                      const GroupItem(
+                        title: 'Mobile Development (Flutter)',
+                        subtitle: '2/5 Anggota - Perpustakaan',
+                        time: 'Besok, 10:00',
+                        isAccentColors: true,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );

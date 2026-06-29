@@ -16,9 +16,9 @@ class ViewToggle extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppPallete.surfaceLightPurple, // wait, let's use a subtle surface color
+        color: AppPallete.surfaceVariant, // Changed from surfaceLightPurple
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppPallete.stroke.withOpacity(0.5)),
+        border: Border.all(color: AppPallete.stroke),
       ),
       child: Row(
         children: [
@@ -33,7 +33,7 @@ class ViewToggle extends StatelessWidget {
                   boxShadow: isCardView
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: AppPallete.onSurface.withOpacity(0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           )
@@ -71,7 +71,7 @@ class ViewToggle extends StatelessWidget {
                   boxShadow: !isCardView
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: AppPallete.onSurface.withOpacity(0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           )

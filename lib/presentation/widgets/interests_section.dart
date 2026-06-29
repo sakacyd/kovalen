@@ -5,9 +5,9 @@ class InterestsSection extends StatelessWidget {
   final List<String> interests;
 
   const InterestsSection({
-    Key? key,
+    super.key,
     required this.interests,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class InterestsSection extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: AppPallete.primaryDark,
+                    color: AppPallete.primary,
                   ),
                 ),
               );
