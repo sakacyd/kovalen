@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
-import 'package:kovalen/main_page.dart';
 import 'package:kovalen/presentation/bloc/auth_bloc.dart';
+import 'package:kovalen/presentation/pages/onboarding_page.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (context) => const SignUpPage());
   const SignUpPage({super.key});
+  static route() => MaterialPageRoute(builder: (context) => const SignUpPage());
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -107,7 +107,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       } else if (state is AuthSuccess) {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MainPage.route(),
+                          OnboardingPage.route(),
                           (route) => false,
                         );
                       }
