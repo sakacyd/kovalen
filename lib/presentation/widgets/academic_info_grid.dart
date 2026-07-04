@@ -4,7 +4,7 @@ import '../../../../core/theme/app_pallete.dart';
 class AcademicInfoGrid extends StatelessWidget {
   final String programStudi;
   final int semester;
-  final int ipk;
+  final double ipk;
 
   const AcademicInfoGrid({
     super.key,

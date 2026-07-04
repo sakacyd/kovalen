@@ -3,15 +3,16 @@ import 'package:kovalen/core/common/entities/user.dart';
 class UserModel extends User {
   UserModel({
     required super.id,
-    required super.fullName,
     required super.email,
+    required super.fullName,
     required super.avatarUrl,
-    required super.phoneNumber,
-    required super.studyProgram,
     required super.semester,
     required super.latitude,
     required super.longitude,
     required super.lastLocationUpdate,
+    required super.gpa,
+    required super.universityId,
+    required super.studyProgramId,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -19,13 +20,14 @@ class UserModel extends User {
       id: json['id'] ?? '',
       email: json['email'] ?? '',
       fullName: json['full_name'] ?? '',
-      phoneNumber: json['phone_number'] ?? '',
       avatarUrl: json['avatar_url'] ?? '',
-      studyProgram: json['study_program'] ?? '',
       semester: json['semester'] as int? ?? 0,
-      latitude: json['latitude'] as double? ?? 0.0,
-      longitude: json['longitude'] as double? ?? 0.0,
+      latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
+      longitude: (json['longtitude'] as num?)?.toDouble() ?? 0.0, // Match schema 'longtitude'
       lastLocationUpdate: json['last_location_update'] ?? '',
+      gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
+      universityId: json['university_id'] ?? '',
+      studyProgramId: json['study_program_id'] ?? '',
     );
   }
 
@@ -34,13 +36,14 @@ class UserModel extends User {
       'id': id,
       'email': email,
       'full_name': fullName,
-      'phone_number': phoneNumber,
       'avatar_url': avatarUrl,
-      'study_program': studyProgram,
       'semester': semester,
       'latitude': latitude,
-      'longitude': longitude,
+      'longtitude': longitude, // Match schema 'longtitude'
       'last_location_update': lastLocationUpdate,
+      'gpa': gpa,
+      'university_id': universityId,
+      'study_program_id': studyProgramId,
     };
   }
 
@@ -48,25 +51,27 @@ class UserModel extends User {
     String? id,
     String? email,
     String? fullName,
-    String? phoneNumber,
     String? avatarUrl,
-    String? studyProgram,
     int? semester,
     double? latitude,
     double? longitude,
     String? lastLocationUpdate,
+    double? gpa,
+    String? universityId,
+    String? studyProgramId,
   }) {
     return UserModel(
       id: id ?? this.id,
       email: email ?? this.email,
       fullName: fullName ?? this.fullName,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      studyProgram: studyProgram ?? this.studyProgram,
       semester: semester ?? this.semester,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       lastLocationUpdate: lastLocationUpdate ?? this.lastLocationUpdate,
+      gpa: gpa ?? this.gpa,
+      universityId: universityId ?? this.universityId,
+      studyProgramId: studyProgramId ?? this.studyProgramId,
     );
   }
 }

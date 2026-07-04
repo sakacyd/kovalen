@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${state.user.studyProgram} • Semester ${state.user.semester}',
+                    '${state.user.studyProgramId} • Semester ${state.user.semester}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppPallete.textSecondary,
                     ),

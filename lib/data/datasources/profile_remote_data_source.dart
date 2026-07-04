@@ -21,14 +21,34 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       if (currentUserSession != null) {
         final userData = await supabaseClient
             .from('users')
-            .select()
+            .select(
+              '*, universities(name), study_programs(name, education_level)',
+            )
             .eq('id', currentUserSession!.user.id);
+
+        final universityName = userData.first['universities']?['name'];
+        final studyProgramData = userData.first['study_programs'];
+        String studyProgramDisplay = 'Program Studi Belum Diisi';
+
+        if (studyProgramData != null) {
+          final level = studyProgramData['education_level'] ?? '';
+          final name = studyProgramData['name'] ?? '';
+
+          if (level.isNotEmpty && name.isNotEmpty) {
+            studyProgramDisplay = '$level - $name';
+          } else {
+            studyProgramDisplay = name.isNotEmpty ? name : level;
+          }
+        }
+
         return UserModel.fromJson(userData.first).copyWith(
           email: currentUserSession!.user.email,
           fullName: userData.first['full_name'],
-          avatarUrl: userData.first['image_url'],
-          studyProgram: userData.first['study_program'],
+          avatarUrl: userData.first['avatar_url'],
           semester: userData.first['semester'],
+          gpa: (userData.first['gpa'] as num?)?.toDouble() ?? 0.0,
+          universityId: universityName,
+          studyProgramId: studyProgramDisplay,
         );
       }
       return null;

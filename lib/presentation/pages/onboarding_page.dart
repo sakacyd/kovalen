@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/main_page.dart';
+import 'package:kovalen/init_dependencies.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/selectable_pill.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_text_field.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
   static route() =>
       MaterialPageRoute(
         builder: (context) => BlocProvider(
-          create: (_) => OnboardingBloc(),
+          create: (_) => serviceLocator<OnboardingBloc>()..add(OnboardingLoadUniversities()),
           child: const OnboardingPage(),
         ),
       );
@@ -21,6 +23,11 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
+  final _fullNameController = TextEditingController();
+  final _avatarUrlController = TextEditingController();
+  final _gpaController = TextEditingController();
+
+  String? _selectedUniversity;
   String? _selectedProgram;
   String? _selectedSemester;
 
@@ -35,6 +42,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ];
   final Set<String> _selectedInterests = {};
   static const int _maxInterests = 5;
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _avatarUrlController.dispose();
+    _gpaController.dispose();
+    super.dispose();
+  }
 
   void _toggleInterest(String interest) {
     setState(() {
@@ -100,55 +115,103 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    CustomDropdown<String>(
-                      label: 'Program Studi',
-                      hint: 'Pilih Program Studi',
-                      value: _selectedProgram,
-                      items: const [
-                        DropdownMenuItem(
-                          value: 'cs',
-                          child: Text('Ilmu Komputer'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'is',
-                          child: Text('Sistem Informasi'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'te',
-                          child: Text('Teknik Elektro'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'ds',
-                          child: Text('Data Science'),
-                        ),
-                        DropdownMenuItem(
-                          value: 'mg',
-                          child: Text('Manajemen Bisnis'),
-                        ),
-                      ],
-                      onChanged: (val) =>
-                          setState(() => _selectedProgram = val),
+                    CustomTextField(
+                      label: 'Nama Lengkap',
+                      hint: 'Masukkan nama lengkap',
+                      controller: _fullNameController,
+                      icon: Icons.person_outline,
                     ),
                     const SizedBox(height: 24),
-                    CustomDropdown<String>(
-                      label: 'Semester Saat Ini',
-                      hint: 'Pilih Semester',
-                      value: _selectedSemester,
-                      items: const [
-                        DropdownMenuItem(value: '1', child: Text('Semester 1')),
-                        DropdownMenuItem(value: '2', child: Text('Semester 2')),
-                        DropdownMenuItem(value: '3', child: Text('Semester 3')),
-                        DropdownMenuItem(value: '4', child: Text('Semester 4')),
-                        DropdownMenuItem(value: '5', child: Text('Semester 5')),
-                        DropdownMenuItem(value: '6', child: Text('Semester 6')),
-                        DropdownMenuItem(value: '7', child: Text('Semester 7')),
-                        DropdownMenuItem(
-                          value: '8',
-                          child: Text('Semester 8+'),
+                    CustomTextField(
+                      label: 'URL Avatar (Opsional)',
+                      hint: 'Masukkan URL gambar avatar',
+                      controller: _avatarUrlController,
+                      icon: Icons.image_outlined,
+                    ),
+                    const SizedBox(height: 24),
+                    BlocBuilder<OnboardingBloc, OnboardingState>(
+                      builder: (context, state) {
+                        List<DropdownMenuItem<String>> uniItems = [];
+                        List<DropdownMenuItem<String>> progItems = [];
+
+                        if (state is OnboardingDataLoaded) {
+                          uniItems = state.universities.map((u) {
+                            return DropdownMenuItem(
+                              value: u.id,
+                              child: Text(u.name),
+                            );
+                          }).toList();
+
+                          progItems = state.studyPrograms.map((p) {
+                            return DropdownMenuItem(
+                              value: p.id,
+                              child: Text('${p.educationLevel} - ${p.name}'),
+                            );
+                          }).toList();
+                        }
+
+                        return Column(
+                          children: [
+                            CustomDropdown<String>(
+                              label: 'Universitas',
+                              hint: 'Pilih Universitas',
+                              value: _selectedUniversity,
+                              items: uniItems,
+                              onChanged: (val) {
+                                setState(() {
+                                  _selectedUniversity = val;
+                                  _selectedProgram = null; // reset program studi ketika universitas berubah
+                                });
+                                if (val != null) {
+                                  context.read<OnboardingBloc>().add(OnboardingLoadStudyPrograms(val));
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            CustomDropdown<String>(
+                              label: 'Program Studi',
+                              hint: 'Pilih Program Studi',
+                              value: _selectedProgram,
+                              items: progItems,
+                              onChanged: (val) =>
+                                  setState(() => _selectedProgram = val),
+                            ),
+                          ],
+                        );
+                      }
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomDropdown<String>(
+                            label: 'Semester Saat Ini',
+                            hint: 'Semester',
+                            value: _selectedSemester,
+                            items: const [
+                              DropdownMenuItem(value: '1', child: Text('Semester 1')),
+                              DropdownMenuItem(value: '2', child: Text('Semester 2')),
+                              DropdownMenuItem(value: '3', child: Text('Semester 3')),
+                              DropdownMenuItem(value: '4', child: Text('Semester 4')),
+                              DropdownMenuItem(value: '5', child: Text('Semester 5')),
+                              DropdownMenuItem(value: '6', child: Text('Semester 6')),
+                              DropdownMenuItem(value: '7', child: Text('Semester 7')),
+                              DropdownMenuItem(value: '8', child: Text('Semester 8+')),
+                            ],
+                            onChanged: (val) =>
+                                setState(() => _selectedSemester = val),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: CustomTextField(
+                            label: 'IPK (G-PA)',
+                            hint: '0.00',
+                            controller: _gpaController,
+                            icon: Icons.grade_outlined,
+                          ),
                         ),
                       ],
-                      onChanged: (val) =>
-                          setState(() => _selectedSemester = val),
                     ),
                     const SizedBox(height: 32),
                     Divider(color: Theme.of(context).colorScheme.outlineVariant),
@@ -226,16 +289,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 builder: (context, state) {
                   return ElevatedButton(
                     onPressed: state is OnboardingLoading ? null : () {
-                      if (_selectedProgram == null || _selectedSemester == null || _selectedInterests.isEmpty) {
+                      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _selectedInterests.isEmpty || _fullNameController.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Lengkapi semua data')),
+                          const SnackBar(content: Text('Lengkapi semua data yang wajib')),
                         );
                         return;
                       }
+                      
+                      final String finalAvatarUrl = _avatarUrlController.text.trim().isEmpty 
+                          ? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(_fullNameController.text)}&background=random'
+                          : _avatarUrlController.text;
+
                       context.read<OnboardingBloc>().add(
                         OnboardingSubmit(
-                          program: _selectedProgram!,
-                          semester: _selectedSemester!,
+                          fullName: _fullNameController.text,
+                          avatarUrl: finalAvatarUrl,
+                          universityId: _selectedUniversity!,
+                          studyProgramId: _selectedProgram!,
+                          semester: int.parse(_selectedSemester!),
+                          gpa: double.tryParse(_gpaController.text) ?? 0.0,
                           interests: _selectedInterests.toList(),
                         ),
                       );

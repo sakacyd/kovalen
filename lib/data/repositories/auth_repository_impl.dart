@@ -1,11 +1,9 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:kovalen/core/constants/constants.dart';
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/core/network/connection_checker.dart';
 import 'package:kovalen/data/models/user_model.dart';
 import 'package:fpdart/fpdart.dart';
-
 import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/data/datasources/auth_remote_data_source.dart';
 import 'package:kovalen/domain/repository/auth_repository.dart';
@@ -56,21 +54,20 @@ class AuthRepositoryImpl implements AuthRepository {
           UserModel(
             id: session.user.id,
             email: session.user.email ?? '',
-            fullName: /* session.user.userMetadata['full_name'] ??  */ '',
-            phoneNumber: /* session.user.userMetadata['phone_number'] ?? */ '',
-            avatarUrl: /* session.user.userMetadata['avatar_url'] ??  */ '',
-            studyProgram: /* session.user.userMetadata['study_program'] ?? */
-                '',
-            semester: /* session.user.userMetadata['semester'] ?? */ 0,
-            latitude: /* session.user.userMetadata['latitude'] ?? */ 0.0,
-            longitude: /* session.user.userMetadata['longitude'] ?? */ 0.0,
-            lastLocationUpdate: /* session.user.userMetadata['last_location_update'] ?? */
-                '',
+            fullName: '',
+            avatarUrl: '',
+            semester: 0,
+            latitude: 0.0,
+            longitude: 0.0,
+            lastLocationUpdate: '',
+            gpa: 0.0,
+            universityId: '',
+            studyProgramId: '',
           ),
         );
       }
 
-      final user = await authRemoteDataSource.getCurrentUserData();
+      final user = await authRemoteDataSource.getCurrentUser();
       if (user == null) {
         return left(Failure('User not logged in!'));
       }

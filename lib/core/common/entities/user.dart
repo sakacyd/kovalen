@@ -2,24 +2,26 @@ class User {
   final String id;
   final String email;
   final String fullName;
-  final String phoneNumber;
   final String avatarUrl;
-  final String studyProgram;
   final int semester;
   final double latitude;
   final double longitude;
   final String lastLocationUpdate;
+  final double gpa;
+  final String universityId;
+  final String studyProgramId;
 
   User({
     required this.id,
     required this.email,
     required this.fullName,
-    required this.phoneNumber,
     required this.avatarUrl,
-    required this.studyProgram,
     required this.semester,
     required this.latitude,
     required this.longitude,
     required this.lastLocationUpdate,
+    required this.gpa,
+    required this.universityId,
+    required this.studyProgramId,
   });
 }

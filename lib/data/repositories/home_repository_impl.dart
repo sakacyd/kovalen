@@ -28,14 +28,14 @@ class HomeRepositoryImpl implements HomeRepository {
             id: session.user.id,
             email: session.user.email ?? '',
             fullName: session.user.userMetadata?['full_name'] ?? '',
-            phoneNumber: /* session.user.userMetadata['phone_number'] ?? */ '',
-            avatarUrl: /* session.user.userMetadata['image_url'] ??  */ '',
+            avatarUrl: '',
             semester: session.user.userMetadata?['semester'] ?? 0,
-            studyProgram: session.user.userMetadata?['study_program'] ?? '',
-            latitude: /* session.user.userMetadata['latitude'] ?? */ 0.0,
-            longitude: /* session.user.userMetadata['longitude'] ?? */ 0.0,
-            lastLocationUpdate: /* session.user.userMetadata['last_location_update'] ?? */
-                '',
+            latitude: 0.0,
+            longitude: 0.0,
+            lastLocationUpdate: '',
+            gpa: 0.0,
+            universityId: '',
+            studyProgramId: '',
           ),
         );
       }

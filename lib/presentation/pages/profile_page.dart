@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_pallete.dart';
 import '../bloc/profile_bloc.dart';
-import '../bloc/auth_bloc.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/academic_info_grid.dart';
 import '../widgets/interests_section.dart';
@@ -30,17 +29,17 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor:
           AppPallete.background, // Menerapkan Clean Minimalism theme background
       appBar: const CustomAppBar(),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
           // Menangkap momen ketika user berhasil keluar (state kembali ke Initial)
-          if (state is AuthInitial) {
+          if (state is ProfileInitial) {
             Navigator.pushAndRemoveUntil(
               context,
               SignInPage.route(), // Kembali ke halaman Login
               (route) =>
                   false, // Menghapus semua riwayat halaman sebelumnya (agar tidak bisa di-back)
             );
-          } else if (state is AuthFailure) {
+          } else if (state is ProfileFailure) {
             // Munculkan snackbar jika proses logout gagal (misal karena jaringan)
             ScaffoldMessenger.of(
               context,
@@ -60,15 +59,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ProfileHeader(
                       name: state.user.fullName,
-                      university: 'Universitas Pancasila',
-                      avatarUrl:
-                          'https://media.licdn.com/dms/image/v2/D4E03AQEAaljZW5GfGA/profile-displayphoto-shrink_800_800/B4EZTv2HgUGgAc-/0/1739190730588?e=1784160000&v=beta&t=GssgASVk2ADNUgTa1MFqrDejDRJEEiJ7RJUvTND5VrI',
+                      university: state.user.universityId,
+                      avatarUrl: state.user.avatarUrl,
                     ),
                     const SizedBox(height: 28),
                     AcademicInfoGrid(
-                      programStudi: state.user.studyProgram,
+                      programStudi: state.user.studyProgramId,
                       semester: state.user.semester,
-                      ipk: 0,
+                      ipk: state.user.gpa,
                     ),
                     const SizedBox(height: 16),
                     const InterestsSection(

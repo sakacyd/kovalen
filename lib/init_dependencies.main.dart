@@ -73,9 +73,13 @@ void _initHome() {
       () => HomeRepositoryImpl(serviceLocator(), serviceLocator()),
     )
     // usecases
-    ..registerFactory(() => GetCurrentUser(serviceLocator()))
+    ..registerFactory(() => GetCurrentUser<HomeRepository>(serviceLocator()))
     // bloc
-    ..registerLazySingleton(() => HomeBloc(getCurrentUser: serviceLocator()));
+    ..registerLazySingleton(
+      () => HomeBloc(
+        getCurrentUser: serviceLocator<GetCurrentUser<HomeRepository>>(),
+      ),
+    );
 }
 
 void _initProfile() {
@@ -88,33 +92,50 @@ void _initProfile() {
     ..registerFactory<ProfileRepository>(
       () => ProfileRepositoryImpl(serviceLocator(), serviceLocator()),
     )
+    // usecases
+    ..registerFactory(() => GetCurrentUser<ProfileRepository>(serviceLocator()))
     // bloc
     ..registerLazySingleton(
-      () => ProfileBloc(getCurrentUser: serviceLocator()),
+      () => ProfileBloc(
+        getCurrentUser: serviceLocator<GetCurrentUser<ProfileRepository>>(),
+      ),
     );
 }
 
 void _initMatchmaking() {
   serviceLocator
-    // bloc
-    .registerLazySingleton(
-      () => MatchmakingBloc(),
-    );
+  // bloc
+  .registerLazySingleton(() => MatchmakingBloc());
 }
 
 void _initMessages() {
   serviceLocator
-    // bloc
-    .registerLazySingleton(
-      () => MessagesBloc(),
-    );
+  // bloc
+  .registerLazySingleton(() => MessagesBloc());
 }
 
 void _initOnboarding() {
   serviceLocator
+    // datasource
+    ..registerFactory<OnboardingRemoteDataSource>(
+      () => OnboardingRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<OnboardingRepository>(
+      () => OnboardingRepositoryImpl(serviceLocator(), serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => SubmitOnboardingData(serviceLocator()))
+    ..registerFactory(() => GetUniversitiesData(serviceLocator()))
+    ..registerFactory(() => GetStudyProgramsData(serviceLocator()))
     // bloc
-    .registerLazySingleton(
-      () => OnboardingBloc(),
+    ..registerLazySingleton(
+      () => OnboardingBloc(
+        submitOnboardingData: serviceLocator(),
+        getUniversitiesData: serviceLocator(),
+        getStudyProgramsData: serviceLocator(),
+        appUserCubit: serviceLocator(),
+      ),
     );
 }
 
