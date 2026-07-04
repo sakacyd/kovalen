@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
 import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/core/error/failures.dart';
+import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/domain/usecases/get_current_user.dart';
 
 part 'home_event.dart';
@@ -11,8 +12,13 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetCurrentUser _getCurrentUser;
-  HomeBloc({required GetCurrentUser getCurrentUser})
+  final AppUserCubit _appUserCubit;
+  HomeBloc({
+    required GetCurrentUser getCurrentUser,
+    required AppUserCubit appUserCubit,
+  })
     : _getCurrentUser = getCurrentUser,
+      _appUserCubit = appUserCubit,
       super(HomeInitial()) {
     on<HomeEvent>((event, emit) => emit(HomeLoading()));
     on<LoadHomeData>(_onHomeDataRequested);
@@ -35,7 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
 
     final user = userResult.getOrElse((_) => throw Exception('Missing user'));
-
+    _appUserCubit.updateUser(user);
     emit(HomeSuccess(user));
   }
 }

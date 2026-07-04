@@ -5,7 +5,7 @@ import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/domain/usecases/current_user.dart';
 import 'package:kovalen/domain/usecases/user_sign_in.dart';
 import 'package:kovalen/domain/usecases/user_sign_up.dart';
-import 'package:kovalen/domain/usecases/user_sign_out.dart';
+import 'package:kovalen/domain/usecases/change_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,26 +15,26 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignUp _userSignUp;
   final UserSignIn _userSignIn;
-  final UserSignOut _userSignOut;
   final CurrentUser _currentUser;
+  final ChangePassword _changePassword;
   final AppUserCubit _appUserCubit;
   AuthBloc({
     required UserSignUp userSignUp,
     required UserSignIn userSignIn,
-    required UserSignOut userSignOut,
     required CurrentUser currentUser,
+    required ChangePassword changePassword,
     required AppUserCubit appUserCubit,
   }) : _userSignUp = userSignUp,
        _userSignIn = userSignIn,
-       _userSignOut = userSignOut,
        _currentUser = currentUser,
+       _changePassword = changePassword,
        _appUserCubit = appUserCubit,
        super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
     on<AuthSignIn>(_onAuthSignIn);
-    on<AuthSignOut>(_onAuthSignOut);
     on<AuthIsUserLoggedIn>(_isUserLoggedIn);
+    on<AuthChangePassword>(_onChangePassword);
   }
 
   FutureOr<void> _onAuthSignUp(
@@ -79,25 +79,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }, (r) => _emitAuthSuccess(r, emit));
   }
 
-  FutureOr<void> _onAuthSignOut(
-    AuthSignOut event,
-    Emitter<AuthState> emit,
-  ) async {
-    final res = await _userSignOut(NoParams());
-
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) => _emitSignOutSuccess(emit),
-    );
-  }
-
-  void _emitSignOutSuccess(Emitter<AuthState> emit) {
-    _appUserCubit.updateUser(null);
-    emit(AuthInitial());
-  }
-
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccess(user));
+  }
+
+  FutureOr<void> _onChangePassword(
+    AuthChangePassword event,
+    Emitter<AuthState> emit,
+  ) async {
+    final res = await _changePassword(
+      ChangePasswordParams(newPassword: event.newPassword),
+    );
+    res.fold(
+      (l) => emit(AuthFailure(l.message)),
+      (r) {
+        final currentUser = _appUserCubit.state;
+        if (currentUser is AppUserLoggedIn) {
+          emit(AuthSuccess(currentUser.user));
+        } else {
+          emit(AuthInitial());
+        }
+      },
+    );
   }
 }

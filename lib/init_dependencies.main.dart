@@ -50,13 +50,14 @@ void _initAuth() {
     ..registerFactory(() => UserSignIn(serviceLocator()))
     ..registerFactory(() => UserSignOut(serviceLocator()))
     ..registerFactory(() => CurrentUser(serviceLocator()))
+    ..registerFactory(() => ChangePassword(serviceLocator()))
     //bloc
     ..registerLazySingleton(
       () => AuthBloc(
         userSignUp: serviceLocator(),
         userSignIn: serviceLocator(),
-        userSignOut: serviceLocator(),
         currentUser: serviceLocator(),
+        changePassword: serviceLocator(),
         appUserCubit: serviceLocator(),
       ),
     );
@@ -78,6 +79,7 @@ void _initHome() {
     ..registerLazySingleton(
       () => HomeBloc(
         getCurrentUser: serviceLocator<GetCurrentUser<HomeRepository>>(),
+        appUserCubit: serviceLocator(),
       ),
     );
 }
@@ -93,11 +95,23 @@ void _initProfile() {
       () => ProfileRepositoryImpl(serviceLocator(), serviceLocator()),
     )
     // usecases
+    ..registerFactory(() => UpdateUserProfile(serviceLocator()))
     ..registerFactory(() => GetCurrentUser<ProfileRepository>(serviceLocator()))
+    ..registerFactory(
+      () => GetUniversitiesData<ProfileRepository>(serviceLocator()),
+    )
+    ..registerFactory(
+      () => GetStudyProgramsData<ProfileRepository>(serviceLocator()),
+    )
     // bloc
     ..registerLazySingleton(
       () => ProfileBloc(
+        appUserCubit: serviceLocator(),
         getCurrentUser: serviceLocator<GetCurrentUser<ProfileRepository>>(),
+        updateUserProfile: serviceLocator(),
+        getUniversitiesData: serviceLocator<GetUniversitiesData<ProfileRepository>>(),
+        getStudyProgramsData: serviceLocator<GetStudyProgramsData<ProfileRepository>>(),
+        userSignOut: serviceLocator(),
       ),
     );
 }
@@ -126,14 +140,18 @@ void _initOnboarding() {
     )
     // usecases
     ..registerFactory(() => SubmitOnboardingData(serviceLocator()))
-    ..registerFactory(() => GetUniversitiesData(serviceLocator()))
-    ..registerFactory(() => GetStudyProgramsData(serviceLocator()))
+    ..registerFactory(
+      () => GetUniversitiesData<OnboardingRepository>(serviceLocator()),
+    )
+    ..registerFactory(
+      () => GetStudyProgramsData<OnboardingRepository>(serviceLocator()),
+    )
     // bloc
     ..registerLazySingleton(
       () => OnboardingBloc(
         submitOnboardingData: serviceLocator(),
-        getUniversitiesData: serviceLocator(),
-        getStudyProgramsData: serviceLocator(),
+        getUniversitiesData: serviceLocator<GetUniversitiesData<OnboardingRepository>>(),
+        getStudyProgramsData: serviceLocator<GetStudyProgramsData<OnboardingRepository>>(),
         appUserCubit: serviceLocator(),
       ),
     );

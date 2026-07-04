@@ -6,6 +6,25 @@ sealed class ProfileState {}
 final class ProfileInitial extends ProfileState {}
 
 final class ProfileLoading extends ProfileState {}
+final class ProfileDataLoaded extends ProfileState {
+  final List<University> universities;
+  final List<StudyProgram> studyPrograms;
+
+  ProfileDataLoaded({
+    required this.universities,
+    this.studyPrograms = const [],
+  });
+
+  ProfileDataLoaded copyWith({
+    List<University>? universities,
+    List<StudyProgram>? studyPrograms,
+  }) {
+    return ProfileDataLoaded(
+      universities: universities ?? this.universities,
+      studyPrograms: studyPrograms ?? this.studyPrograms,
+    );
+  }
+}
 
 final class ProfileSuccess extends ProfileState {
   final User user;
@@ -18,6 +37,7 @@ final class ProfileFailure extends ProfileState {
 
   ProfileFailure(this.message);
 }
+
 
 
 /* class ProfileState {

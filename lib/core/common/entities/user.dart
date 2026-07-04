@@ -10,6 +10,8 @@ class User {
   final double gpa;
   final String universityId;
   final String studyProgramId;
+  final String? universityName;
+  final String? studyProgramName;
 
   User({
     required this.id,
@@ -23,5 +25,7 @@ class User {
     required this.gpa,
     required this.universityId,
     required this.studyProgramId,
+    this.universityName,
+    this.studyProgramName,
   });
 }

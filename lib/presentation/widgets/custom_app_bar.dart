@@ -31,11 +31,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),
         child: Container(
-          color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.3),
           height: 1.0,
         ),
       ),
-      title: titleWidget ??
+      title:
+          titleWidget ??
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -43,17 +46,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 BlocBuilder<AppUserCubit, AppUserState>(
                   builder: (context, state) {
                     String? avatarUrl;
-                    if (state is AppUserLoggedIn && state.user.avatarUrl.isNotEmpty) {
+                    if (state is AppUserLoggedIn &&
+                        state.user.avatarUrl.isNotEmpty) {
                       avatarUrl = state.user.avatarUrl;
                     }
-                    
+
                     return Container(
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerHighest,
                         image: avatarUrl != null
                             ? DecorationImage(
                                 image: NetworkImage(avatarUrl),
@@ -62,7 +70,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                             : null,
                       ),
                       child: avatarUrl == null
-                          ? Icon(Icons.person, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant)
+                          ? Icon(
+                              Icons.person,
+                              size: 20,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            )
                           : null,
                     );
                   },
@@ -71,18 +85,23 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Text(
                 title ?? 'Kovalen',
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ],
           ),
-      actions: actions ?? [
-        IconButton(
-          icon: Icon(Icons.notifications_outlined, color: Theme.of(context).colorScheme.primary),
-          onPressed: () {},
-        ),
-        const SizedBox(width: 8),
-      ],
+      actions:
+          actions ??
+          [
+            IconButton(
+              icon: Icon(
+                Icons.notifications_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {},
+            ),
+            const SizedBox(width: 8),
+          ],
     );
   }
 

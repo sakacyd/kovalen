@@ -78,10 +78,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
+  Future<Either<Failure, void>> changePassword({
+    required String newPassword,
+  }) async {
     try {
-      await authRemoteDataSource.signOut();
+      final hasConnection = await connectionChecker.isConnected;
+      if (!hasConnection) {
+        return left(Failure(Constants.noConnectionMessage));
+      }
+      
+      await authRemoteDataSource.changePassword(newPassword: newPassword);
       return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
     } catch (e) {
       return left(Failure(e.toString()));
     }

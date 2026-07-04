@@ -13,6 +13,8 @@ class UserModel extends User {
     required super.gpa,
     required super.universityId,
     required super.studyProgramId,
+    super.universityName,
+    super.studyProgramName,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,8 @@ class UserModel extends User {
       gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
       universityId: json['university_id'] ?? '',
       studyProgramId: json['study_program_id'] ?? '',
+      universityName: json['university_name'],
+      studyProgramName: json['study_program_name'],
     );
   }
 
@@ -44,6 +48,8 @@ class UserModel extends User {
       'gpa': gpa,
       'university_id': universityId,
       'study_program_id': studyProgramId,
+      'university_name': universityName,
+      'study_program_name': studyProgramName,
     };
   }
 
@@ -59,6 +65,8 @@ class UserModel extends User {
     double? gpa,
     String? universityId,
     String? studyProgramId,
+    String? universityName,
+    String? studyProgramName,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -72,6 +80,8 @@ class UserModel extends User {
       gpa: gpa ?? this.gpa,
       universityId: universityId ?? this.universityId,
       studyProgramId: studyProgramId ?? this.studyProgramId,
+      universityName: universityName ?? this.universityName,
+      studyProgramName: studyProgramName ?? this.studyProgramName,
     );
   }
 }

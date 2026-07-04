@@ -16,8 +16,7 @@ abstract interface class AuthRemoteDataSource {
   });
 
   Future<UserModel?> getCurrentUser();
-
-  Future<void> signOut();
+  Future<void> changePassword({required String newPassword});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -43,7 +42,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException('User is null!');
       }
 
-      return UserModel.fromJson(response.user!.toJson());
+      final userData = await supabaseClient
+          .from('users')
+          .select()
+          .eq('id', response.user!.id);
+
+      return UserModel.fromJson(
+        userData.first,
+      ).copyWith(email: response.user!.email);
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -68,15 +74,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException('User is null!');
       }
 
-      return UserModel.fromJson(response.user!.toJson());
+      final userData = await supabaseClient
+          .from('users')
+          .select()
+          .eq('id', response.user!.id);
+
+      return UserModel.fromJson(
+        userData.first,
+      ).copyWith(email: response.user!.email);
     } catch (e) {
       throw ServerException(e.toString());
     }
-  }
-
-  @override
-  Future<void> signOut() async {
-    await supabaseClient.auth.signOut();
   }
 
   @override
@@ -92,6 +100,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ).copyWith(email: currentUserSession!.user.email);
       }
       return null;
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> changePassword({required String newPassword}) async {
+    try {
+      await supabaseClient.auth.updateUser(
+        UserAttributes(password: newPassword),
+      );
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

@@ -23,11 +23,11 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     required GetUniversitiesData getUniversitiesData,
     required GetStudyProgramsData getStudyProgramsData,
     required AppUserCubit appUserCubit,
-  })  : _submitOnboardingData = submitOnboardingData,
-        _getUniversitiesData = getUniversitiesData,
-        _getStudyProgramsData = getStudyProgramsData,
-        _appUserCubit = appUserCubit,
-        super(OnboardingInitial()) {
+  }) : _submitOnboardingData = submitOnboardingData,
+       _getUniversitiesData = getUniversitiesData,
+       _getStudyProgramsData = getStudyProgramsData,
+       _appUserCubit = appUserCubit,
+       super(OnboardingInitial()) {
     on<OnboardingLoadUniversities>(_onLoadUniversities);
     on<OnboardingLoadStudyPrograms>(_onLoadStudyPrograms);
     on<OnboardingSubmit>(_onOnboardingSubmit);
@@ -81,7 +81,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
       (failure) {
         emit(OnboardingFailure(failure.message));
         if (currentState is OnboardingDataLoaded) {
-          emit(currentState); // Restore state if failed
+          emit(currentState);
         }
       },
       (user) {

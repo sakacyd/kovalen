@@ -9,10 +9,10 @@ import 'package:kovalen/data/datasources/onboarding_remote_data_source.dart';
 import 'package:kovalen/domain/repository/onboarding_repository.dart';
 
 class OnboardingRepositoryImpl implements OnboardingRepository {
-  final OnboardingRemoteDataSource remoteDataSource;
+  final OnboardingRemoteDataSource onboardingRemoteDataSource;
   final ConnectionChecker connectionChecker;
 
-  const OnboardingRepositoryImpl(this.remoteDataSource, this.connectionChecker);
+  const OnboardingRepositoryImpl(this.onboardingRemoteDataSource, this.connectionChecker);
 
   @override
   Future<Either<Failure, User>> updateUserData({
@@ -28,7 +28,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         return left(Failure('No internet connection'));
       }
 
-      final user = await remoteDataSource.updateUserData(
+      final user = await onboardingRemoteDataSource.updateUserData(
         fullName: fullName,
         avatarUrl: avatarUrl,
         universityId: universityId,
@@ -50,7 +50,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       if (!await connectionChecker.isConnected) {
         return left(Failure('No internet connection'));
       }
-      final universities = await remoteDataSource.getUniversities();
+      final universities = await onboardingRemoteDataSource.getUniversities();
       return right(universities);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -65,7 +65,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       if (!await connectionChecker.isConnected) {
         return left(Failure('No internet connection'));
       }
-      final programs = await remoteDataSource.getStudyProgramsByUniversityId(universityId);
+      final programs = await onboardingRemoteDataSource.getStudyProgramsByUniversityId(universityId);
       return right(programs);
     } on ServerException catch (e) {
       return left(Failure(e.message));

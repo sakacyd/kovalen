@@ -27,6 +27,7 @@ class CustomDropdown<T> extends StatelessWidget {
           value: value,
           onChanged: onChanged,
           items: items,
+          isExpanded: true,
           icon: Icon(Icons.expand_more, color: Theme.of(context).colorScheme.outline),
           decoration: InputDecoration(
             hintText: hint,
