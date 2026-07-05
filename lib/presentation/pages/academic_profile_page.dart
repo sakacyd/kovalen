@@ -58,6 +58,17 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   }
 
   void _saveProfile() {
+    final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
+
+    if (parsedGpa < 0.0 || parsedGpa > 4.0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nilai IPK harus berada di rentang 0.00 hingga 4.00'),
+        ),
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate() &&
         _selectedUniversity != null &&
         _selectedStudyProgram != null) {
@@ -68,7 +79,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           universityId: _selectedUniversity!,
           studyProgramId: _selectedStudyProgram!,
           semester: int.tryParse(_semesterController.text) ?? 1,
-          gpa: double.tryParse(_gpaController.text) ?? 0.0,
+          gpa: parsedGpa,
           interests: const [],
         ),
       );
