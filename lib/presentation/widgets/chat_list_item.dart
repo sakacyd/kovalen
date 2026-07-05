@@ -10,6 +10,7 @@ class ChatListItem extends StatelessWidget {
   final int unreadCount;
   final bool isOnline;
   final bool isRead;
+  final VoidCallback? onTap;
 
   const ChatListItem({
     super.key,
@@ -21,12 +22,13 @@ class ChatListItem extends StatelessWidget {
     this.unreadCount = 0,
     this.isOnline = false,
     this.isRead = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: const BoxDecoration(

@@ -4,16 +4,9 @@ import '../../core/theme/app_pallete.dart';
 import '../bloc/messages_bloc.dart';
 import '../widgets/chat_list_item.dart';
 import '../widgets/custom_app_bar.dart';
-
-import 'package:get_it/get_it.dart';
+import 'message_room_page.dart';
 
 class MessagesPage extends StatefulWidget {
-  static route() => MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (context) => GetIt.instance<MessagesBloc>()..add(LoadMessagesData()),
-          child: const MessagesPage(),
-        ),
-      );
   const MessagesPage({super.key});
 
   @override
@@ -22,6 +15,12 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<MessagesBloc>().add(LoadMessagesData());
+  }
 
   @override
   void dispose() {
@@ -58,7 +57,10 @@ class _MessagesPageState extends State<MessagesPage> {
                     hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppPallete.textOutline,
                     ),
-                    prefixIcon: const Icon(Icons.search, color: AppPallete.textOutline),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: AppPallete.textOutline,
+                    ),
                     filled: true,
                     fillColor: AppPallete.surface,
                     contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -78,7 +80,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 ),
               ),
             ),
-            
+
             // Messages List Container
             Expanded(
               child: Padding(
@@ -100,7 +102,11 @@ class _MessagesPageState extends State<MessagesPage> {
                   child: BlocBuilder<MessagesBloc, MessagesState>(
                     builder: (context, state) {
                       if (state is MessagesLoading) {
-                        return const Center(child: CircularProgressIndicator(color: AppPallete.primary));
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppPallete.primary,
+                          ),
+                        );
                       } else if (state is MessagesFailure) {
                         return Center(child: Text(state.message));
                       } else if (state is MessagesSuccess) {
@@ -111,13 +117,19 @@ class _MessagesPageState extends State<MessagesPage> {
                           itemCount: state.rooms.length,
                           itemBuilder: (context, index) {
                             final room = state.rooms[index];
-                            final name = room.name ?? room.otherUser?.fullName ?? 'Unknown User';
-                            final time = room.lastMessageTime != null 
-                                ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}' 
+                            final name =
+                                room.name ??
+                                room.otherUser?.fullName ??
+                                'Unknown User';
+                            final time = room.lastMessageTime != null
+                                ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}'
                                 : '';
-                            final preview = room.lastMessage ?? 'No messages yet';
+                            final preview =
+                                room.lastMessage ?? 'No messages yet';
                             final imageUrl = room.otherUser?.avatarUrl;
-                            final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                            final initials = name.isNotEmpty
+                                ? name[0].toUpperCase()
+                                : '?';
 
                             return ChatListItem(
                               name: name,
@@ -128,6 +140,16 @@ class _MessagesPageState extends State<MessagesPage> {
                               unreadCount: 0,
                               isOnline: false,
                               isRead: true,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MessageRoomPage.route(
+                                    roomId: room.id,
+                                    name: name,
+                                    avatarUrl: imageUrl,
+                                  ),
+                                );
+                              },
                             );
                           },
                         );

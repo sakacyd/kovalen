@@ -50,5 +50,11 @@ import 'package:kovalen/domain/repository/messages_repository.dart';
 import 'package:kovalen/domain/usecases/get_chat_rooms.dart';
 import 'package:kovalen/domain/usecases/get_messages.dart';
 import 'package:kovalen/domain/usecases/send_message_usecase.dart';
+import 'package:kovalen/data/datasources/message_room_remote_data_source.dart';
+import 'package:kovalen/data/repositories/message_room_repository_impl.dart';
+import 'package:kovalen/domain/repository/message_room_repository.dart';
+import 'package:kovalen/domain/usecases/get_message_room_messages.dart';
+import 'package:kovalen/domain/usecases/send_message_room_message.dart';
+import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 
 part 'init_dependencies.main.dart';

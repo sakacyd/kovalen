@@ -10,6 +10,7 @@ Future<void> initDependencies() async {
   _initProfile();
   _initMatchmaking();
   _initMessages();
+  _initMessageRoom();
   _initOnboarding();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
@@ -187,6 +188,28 @@ void _initOnboarding() {
         getStudyProgramsData:
             serviceLocator<GetStudyProgramsData<OnboardingRepository>>(),
         appUserCubit: serviceLocator(),
+      ),
+    );
+}
+
+void _initMessageRoom() {
+  serviceLocator
+    // datasource
+    ..registerFactory<MessageRoomRemoteDataSource>(
+      () => MessageRoomRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<MessageRoomRepository>(
+      () => MessageRoomRepositoryImpl(serviceLocator(), serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetMessageRoomMessages(serviceLocator()))
+    ..registerFactory(() => SendMessageRoomMessage(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => MessageRoomBloc(
+        getMessageRoomMessages: serviceLocator(),
+        sendMessageRoomMessage: serviceLocator(),
       ),
     );
 }
