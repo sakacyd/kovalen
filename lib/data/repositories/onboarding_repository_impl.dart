@@ -5,6 +5,7 @@ import 'package:kovalen/core/network/connection_checker.dart';
 import 'package:kovalen/core/common/entities/study_program.dart';
 import 'package:kovalen/core/common/entities/university.dart';
 import 'package:kovalen/core/common/entities/user.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 import 'package:kovalen/data/datasources/onboarding_remote_data_source.dart';
 import 'package:kovalen/domain/repository/onboarding_repository.dart';
 
@@ -22,6 +23,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     required String studyProgramId,
     required int semester,
     required double gpa,
+    required List<String> interestIds,
   }) async {
     try {
       if (!await connectionChecker.isConnected) {
@@ -35,6 +37,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
         studyProgramId: studyProgramId,
         semester: semester,
         gpa: gpa,
+        interestIds: interestIds,
       );
       return right(user);
     } on ServerException catch (e) {
@@ -67,6 +70,21 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       }
       final programs = await onboardingRemoteDataSource.getStudyProgramsByUniversityId(universityId);
       return right(programs);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Interest>>> getAvailableInterests() async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure('No internet connection'));
+      }
+      final interests = await onboardingRemoteDataSource.getAvailableInterests();
+      return right(interests);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     } catch (e) {

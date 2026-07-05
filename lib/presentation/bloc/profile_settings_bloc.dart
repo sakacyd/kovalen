@@ -6,6 +6,8 @@ import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/core/common/entities/study_program.dart';
 import 'package:kovalen/core/common/entities/university.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
+import 'package:kovalen/domain/usecases/get_available_interests.dart';
 import 'package:kovalen/domain/usecases/update_user_profile.dart';
 import 'package:kovalen/domain/usecases/get_universities_data.dart';
 import 'package:kovalen/domain/usecases/get_study_programs_data.dart';
@@ -20,6 +22,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
   final UpdateUserProfile _updateUserProfile;
   final GetUniversitiesData<ProfileSettingsRepository> _getUniversitiesData;
   final GetStudyProgramsData<ProfileSettingsRepository> _getStudyProgramsData;
+  final GetAvailableInterests<ProfileSettingsRepository> _getAvailableInterests;
   final UserSignOut _userSignOut;
 
   ProfileSettingsBloc({
@@ -27,11 +30,13 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     required UpdateUserProfile updateUserProfile,
     required GetUniversitiesData<ProfileSettingsRepository> getUniversitiesData,
     required GetStudyProgramsData<ProfileSettingsRepository> getStudyProgramsData,
+    required GetAvailableInterests<ProfileSettingsRepository> getAvailableInterests,
     required UserSignOut userSignOut,
   }) : _appUserCubit = appUserCubit,
        _updateUserProfile = updateUserProfile,
        _getUniversitiesData = getUniversitiesData,
        _getStudyProgramsData = getStudyProgramsData,
+       _getAvailableInterests = getAvailableInterests,
        _userSignOut = userSignOut,
        super(ProfileSettingsInitial()) {
     on<UpdateProfileSettingsData>(_onUpdateProfileSettingsData);
@@ -54,6 +59,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
         studyProgramId: event.studyProgramId,
         semester: event.semester,
         gpa: event.gpa,
+        interestIds: event.interests,
       ),
     );
 
@@ -91,14 +97,28 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     Emitter<ProfileSettingsState> emit,
   ) async {
     final res = await _getUniversitiesData(NoParams());
+    final interestsRes = await _getAvailableInterests(NoParams());
+    
+    List<Interest> availableInterests = [];
+    interestsRes.fold(
+      (failure) => null,
+      (interests) => availableInterests = interests,
+    );
+
     res.fold((failure) => emit(ProfileSettingsFailure(failure.message)), (
       universities,
     ) {
       final currentState = state;
       if (currentState is ProfileSettingsDataLoaded) {
-        emit(currentState.copyWith(universities: universities));
+        emit(currentState.copyWith(
+          universities: universities,
+          availableInterests: availableInterests,
+        ));
       } else {
-        emit(ProfileSettingsDataLoaded(universities: universities));
+        emit(ProfileSettingsDataLoaded(
+          universities: universities,
+          availableInterests: availableInterests,
+        ));
       }
     });
   }

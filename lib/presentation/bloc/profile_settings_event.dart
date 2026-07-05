@@ -10,6 +10,7 @@ class UpdateProfileSettingsData extends ProfileSettingsEvent {
   final String studyProgramId;
   final int semester;
   final double gpa;
+  final List<String> interests;
 
   UpdateProfileSettingsData({
     required this.fullName,
@@ -18,6 +19,7 @@ class UpdateProfileSettingsData extends ProfileSettingsEvent {
     required this.studyProgramId,
     required this.semester,
     required this.gpa,
+    required this.interests,
   });
 }
 

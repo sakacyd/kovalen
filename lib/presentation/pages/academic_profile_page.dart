@@ -6,7 +6,9 @@ import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
 import 'package:kovalen/presentation/widgets/custom_dropdown.dart';
 import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
+import 'package:kovalen/presentation/bloc/profile_bloc.dart';
 import 'package:kovalen/presentation/widgets/confirmation_modal.dart';
+import 'package:kovalen/presentation/widgets/selectable_pill.dart';
 
 class AcademicProfilePage extends StatefulWidget {
   static Route route() =>
@@ -27,6 +29,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   String? _selectedUniversity;
   String? _selectedStudyProgram;
   String _avatarUrl = '';
+  final Set<String> _selectedInterests = {};
+  static const int _maxInterests = 5;
 
   @override
   void initState() {
@@ -48,6 +52,11 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
         );
       }
     }
+
+    final profileState = context.read<ProfileBloc>().state;
+    if (profileState is ProfileSuccess) {
+      _selectedInterests.addAll(profileState.interests.map((e) => e.id));
+    }
   }
 
   @override
@@ -56,6 +65,24 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     _semesterController.dispose();
     _gpaController.dispose();
     super.dispose();
+  }
+
+  void _toggleInterest(String interestId) {
+    setState(() {
+      if (_selectedInterests.contains(interestId)) {
+        _selectedInterests.remove(interestId);
+      } else {
+        if (_selectedInterests.length < _maxInterests) {
+          _selectedInterests.add(interestId);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Maksimal 5 minat yang dapat dipilih.'),
+            ),
+          );
+        }
+      }
+    });
   }
 
   bool get _hasUnsavedChanges {
@@ -67,6 +94,15 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           _semesterController.text != appUserState.user.semester.toString() ||
           _gpaController.text != appUserState.user.gpa.toString() ||
           _avatarUrl != appUserState.user.avatarUrl;
+    }
+    // Compare interests
+    final profileState = context.read<ProfileBloc>().state;
+    if (profileState is ProfileSuccess) {
+      final initialInterests = profileState.interests.map((e) => e.id).toSet();
+      if (_selectedInterests.length != initialInterests.length ||
+          !_selectedInterests.containsAll(initialInterests)) {
+        return true;
+      }
     }
     return false;
   }
@@ -104,6 +140,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             studyProgramId: _selectedStudyProgram!,
             semester: int.tryParse(_semesterController.text) ?? 1,
             gpa: parsedGpa,
+            interests: _selectedInterests.toList(),
           ),
         );
       }
@@ -318,6 +355,55 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 32),
+                Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      'Minat Belajar',
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                    Text(
+                      '${_selectedInterests.length}/$_maxInterests Terpilih',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: _selectedInterests.length == _maxInterests
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
+                  builder: (context, state) {
+                    if (state is ProfileSettingsDataLoaded) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 12,
+                        children: state.availableInterests.map((interest) {
+                          return SelectablePill(
+                            label: interest.name,
+                            isSelected: _selectedInterests.contains(interest.id),
+                            onTap: () => _toggleInterest(interest.id),
+                          );
+                        }).toList(),
+                      );
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
                 ),
                 BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {

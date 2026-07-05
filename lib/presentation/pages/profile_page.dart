@@ -73,13 +73,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ipk: state.user.gpa,
                               ),
                               const SizedBox(height: 16),
-                              const InterestsSection(
-                                interests: [
-                                  'Flutter',
-                                  'Dart',
-                                  'UI/UX Design',
-                                  'Machine Learning',
-                                ],
+                              InterestsSection(
+                                interests: state.interests.isNotEmpty
+                                    ? state.interests.map((e) => e.name).toList()
+                                    : ['Belum ada minat yang dipilih'],
                               ),
                               const Spacer(),
                               const SizedBox(height: 16),

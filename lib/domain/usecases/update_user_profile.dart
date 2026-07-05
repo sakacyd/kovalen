@@ -18,6 +18,7 @@ class UpdateUserProfile implements UseCase<User, UpdateUserProfileParams> {
       studyProgramId: params.studyProgramId,
       semester: params.semester,
       gpa: params.gpa,
+      interestIds: params.interestIds,
     );
   }
 }
@@ -29,6 +30,7 @@ class UpdateUserProfileParams {
   final String studyProgramId;
   final int semester;
   final double gpa;
+  final List<String> interestIds;
 
   UpdateUserProfileParams({
     required this.fullName,
@@ -37,5 +39,6 @@ class UpdateUserProfileParams {
     required this.studyProgramId,
     required this.semester,
     required this.gpa,
+    required this.interestIds,
   });
 }

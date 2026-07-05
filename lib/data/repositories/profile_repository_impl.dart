@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/core/common/entities/user.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 import 'package:kovalen/core/network/connection_checker.dart';
 import 'package:kovalen/data/models/user_model.dart';
 import 'package:fpdart/fpdart.dart';
@@ -48,6 +49,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return left(Failure('User not logged in!'));
       }
       return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Interest>>> getUserInterests() async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure('No internet connection'));
+      }
+      final interests = await profileRemoteDataSource.getUserInterests();
+      return right(interests);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

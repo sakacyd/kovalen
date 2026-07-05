@@ -14,5 +14,6 @@ class ProfileFailure extends ProfileState {
 
 class ProfileSuccess extends ProfileState {
   final User user;
-  ProfileSuccess(this.user);
+  final List<Interest> interests;
+  ProfileSuccess(this.user, {this.interests = const []});
 }

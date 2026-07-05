@@ -5,8 +5,10 @@ import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/core/common/entities/study_program.dart';
 import 'package:kovalen/core/common/entities/university.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 import 'package:kovalen/domain/usecases/get_study_programs_data.dart';
 import 'package:kovalen/domain/usecases/get_universities_data.dart';
+import 'package:kovalen/domain/usecases/get_available_interests.dart';
 import 'package:kovalen/domain/usecases/submit_onboarding_data.dart';
 
 part 'onboarding_event.dart';
@@ -16,16 +18,19 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   final SubmitOnboardingData _submitOnboardingData;
   final GetUniversitiesData _getUniversitiesData;
   final GetStudyProgramsData _getStudyProgramsData;
+  final GetAvailableInterests _getAvailableInterests;
   final AppUserCubit _appUserCubit;
 
   OnboardingBloc({
     required SubmitOnboardingData submitOnboardingData,
     required GetUniversitiesData getUniversitiesData,
     required GetStudyProgramsData getStudyProgramsData,
+    required GetAvailableInterests getAvailableInterests,
     required AppUserCubit appUserCubit,
   }) : _submitOnboardingData = submitOnboardingData,
        _getUniversitiesData = getUniversitiesData,
        _getStudyProgramsData = getStudyProgramsData,
+       _getAvailableInterests = getAvailableInterests,
        _appUserCubit = appUserCubit,
        super(OnboardingInitial()) {
     on<OnboardingLoadUniversities>(_onLoadUniversities);
@@ -38,9 +43,20 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     Emitter<OnboardingState> emit,
   ) async {
     final res = await _getUniversitiesData(NoParams());
+    final interestsRes = await _getAvailableInterests(NoParams());
+    
+    List<Interest> availableInterests = [];
+    interestsRes.fold(
+      (failure) => null, // Just ignore failure for interests, it won't break onboarding entirely
+      (interests) => availableInterests = interests,
+    );
+
     res.fold(
       (failure) => emit(OnboardingFailure(failure.message)),
-      (universities) => emit(OnboardingDataLoaded(universities: universities)),
+      (universities) => emit(OnboardingDataLoaded(
+        universities: universities,
+        availableInterests: availableInterests,
+      )),
     );
   }
 
@@ -74,6 +90,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
         studyProgramId: event.studyProgramId,
         semester: event.semester,
         gpa: event.gpa,
+        interestIds: event.interests,
       ),
     );
 

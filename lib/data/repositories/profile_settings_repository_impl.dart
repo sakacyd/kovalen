@@ -4,6 +4,7 @@ import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/core/common/entities/study_program.dart';
 import 'package:kovalen/core/common/entities/university.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 import 'package:kovalen/data/datasources/profile_settings_remote_data_source.dart';
 import 'package:kovalen/domain/repository/profile_settings_repository.dart';
 
@@ -20,6 +21,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
     required String studyProgramId,
     required int semester,
     required double gpa,
+    required List<String> interestIds,
   }) async {
     try {
       final userModel = await remoteDataSource.updateUserData(
@@ -29,6 +31,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
         studyProgramId: studyProgramId,
         semester: semester,
         gpa: gpa,
+        interestIds: interestIds,
       );
       return right(userModel);
     } on ServerException catch (e) {
@@ -65,6 +68,16 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
     try {
       await remoteDataSource.signOut();
       return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Interest>>> getAvailableInterests() async {
+    try {
+      final interests = await remoteDataSource.getAvailableInterests();
+      return right(interests);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

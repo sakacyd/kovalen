@@ -42,10 +42,45 @@ class MatchmakingCard extends StatelessWidget {
           // Image Section
           Expanded(
             flex: 6,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    backgroundColor: Colors.transparent,
+                    insetPadding: const EdgeInsets.all(16),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        InteractiveViewer(
+                          panEnabled: true,
+                          minScale: 0.5,
+                          maxScale: 4,
+                          child: Image.network(
+                            imageUrl,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(color: AppPallete.surfaceVariant);
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          top: -16,
+                          right: -16,
+                          child: IconButton(
+                            icon: const Icon(Icons.close, color: Colors.white, size: 32),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
@@ -124,12 +159,14 @@ class MatchmakingCard extends StatelessWidget {
               ],
             ),
           ),
+          ),
           // Details Section
           Expanded(
             flex: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -187,6 +224,7 @@ class MatchmakingCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
             ),
           ),
         ],

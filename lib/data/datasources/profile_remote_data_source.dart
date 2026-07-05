@@ -1,10 +1,12 @@
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/data/models/user_model.dart';
+import 'package:kovalen/data/models/interest_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class ProfileRemoteDataSource {
   Session? get currentUserSession;
   Future<UserModel?> getCurrentUserData();
+  Future<List<InterestModel>> getUserInterests();
 }
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
@@ -61,4 +63,31 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
   }
 
+  @override
+  Future<List<InterestModel>> getUserInterests() async {
+    try {
+      final session = currentUserSession;
+      if (session == null) {
+        throw ServerException('User not logged in');
+      }
+
+      final response = await supabaseClient
+          .from('user_interests')
+          .select('interests(id, name, category_id, interest_categories(id, name, type))')
+          .eq('user_id', session.user.id);
+
+      final List<InterestModel> interests = [];
+      for (var row in response) {
+        if (row['interests'] != null) {
+          interests.add(InterestModel.fromJson(row['interests']));
+        }
+      }
+
+      return interests;
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
 }

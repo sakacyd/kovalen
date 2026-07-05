@@ -100,11 +100,13 @@ void _initProfile() {
     )
     // usecases
     ..registerFactory(() => GetCurrentUser<ProfileRepository>(serviceLocator()))
+    ..registerFactory(() => GetUserInterests(serviceLocator()))
     // bloc
     ..registerLazySingleton(
       () => ProfileBloc(
         appUserCubit: serviceLocator(),
         getCurrentUser: serviceLocator<GetCurrentUser<ProfileRepository>>(),
+        getUserInterests: serviceLocator(),
       ),
     );
 }
@@ -125,6 +127,9 @@ void _initProfileSettings() {
       () => GetUniversitiesData<ProfileSettingsRepository>(serviceLocator()),
     )
     ..registerFactory(
+      () => GetAvailableInterests<ProfileSettingsRepository>(serviceLocator()),
+    )
+    ..registerFactory(
       () => GetStudyProgramsData<ProfileSettingsRepository>(serviceLocator()),
     )
     // bloc
@@ -136,6 +141,8 @@ void _initProfileSettings() {
             serviceLocator<GetUniversitiesData<ProfileSettingsRepository>>(),
         getStudyProgramsData:
             serviceLocator<GetStudyProgramsData<ProfileSettingsRepository>>(),
+        getAvailableInterests:
+            serviceLocator<GetAvailableInterests<ProfileSettingsRepository>>(),
         userSignOut: serviceLocator(),
       ),
     );
@@ -199,6 +206,9 @@ void _initOnboarding() {
     ..registerFactory(
       () => GetStudyProgramsData<OnboardingRepository>(serviceLocator()),
     )
+    ..registerFactory(
+      () => GetAvailableInterests<OnboardingRepository>(serviceLocator()),
+    )
     // bloc
     ..registerLazySingleton(
       () => OnboardingBloc(
@@ -207,6 +217,8 @@ void _initOnboarding() {
             serviceLocator<GetUniversitiesData<OnboardingRepository>>(),
         getStudyProgramsData:
             serviceLocator<GetStudyProgramsData<OnboardingRepository>>(),
+        getAvailableInterests:
+            serviceLocator<GetAvailableInterests<OnboardingRepository>>(),
         appUserCubit: serviceLocator(),
       ),
     );

@@ -18,6 +18,7 @@ class SubmitOnboardingData implements UseCase<User, SubmitOnboardingDataParams> 
       studyProgramId: params.studyProgramId,
       semester: params.semester,
       gpa: params.gpa,
+      interestIds: params.interestIds,
     );
   }
 }
@@ -29,6 +30,7 @@ class SubmitOnboardingDataParams {
   final String studyProgramId;
   final int semester;
   final double gpa;
+  final List<String> interestIds;
 
   SubmitOnboardingDataParams({
     required this.fullName,
@@ -37,5 +39,6 @@ class SubmitOnboardingDataParams {
     required this.studyProgramId,
     required this.semester,
     required this.gpa,
+    required this.interestIds,
   });
 }

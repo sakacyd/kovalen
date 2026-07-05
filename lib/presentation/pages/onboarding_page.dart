@@ -31,15 +31,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   String? _selectedProgram;
   String? _selectedSemester;
 
-  final List<String> _availableInterests = [
-    "Machine Learning",
-    "Data Structure",
-    "UI/UX Design",
-    "Kalkulus Dasar",
-    "Statistika",
-    "Web Development",
-    "Bahasa Inggris",
-  ];
   final Set<String> _selectedInterests = {};
   static const int _maxInterests = 5;
 
@@ -246,16 +237,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 12,
-                      children: _availableInterests.map((interest) {
-                        return SelectablePill(
-                          label: interest,
-                          isSelected: _selectedInterests.contains(interest),
-                          onTap: () => _toggleInterest(interest),
-                        );
-                      }).toList(),
+                    BlocBuilder<OnboardingBloc, OnboardingState>(
+                      builder: (context, state) {
+                        if (state is OnboardingDataLoaded) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 12,
+                            children: state.availableInterests.map((interest) {
+                              return SelectablePill(
+                                label: interest.name,
+                                isSelected: _selectedInterests.contains(interest.id),
+                                onTap: () => _toggleInterest(interest.id),
+                              );
+                            }).toList(),
+                          );
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      }
                     ),
                   ],
                 ),
