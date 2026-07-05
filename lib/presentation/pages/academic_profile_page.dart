@@ -6,6 +6,7 @@ import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
 import 'package:kovalen/presentation/widgets/custom_dropdown.dart';
 import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
+import 'package:kovalen/presentation/widgets/confirmation_modal.dart';
 
 class AcademicProfilePage extends StatefulWidget {
   static Route route() =>
@@ -57,7 +58,20 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     super.dispose();
   }
 
-  void _saveProfile() {
+  bool get _hasUnsavedChanges {
+    final appUserState = context.read<AppUserCubit>().state;
+    if (appUserState is AppUserLoggedIn) {
+      return _nameController.text != appUserState.user.fullName ||
+          _selectedUniversity != appUserState.user.universityId ||
+          _selectedStudyProgram != appUserState.user.studyProgramId ||
+          _semesterController.text != appUserState.user.semester.toString() ||
+          _gpaController.text != appUserState.user.gpa.toString() ||
+          _avatarUrl != appUserState.user.avatarUrl;
+    }
+    return false;
+  }
+
+  void _saveProfile() async {
     final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
 
     if (parsedGpa < 0.0 || parsedGpa > 4.0) {
@@ -72,16 +86,27 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     if (_formKey.currentState!.validate() &&
         _selectedUniversity != null &&
         _selectedStudyProgram != null) {
-      context.read<ProfileSettingsBloc>().add(
-        UpdateProfileSettingsData(
-          fullName: _nameController.text,
-          avatarUrl: _avatarUrl,
-          universityId: _selectedUniversity!,
-          studyProgramId: _selectedStudyProgram!,
-          semester: int.tryParse(_semesterController.text) ?? 1,
-          gpa: parsedGpa,
-        ),
+      final shouldSave = await ConfirmationModal.show(
+        context: context,
+        title: 'Simpan Perubahan?',
+        content: 'Apakah Anda yakin ingin menyimpan perubahan profil akademik ini?',
+        confirmText: 'Simpan',
+        cancelText: 'Batal',
       );
+
+      if (shouldSave == true) {
+        if (!mounted) return;
+        context.read<ProfileSettingsBloc>().add(
+          UpdateProfileSettingsData(
+            fullName: _nameController.text,
+            avatarUrl: _avatarUrl,
+            universityId: _selectedUniversity!,
+            studyProgramId: _selectedStudyProgram!,
+            semester: int.tryParse(_semesterController.text) ?? 1,
+            gpa: parsedGpa,
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lengkapi semua field terlebih dahulu')),
@@ -104,8 +129,29 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-      child: Scaffold(
-        backgroundColor: AppPallete.background,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) return;
+          if (_hasUnsavedChanges) {
+            final shouldPop = await ConfirmationModal.show(
+              context: context,
+              title: 'Buang Perubahan?',
+              content: 'Anda memiliki perubahan yang belum disimpan. Yakin ingin membuangnya?',
+              confirmText: 'Buang',
+              cancelText: 'Batal',
+            );
+            if (shouldPop == true) {
+              if (!context.mounted) return;
+              Navigator.pop(context);
+            }
+          } else {
+            if (!context.mounted) return;
+            Navigator.pop(context);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppPallete.background,
         appBar: CustomAppBar(
           title: 'Profil Akademik',
           showAvatar: false,
@@ -161,36 +207,58 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                       }).toList();
                     }
 
-                    String? safeUniversity =
-                        uniItems.any((e) => e.value == _selectedUniversity)
-                        ? _selectedUniversity
-                        : (uniItems.isNotEmpty ? null : _selectedUniversity);
-
-                    if (safeUniversity == _selectedUniversity &&
-                        uniItems.isEmpty &&
-                        _selectedUniversity != null) {
-                      uniItems.add(
-                        DropdownMenuItem(
-                          value: _selectedUniversity,
-                          child: Text('Memuat...'),
-                        ),
-                      );
+                    String? safeUniversity;
+                    if (_selectedUniversity != null && _selectedUniversity!.isNotEmpty) {
+                      if (uniItems.any((e) => e.value == _selectedUniversity)) {
+                        safeUniversity = _selectedUniversity;
+                      } else if (uniItems.isEmpty) {
+                        safeUniversity = _selectedUniversity;
+                        final userState = context.read<AppUserCubit>().state;
+                        final uniName = userState is AppUserLoggedIn ? userState.user.universityName : null;
+                        uniItems.add(
+                          DropdownMenuItem(
+                            value: _selectedUniversity,
+                            child: Text(uniName ?? 'Memuat...'),
+                          ),
+                        );
+                      } else {
+                        // University loaded but not in list, keep it to show name or reset
+                        safeUniversity = _selectedUniversity;
+                        final userState = context.read<AppUserCubit>().state;
+                        final uniName = userState is AppUserLoggedIn ? userState.user.universityName : null;
+                        if (uniName != null) {
+                           uniItems.add(DropdownMenuItem(value: _selectedUniversity, child: Text(uniName)));
+                        } else {
+                           safeUniversity = null; // fallback to hint
+                        }
+                      }
                     }
 
-                    String? safeStudyProgram =
-                        progItems.any((e) => e.value == _selectedStudyProgram)
-                        ? _selectedStudyProgram
-                        : (progItems.isNotEmpty ? null : _selectedStudyProgram);
-
-                    if (safeStudyProgram == _selectedStudyProgram &&
-                        progItems.isEmpty &&
-                        _selectedStudyProgram != null) {
-                      progItems.add(
-                        DropdownMenuItem(
-                          value: _selectedStudyProgram,
-                          child: Text('Memuat...'),
-                        ),
-                      );
+                    String? safeStudyProgram;
+                    if (_selectedStudyProgram != null && _selectedStudyProgram!.isNotEmpty) {
+                      if (progItems.any((e) => e.value == _selectedStudyProgram)) {
+                        safeStudyProgram = _selectedStudyProgram;
+                      } else if (progItems.isEmpty) {
+                        safeStudyProgram = _selectedStudyProgram;
+                        final userState = context.read<AppUserCubit>().state;
+                        final progName = userState is AppUserLoggedIn ? userState.user.studyProgramName : null;
+                        progItems.add(
+                          DropdownMenuItem(
+                            value: _selectedStudyProgram,
+                            child: Text(progName ?? 'Memuat...'),
+                          ),
+                        );
+                      } else {
+                        // Programs loaded but not in list, add it to show name or reset
+                        safeStudyProgram = _selectedStudyProgram;
+                        final userState = context.read<AppUserCubit>().state;
+                        final progName = userState is AppUserLoggedIn ? userState.user.studyProgramName : null;
+                        if (progName != null) {
+                           progItems.add(DropdownMenuItem(value: _selectedStudyProgram, child: Text(progName)));
+                        } else {
+                           safeStudyProgram = null; // fallback to hint
+                        }
+                      }
                     }
 
                     return Column(
@@ -266,6 +334,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
