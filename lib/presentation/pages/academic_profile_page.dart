@@ -83,7 +83,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state is ProfileSuccess) {
+        if (state is UpdateUserProfileSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profil berhasil diperbarui')),
           );

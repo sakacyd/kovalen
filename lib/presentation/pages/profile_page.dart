@@ -41,6 +41,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is UpdateUserProfileSuccess) {
+            context.read<ProfileBloc>().add(LoadProfileData());
           }
         },
         child: BlocBuilder<AppUserCubit, AppUserState>(

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
-import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/core/common/entities/study_program.dart';
@@ -49,20 +48,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     emit(ProfileLoading());
+    final res = await _getCurrentUser(NoParams());
 
-    final userResult = await _getCurrentUser(NoParams());
+    res.fold(
+      (l) => emit(ProfileFailure(l.message)),
+      (r) => _emitLoadProfileDataSuccess(emit, r),
+    );
+  }
 
-    if (userResult.isLeft()) {
-      final failure = userResult.swap().getOrElse(
-        (_) => Failure('Unknown error'),
-      );
-      emit(ProfileFailure(failure.message));
-      return;
-    }
-
-    final user = userResult.getOrElse((_) => throw Exception('Missing user'));
+  void _emitLoadProfileDataSuccess(Emitter<ProfileState> emit, User user) {
     _appUserCubit.updateUser(user);
-    emit(ProfileSuccess(user));
+    emit(LoadUserProfileSuccess(user));
   }
 
   FutureOr<void> _onUpdateProfileData(
@@ -91,7 +87,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       },
       (user) {
         _appUserCubit.updateUser(user);
-        emit(ProfileSuccess(user));
+        emit(UpdateUserProfileSuccess(user));
       },
     );
   }
@@ -118,17 +114,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     final res = await _getUniversitiesData(NoParams());
-    res.fold(
-      (failure) => emit(ProfileFailure(failure.message)),
-      (universities) {
-        final currentState = state;
-        if (currentState is ProfileDataLoaded) {
-          emit(currentState.copyWith(universities: universities));
-        } else {
-          emit(ProfileDataLoaded(universities: universities));
-        }
-      },
-    );
+    res.fold((failure) => emit(ProfileFailure(failure.message)), (
+      universities,
+    ) {
+      final currentState = state;
+      if (currentState is ProfileDataLoaded) {
+        emit(currentState.copyWith(universities: universities));
+      } else {
+        emit(ProfileDataLoaded(universities: universities));
+      }
+    });
   }
 
   FutureOr<void> _onLoadStudyPrograms(
@@ -138,16 +133,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final res = await _getStudyProgramsData(
       GetStudyProgramsDataParams(universityId: event.universityId),
     );
-    res.fold(
-      (failure) => emit(ProfileFailure(failure.message)),
-      (programs) {
-        final currentState = state;
-        if (currentState is ProfileDataLoaded) {
-          emit(currentState.copyWith(studyPrograms: programs));
-        } else {
-          emit(ProfileDataLoaded(universities: const [], studyPrograms: programs));
-        }
-      },
-    );
+    res.fold((failure) => emit(ProfileFailure(failure.message)), (programs) {
+      final currentState = state;
+      if (currentState is ProfileDataLoaded) {
+        emit(currentState.copyWith(studyPrograms: programs));
+      } else {
+        emit(
+          ProfileDataLoaded(universities: const [], studyPrograms: programs),
+        );
+      }
+    });
   }
 }
