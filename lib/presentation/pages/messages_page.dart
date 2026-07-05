@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import '../../core/theme/app_pallete.dart';
 import '../bloc/messages_bloc.dart';
 import '../widgets/chat_list_item.dart';
@@ -85,77 +86,84 @@ class _MessagesPageState extends State<MessagesPage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppPallete.surface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppPallete.stroke),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppPallete.onSurface.withValues(alpha: 0.04),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: BlocBuilder<MessagesBloc, MessagesState>(
-                    builder: (context, state) {
-                      if (state is MessagesLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(
-                            color: AppPallete.primary,
-                          ),
-                        );
-                      } else if (state is MessagesFailure) {
-                        return Center(child: Text(state.message));
-                      } else if (state is MessagesSuccess) {
-                        if (state.rooms.isEmpty) {
-                          return const Center(child: Text('No messages'));
-                        }
-                        return ListView.builder(
-                          itemCount: state.rooms.length,
-                          itemBuilder: (context, index) {
-                            final room = state.rooms[index];
-                            final name =
-                                room.name ??
-                                room.otherUser?.fullName ??
-                                'Unknown User';
-                            final time = room.lastMessageTime != null
-                                ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}'
-                                : '';
-                            final preview =
-                                room.lastMessage ?? 'No messages yet';
-                            final imageUrl = room.otherUser?.avatarUrl;
-                            final initials = name.isNotEmpty
-                                ? name[0].toUpperCase()
-                                : '?';
+                child: BlocListener<MessageRoomBloc, MessageRoomState>(
+                  listener: (context, state) {
+                    if (state is MessageRoomSuccess) {
+                      context.read<MessagesBloc>().add(LoadMessagesData());
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppPallete.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppPallete.stroke),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppPallete.onSurface.withValues(alpha: 0.04),
+                          offset: const Offset(0, 2),
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: BlocBuilder<MessagesBloc, MessagesState>(
+                      builder: (context, state) {
+                        if (state is MessagesLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                              color: AppPallete.primary,
+                            ),
+                          );
+                        } else if (state is MessagesFailure) {
+                          return Center(child: Text(state.message));
+                        } else if (state is MessagesSuccess) {
+                          if (state.rooms.isEmpty) {
+                            return const Center(child: Text('No messages'));
+                          }
+                          return ListView.builder(
+                            itemCount: state.rooms.length,
+                            itemBuilder: (context, index) {
+                              final room = state.rooms[index];
+                              final name =
+                                  room.name ??
+                                  room.otherUser?.fullName ??
+                                  'Unknown User';
+                              final time = room.lastMessageTime != null
+                                  ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}'
+                                  : '';
+                              final preview =
+                                  room.lastMessage ?? 'No messages yet';
+                              final imageUrl = room.otherUser?.avatarUrl;
+                              final initials = name.isNotEmpty
+                                  ? name[0].toUpperCase()
+                                  : '?';
 
-                            return ChatListItem(
-                              name: name,
-                              time: time,
-                              messagePreview: preview,
-                              imageUrl: imageUrl,
-                              initials: initials,
-                              unreadCount: 0,
-                              isOnline: false,
-                              isRead: true,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MessageRoomPage.route(
-                                    roomId: room.id,
-                                    name: name,
-                                    avatarUrl: imageUrl,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
+                              return ChatListItem(
+                                name: name,
+                                time: time,
+                                messagePreview: preview,
+                                imageUrl: imageUrl,
+                                initials: initials,
+                                unreadCount: 0,
+                                isOnline: false,
+                                isRead: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MessageRoomPage.route(
+                                      roomId: room.id,
+                                      name: name,
+                                      avatarUrl: imageUrl,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
                   ),
                 ),
               ),
