@@ -5,7 +5,7 @@ import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/custom_text_field.dart';
 import 'package:kovalen/presentation/widgets/custom_dropdown.dart';
-import 'package:kovalen/presentation/bloc/profile_bloc.dart';
+import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 
 class AcademicProfilePage extends StatefulWidget {
   static Route route() =>
@@ -30,7 +30,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   @override
   void initState() {
     super.initState();
-    context.read<ProfileBloc>().add(ProfileLoadUniversities());
+    context.read<ProfileSettingsBloc>().add(ProfileSettingsLoadUniversities());
 
     final appUserState = context.read<AppUserCubit>().state;
     if (appUserState is AppUserLoggedIn) {
@@ -42,8 +42,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
       _avatarUrl = appUserState.user.avatarUrl;
 
       if (_selectedUniversity != null && _selectedUniversity!.isNotEmpty) {
-        context.read<ProfileBloc>().add(
-          ProfileLoadStudyPrograms(_selectedUniversity!),
+        context.read<ProfileSettingsBloc>().add(
+          ProfileSettingsLoadStudyPrograms(_selectedUniversity!),
         );
       }
     }
@@ -72,15 +72,14 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     if (_formKey.currentState!.validate() &&
         _selectedUniversity != null &&
         _selectedStudyProgram != null) {
-      context.read<ProfileBloc>().add(
-        UpdateProfileData(
+      context.read<ProfileSettingsBloc>().add(
+        UpdateProfileSettingsData(
           fullName: _nameController.text,
           avatarUrl: _avatarUrl,
           universityId: _selectedUniversity!,
           studyProgramId: _selectedStudyProgram!,
           semester: int.tryParse(_semesterController.text) ?? 1,
           gpa: parsedGpa,
-          interests: const [],
         ),
       );
     } else {
@@ -92,14 +91,14 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
+    return BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
       listener: (context, state) {
-        if (state is UpdateUserProfileSuccess) {
+        if (state is UpdateProfileSettingsSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profil berhasil diperbarui')),
           );
           Navigator.pop(context);
-        } else if (state is ProfileFailure) {
+        } else if (state is ProfileSettingsFailure) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -141,12 +140,12 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   icon: Icons.person_outline,
                 ),
                 const SizedBox(height: 16),
-                BlocBuilder<ProfileBloc, ProfileState>(
+                BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {
                     List<DropdownMenuItem<String>> uniItems = [];
                     List<DropdownMenuItem<String>> progItems = [];
 
-                    if (state is ProfileDataLoaded) {
+                    if (state is ProfileSettingsDataLoaded) {
                       uniItems = state.universities.map((u) {
                         return DropdownMenuItem(
                           value: u.id,
@@ -208,8 +207,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                               _selectedStudyProgram = null;
                             });
                             if (val != null) {
-                              context.read<ProfileBloc>().add(
-                                ProfileLoadStudyPrograms(val),
+                              context.read<ProfileSettingsBloc>().add(
+                                ProfileSettingsLoadStudyPrograms(val),
                               );
                             }
                           },
@@ -252,9 +251,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                     ),
                   ],
                 ),
-                BlocBuilder<ProfileBloc, ProfileState>(
+                BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {
-                    if (state is ProfileLoading) {
+                    if (state is ProfileSettingsLoading) {
                       return const Padding(
                         padding: EdgeInsets.only(top: 24),
                         child: Center(child: CircularProgressIndicator()),

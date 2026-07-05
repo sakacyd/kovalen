@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
-import 'package:kovalen/presentation/bloc/profile_bloc.dart';
+import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
 import 'package:kovalen/presentation/widgets/group_item.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
@@ -26,10 +26,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: BlocListener<ProfileBloc, ProfileState>(
+      body: BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
         listener: (context, state) {
-          if (state is UpdateUserProfileSuccess) {
+          if (state is UpdateProfileSettingsSuccess) {
             context.read<HomeBloc>().add(LoadHomeData());
+          } else if (state is ProfileSettingsFailure) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
 

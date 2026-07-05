@@ -8,6 +8,7 @@ Future<void> initDependencies() async {
   _initAuth();
   _initHome();
   _initProfile();
+  _initProfileSettings();
   _initMatchmaking();
   _initMessages();
   _initMessageRoom();
@@ -98,24 +99,43 @@ void _initProfile() {
       () => ProfileRepositoryImpl(serviceLocator(), serviceLocator()),
     )
     // usecases
-    ..registerFactory(() => UpdateUserProfile(serviceLocator()))
     ..registerFactory(() => GetCurrentUser<ProfileRepository>(serviceLocator()))
-    ..registerFactory(
-      () => GetUniversitiesData<ProfileRepository>(serviceLocator()),
-    )
-    ..registerFactory(
-      () => GetStudyProgramsData<ProfileRepository>(serviceLocator()),
-    )
     // bloc
     ..registerLazySingleton(
       () => ProfileBloc(
         appUserCubit: serviceLocator(),
         getCurrentUser: serviceLocator<GetCurrentUser<ProfileRepository>>(),
+      ),
+    );
+}
+
+void _initProfileSettings() {
+  serviceLocator
+    // datasource
+    ..registerFactory<ProfileSettingsRemoteDataSource>(
+      () => ProfileSettingsRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<ProfileSettingsRepository>(
+      () => ProfileSettingsRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => UpdateUserProfile(serviceLocator()))
+    ..registerFactory(
+      () => GetUniversitiesData<ProfileSettingsRepository>(serviceLocator()),
+    )
+    ..registerFactory(
+      () => GetStudyProgramsData<ProfileSettingsRepository>(serviceLocator()),
+    )
+    // bloc
+    ..registerLazySingleton(
+      () => ProfileSettingsBloc(
+        appUserCubit: serviceLocator(),
         updateUserProfile: serviceLocator(),
         getUniversitiesData:
-            serviceLocator<GetUniversitiesData<ProfileRepository>>(),
+            serviceLocator<GetUniversitiesData<ProfileSettingsRepository>>(),
         getStudyProgramsData:
-            serviceLocator<GetStudyProgramsData<ProfileRepository>>(),
+            serviceLocator<GetStudyProgramsData<ProfileSettingsRepository>>(),
         userSignOut: serviceLocator(),
       ),
     );

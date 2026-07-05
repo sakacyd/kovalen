@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
-import 'package:kovalen/presentation/bloc/profile_bloc.dart';
+import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 import 'package:kovalen/presentation/pages/academic_profile_page.dart';
 import 'package:kovalen/presentation/pages/credential_page.dart';
@@ -18,15 +18,15 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
+    return BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
       listener: (context, state) {
-        if (state is ProfileInitial) {
+        if (state is ProfileSettingsInitial) {
           Navigator.pushAndRemoveUntil(
             context,
             SignInPage.route(),
             (route) => false,
           );
-        } else if (state is ProfileFailure) {
+        } else if (state is ProfileSettingsFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
@@ -66,7 +66,6 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              /*
               const SizedBox(height: 24),
               _buildSettingsGroup(
                 context,
@@ -103,11 +102,10 @@ class SettingsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              */
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
-                  context.read<ProfileBloc>().add(ProfileSignOut());
+                  context.read<ProfileSettingsBloc>().add(ProfileSettingsSignOut());
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.surface,

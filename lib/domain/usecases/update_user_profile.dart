@@ -2,10 +2,10 @@ import 'package:fpdart/fpdart.dart';
 import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
 import 'package:kovalen/core/common/entities/user.dart';
-import 'package:kovalen/domain/repository/onboarding_repository.dart';
+import 'package:kovalen/domain/repository/profile_settings_repository.dart';
 
 class UpdateUserProfile implements UseCase<User, UpdateUserProfileParams> {
-  final OnboardingRepository repository;
+  final ProfileSettingsRepository repository;
 
   UpdateUserProfile(this.repository);
 

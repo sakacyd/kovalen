@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import '../../../../core/theme/app_pallete.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/academic_info_grid.dart';
 import '../widgets/interests_section.dart';
 import '../widgets/profile_actions.dart';
-import 'package:kovalen/presentation/pages/sign_in_page.dart';
-import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import '../widgets/custom_app_bar.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,25 +28,19 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppPallete.background,
       appBar: const CustomAppBar(),
-      body: BlocListener<ProfileBloc, ProfileState>(
+      body: BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
         listener: (context, state) {
-          if (state is ProfileInitial) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              SignInPage.route(),
-              (route) => false,
-            );
-          } else if (state is ProfileFailure) {
+          if (state is UpdateProfileSettingsSuccess) {
+            context.read<ProfileBloc>().add(LoadProfileData());
+          } else if (state is ProfileSettingsFailure) {
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is UpdateUserProfileSuccess) {
-            context.read<ProfileBloc>().add(LoadProfileData());
           }
         },
-        child: BlocBuilder<AppUserCubit, AppUserState>(
-          builder: (context, appUserState) {
-            if (appUserState is AppUserLoggedIn) {
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileSuccess) {
               return LayoutBuilder(
                 builder: (context, constraints) {
                   return SingleChildScrollView(
@@ -65,19 +58,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               ProfileHeader(
-                                name: appUserState.user.fullName,
+                                name: state.user.fullName,
                                 university:
-                                    appUserState.user.universityName ??
-                                    appUserState.user.universityId,
-                                avatarUrl: appUserState.user.avatarUrl,
+                                    state.user.universityName ??
+                                    state.user.universityId,
+                                avatarUrl: state.user.avatarUrl,
                               ),
                               const SizedBox(height: 20),
                               AcademicInfoGrid(
                                 programStudi:
-                                    appUserState.user.studyProgramName ??
-                                    appUserState.user.studyProgramId,
-                                semester: appUserState.user.semester,
-                                ipk: appUserState.user.gpa,
+                                    state.user.studyProgramName ??
+                                    state.user.studyProgramId,
+                                semester: state.user.semester,
+                                ipk: state.user.gpa,
                               ),
                               const SizedBox(height: 16),
                               const InterestsSection(
