@@ -25,7 +25,7 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
       // Because Supabase RPC is best for complex exclusions, we might need to filter locally if no RPC exists,
       // but assuming we can fetch all and filter, or use a basic query.
       
-      // Let's fetch swiped IDs first to exclude them
+      // Fetch swiped IDs first to exclude them
       final swipedResponse = await supabaseClient
           .from('swipes')
           .select('swiped_id')
@@ -34,37 +34,39 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
       final List<String> swipedIds = (swipedResponse as List).map((e) => e['swiped_id'] as String).toList();
       swipedIds.add(currentUserId); // exclude self
 
-      // Fetch potential matches
+      // Fetch potential matches, explicitly filtering out swiped users on the database side
       var query = supabaseClient
           .from('users')
           .select('*, universities(name), study_programs(name, education_level), user_interests(interests(*, interest_categories(*)))');
+      
+      if (swipedIds.isNotEmpty) {
+        query = query.not('id', 'in', swipedIds);
+      }
           
       final response = await query;
       
       List<MatchProfileModel> potentials = [];
       
       for (var row in response) {
-        if (!swipedIds.contains(row['id'])) {
-          // Parse university and study program names similar to Profile
-          final universityName = row['universities']?['name'];
-          final studyProgramData = row['study_programs'];
-          String studyProgramDisplay = row['study_program_id'] ?? '';
-          
-          if (studyProgramData != null) {
-            final level = studyProgramData['education_level'] ?? '';
-            final name = studyProgramData['name'] ?? '';
-            if (level.isNotEmpty && name.isNotEmpty) {
-              studyProgramDisplay = '$level - $name';
-            } else {
-              studyProgramDisplay = name.isNotEmpty ? name : level;
-            }
+        // Parse university and study program names similar to Profile
+        final universityName = row['universities']?['name'];
+        final studyProgramData = row['study_programs'];
+        String studyProgramDisplay = row['study_program_id'] ?? '';
+        
+        if (studyProgramData != null) {
+          final level = studyProgramData['education_level'] ?? '';
+          final name = studyProgramData['name'] ?? '';
+          if (level.isNotEmpty && name.isNotEmpty) {
+            studyProgramDisplay = '$level - $name';
+          } else {
+            studyProgramDisplay = name.isNotEmpty ? name : level;
           }
-          
-          row['university_name'] = universityName;
-          row['study_program_name'] = studyProgramDisplay;
-          
-          potentials.add(MatchProfileModel.fromJson(row));
         }
+        
+        row['university_name'] = universityName;
+        row['study_program_name'] = studyProgramDisplay;
+        
+        potentials.add(MatchProfileModel.fromJson(row));
       }
 
       return potentials;
