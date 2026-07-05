@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: const CustomAppBar(),
+      appBar: const CustomAppBar(showAvatar: false),
       body: BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
         listener: (context, state) {
           if (state is UpdateProfileSettingsSuccess) {

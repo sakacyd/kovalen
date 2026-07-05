@@ -37,19 +37,6 @@ class ProfileHeader extends StatelessWidget {
                 backgroundImage: NetworkImage(avatarUrl),
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: AppPallete.primary,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppPallete.surface, width: 3),
-              ),
-              padding: const EdgeInsets.all(8),
-              child: const Icon(
-                Icons.edit,
-                color: AppPallete.surface,
-                size: 16,
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 16),
