@@ -46,13 +46,23 @@ CREATE TABLE public.users (
 );
 
 -- ==========================================
--- 3. INTERESTS (Master Minat)
+-- 3. INTERESTS (Master Minat & Kategori)
 -- ==========================================
-CREATE TABLE public.interests (
+CREATE TABLE public.interest_categories (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   name character varying NOT NULL UNIQUE,
+  type character varying NOT NULL CHECK (type IN ('academic', 'non_academic')),
   created_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT interests_pkey PRIMARY KEY (id)
+  CONSTRAINT interest_categories_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.interests (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  category_id uuid NOT NULL,
+  name character varying NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT interests_pkey PRIMARY KEY (id),
+  CONSTRAINT interests_category_id_fkey FOREIGN KEY (category_id) REFERENCES public.interest_categories(id) ON DELETE CASCADE
 );
 
 -- ==========================================

@@ -24,6 +24,7 @@ import 'package:kovalen/domain/usecases/user_sign_in.dart';
 import 'package:kovalen/domain/usecases/user_sign_up.dart';
 import 'package:kovalen/domain/usecases/user_sign_out.dart';
 import 'package:kovalen/domain/usecases/change_password.dart';
+import 'package:kovalen/domain/usecases/update_user_location.dart';
 import 'package:kovalen/domain/usecases/get_current_user.dart';
 import 'package:kovalen/domain/usecases/submit_onboarding_data.dart';
 import 'package:kovalen/domain/usecases/get_universities_data.dart';
@@ -36,5 +37,18 @@ import 'package:kovalen/presentation/bloc/matchmaking_bloc.dart';
 import 'package:kovalen/presentation/bloc/messages_bloc.dart';
 import 'package:kovalen/presentation/bloc/onboarding_bloc.dart';
 import 'package:kovalen/domain/repository/onboarding_repository.dart';
+
+import 'package:kovalen/data/datasources/matchmaking_remote_data_source.dart';
+import 'package:kovalen/data/repositories/matchmaking_repository_impl.dart';
+import 'package:kovalen/domain/repository/matchmaking_repository.dart';
+import 'package:kovalen/domain/usecases/get_potential_matches.dart';
+import 'package:kovalen/domain/usecases/swipe_user.dart';
+
+import 'package:kovalen/data/datasources/messages_remote_data_source.dart';
+import 'package:kovalen/data/repositories/messages_repository_impl.dart';
+import 'package:kovalen/domain/repository/messages_repository.dart';
+import 'package:kovalen/domain/usecases/get_chat_rooms.dart';
+import 'package:kovalen/domain/usecases/get_messages.dart';
+import 'package:kovalen/domain/usecases/send_message_usecase.dart';
 
 part 'init_dependencies.main.dart';

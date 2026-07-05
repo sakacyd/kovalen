@@ -96,6 +96,19 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, User>> updateUserLocation({
+    required double latitude, 
+    required double longitude,
+  }) async {
+    return _getUser(
+      () async => await authRemoteDataSource.updateUserLocation(
+        latitude: latitude,
+        longitude: longitude,
+      ),
+    );
+  }
+
   Future<Either<Failure, User>> _getUser(Future<User> Function() fn) async {
     try {
       final hasConnection = await connectionChecker.isConnected;

@@ -19,4 +19,9 @@ abstract interface class AuthRepository {
   Future<Either<Failure, void>> changePassword({
     required String newPassword,
   });
+
+  Future<Either<Failure, User>> updateUserLocation({
+    required double latitude, 
+    required double longitude,
+  });
 }

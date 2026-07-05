@@ -5,10 +5,12 @@ import '../bloc/messages_bloc.dart';
 import '../widgets/chat_list_item.dart';
 import '../widgets/custom_app_bar.dart';
 
+import 'package:get_it/get_it.dart';
+
 class MessagesPage extends StatefulWidget {
   static route() => MaterialPageRoute(
         builder: (context) => BlocProvider(
-          create: (context) => MessagesBloc()..add(LoadMessagesData()),
+          create: (context) => GetIt.instance<MessagesBloc>()..add(LoadMessagesData()),
           child: const MessagesPage(),
         ),
       );
@@ -102,22 +104,30 @@ class _MessagesPageState extends State<MessagesPage> {
                       } else if (state is MessagesFailure) {
                         return Center(child: Text(state.message));
                       } else if (state is MessagesSuccess) {
-                        if (state.messages.isEmpty) {
+                        if (state.rooms.isEmpty) {
                           return const Center(child: Text('No messages'));
                         }
                         return ListView.builder(
-                          itemCount: state.messages.length,
+                          itemCount: state.rooms.length,
                           itemBuilder: (context, index) {
-                            final msg = state.messages[index];
+                            final room = state.rooms[index];
+                            final name = room.name ?? room.otherUser?.fullName ?? 'Unknown User';
+                            final time = room.lastMessageTime != null 
+                                ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}' 
+                                : '';
+                            final preview = room.lastMessage ?? 'No messages yet';
+                            final imageUrl = room.otherUser?.avatarUrl;
+                            final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
+
                             return ChatListItem(
-                              name: msg.name,
-                              time: msg.time,
-                              messagePreview: msg.preview,
-                              imageUrl: msg.imageUrl,
-                              initials: msg.initials,
-                              unreadCount: msg.unreadCount,
-                              isOnline: msg.isOnline,
-                              isRead: msg.isRead,
+                              name: name,
+                              time: time,
+                              messagePreview: preview,
+                              imageUrl: imageUrl,
+                              initials: initials,
+                              unreadCount: 0,
+                              isOnline: false,
+                              isRead: true,
                             );
                           },
                         );

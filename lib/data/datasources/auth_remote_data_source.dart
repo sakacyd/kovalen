@@ -17,6 +17,7 @@ abstract interface class AuthRemoteDataSource {
 
   Future<UserModel?> getCurrentUser();
   Future<void> changePassword({required String newPassword});
+  Future<UserModel> updateUserLocation({required double latitude, required double longitude});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -113,6 +114,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       await supabaseClient.auth.updateUser(
         UserAttributes(password: newPassword),
       );
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> updateUserLocation({required double latitude, required double longitude}) async {
+    try {
+      final session = currentUserSession;
+      if (session == null) throw ServerException('User not logged in');
+
+      final updateData = {
+        'latitude': latitude,
+        'longitude': longitude,
+        'last_location_update': DateTime.now().toUtc().toIso8601String(),
+      };
+
+      final response = await supabaseClient
+          .from('users')
+          .update(updateData)
+          .eq('id', session.user.id)
+          .select()
+          .single();
+
+      return UserModel.fromJson(response).copyWith(email: session.user.email);
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

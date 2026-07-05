@@ -51,6 +51,7 @@ void _initAuth() {
     ..registerFactory(() => UserSignOut(serviceLocator()))
     ..registerFactory(() => CurrentUser(serviceLocator()))
     ..registerFactory(() => ChangePassword(serviceLocator()))
+    ..registerFactory(() => UpdateUserLocation(serviceLocator()))
     //bloc
     ..registerLazySingleton(
       () => AuthBloc(
@@ -59,6 +60,7 @@ void _initAuth() {
         currentUser: serviceLocator(),
         changePassword: serviceLocator(),
         appUserCubit: serviceLocator(),
+        updateUserLocation: serviceLocator(),
       ),
     );
 }
@@ -109,8 +111,10 @@ void _initProfile() {
         appUserCubit: serviceLocator(),
         getCurrentUser: serviceLocator<GetCurrentUser<ProfileRepository>>(),
         updateUserProfile: serviceLocator(),
-        getUniversitiesData: serviceLocator<GetUniversitiesData<ProfileRepository>>(),
-        getStudyProgramsData: serviceLocator<GetStudyProgramsData<ProfileRepository>>(),
+        getUniversitiesData:
+            serviceLocator<GetUniversitiesData<ProfileRepository>>(),
+        getStudyProgramsData:
+            serviceLocator<GetStudyProgramsData<ProfileRepository>>(),
         userSignOut: serviceLocator(),
       ),
     );
@@ -118,14 +122,42 @@ void _initProfile() {
 
 void _initMatchmaking() {
   serviceLocator
-  // bloc
-  .registerLazySingleton(() => MatchmakingBloc());
+    // datasource
+    ..registerFactory<MatchmakingRemoteDataSource>(
+      () => MatchmakingRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<MatchmakingRepository>(
+      () => MatchmakingRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetPotentialMatches(serviceLocator()))
+    ..registerFactory(() => SwipeUser(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => MatchmakingBloc(
+        getPotentialMatches: serviceLocator(),
+        swipeUser: serviceLocator(),
+      ),
+    );
 }
 
 void _initMessages() {
   serviceLocator
-  // bloc
-  .registerLazySingleton(() => MessagesBloc());
+    // datasource
+    ..registerFactory<MessagesRemoteDataSource>(
+      () => MessagesRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<MessagesRepository>(
+      () => MessagesRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetChatRooms(serviceLocator()))
+    ..registerFactory(() => GetMessages(serviceLocator()))
+    ..registerFactory(() => SendMessageUseCase(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(() => MessagesBloc(getChatRooms: serviceLocator()));
 }
 
 void _initOnboarding() {
@@ -150,8 +182,10 @@ void _initOnboarding() {
     ..registerLazySingleton(
       () => OnboardingBloc(
         submitOnboardingData: serviceLocator(),
-        getUniversitiesData: serviceLocator<GetUniversitiesData<OnboardingRepository>>(),
-        getStudyProgramsData: serviceLocator<GetStudyProgramsData<OnboardingRepository>>(),
+        getUniversitiesData:
+            serviceLocator<GetUniversitiesData<OnboardingRepository>>(),
+        getStudyProgramsData:
+            serviceLocator<GetStudyProgramsData<OnboardingRepository>>(),
         appUserCubit: serviceLocator(),
       ),
     );
