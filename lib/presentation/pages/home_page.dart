@@ -77,7 +77,6 @@ class _HomePageState extends State<HomePage> {
                             logo: Icons.groups,
                             title: 'Grup Aktif',
                             value: '${state.user.semester}',
-                            secondValue: '',
                           ),
                         ),
                         const SizedBox(width: 16),

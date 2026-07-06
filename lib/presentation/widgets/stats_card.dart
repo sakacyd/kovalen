@@ -5,14 +5,14 @@ class StatsCard extends StatelessWidget {
   final IconData logo;
   final String title;
   final String value;
-  final String secondValue;
+  final String? secondValue;
 
   const StatsCard({
     super.key,
     required this.logo,
     required this.title,
     required this.value,
-    required this.secondValue,
+    this.secondValue,
   });
 
   @override
@@ -47,20 +47,26 @@ class StatsCard extends StatelessWidget {
                   context,
                 ).textTheme.displayLarge?.copyWith(color: AppPallete.primary),
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppPallete.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(100),
+
+              if (secondValue != null && secondValue!.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppPallete.success.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Text(
+                    secondValue!,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: AppPallete.success),
+                  ),
                 ),
-                child: Text(
-                  secondValue,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.labelSmall?.copyWith(color: AppPallete.success),
-                ),
-              ),
+              ],
             ],
           ),
         ],
