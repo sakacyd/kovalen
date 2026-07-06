@@ -16,6 +16,7 @@ import 'package:kovalen/presentation/bloc/messages_bloc.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import 'package:kovalen/presentation/bloc/onboarding_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
+import 'package:kovalen/presentation/pages/onboarding_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +70,9 @@ class _MyAppState extends State<MyApp> {
       home: BlocBuilder<AppUserCubit, AppUserState>(
         builder: (context, state) {
           if (state is AppUserLoggedIn) {
+            if (!state.user.isProfileComplete) {
+              return const OnboardingPage();
+            }
             return const MainPage();
           } else if (state is AppUserLoggedOut) {
             return const SignInPage();

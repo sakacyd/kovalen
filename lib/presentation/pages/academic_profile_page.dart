@@ -482,6 +482,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                     backgroundImage: avatarUrl.trim().startsWith('http')
                         ? NetworkImage(avatarUrl.trim())
                         : null,
+                    onBackgroundImageError: avatarUrl.trim().startsWith('http')
+                        ? (exception, stackTrace) {}
+                        : null,
                     child: !avatarUrl.trim().startsWith('http')
                         ? const Icon(
                             Icons.person,

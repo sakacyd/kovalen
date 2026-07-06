@@ -66,6 +66,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                             ? DecorationImage(
                                 image: NetworkImage(avatarUrl),
                                 fit: BoxFit.cover,
+                                onError: (exception, stackTrace) {},
                               )
                             : null,
                       ),

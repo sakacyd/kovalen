@@ -28,5 +28,9 @@ class User {
     this.universityName,
     this.studyProgramName,
   });
+
+  bool get isProfileComplete {
+    return universityId.isNotEmpty && studyProgramId.isNotEmpty && semester > 0;
+  }
 }
 // TODO: tambahin gender cok

@@ -146,6 +146,9 @@ class SettingsPage extends StatelessWidget {
                   backgroundImage: user.avatarUrl.trim().startsWith('http')
                       ? NetworkImage(user.avatarUrl.trim())
                       : null,
+                  onBackgroundImageError: user.avatarUrl.trim().startsWith('http')
+                      ? (exception, stackTrace) {}
+                      : null,
                   child: !user.avatarUrl.trim().startsWith('http')
                       ? const Icon(
                           Icons.person,

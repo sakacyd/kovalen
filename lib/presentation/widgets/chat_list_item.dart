@@ -47,6 +47,9 @@ class ChatListItem extends StatelessWidget {
                   backgroundImage: imageUrl != null && imageUrl!.trim().startsWith('http') 
                       ? NetworkImage(imageUrl!.trim()) 
                       : null,
+                  onBackgroundImageError: imageUrl != null && imageUrl!.trim().startsWith('http') 
+                      ? (exception, stackTrace) {}
+                      : null,
                   child: (imageUrl == null || !imageUrl!.trim().startsWith('http')) && initials != null
                       ? Text(
                           initials!,

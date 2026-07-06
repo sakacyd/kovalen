@@ -36,6 +36,7 @@ class ProfileHeader extends StatelessWidget {
                 radius: 64,
                 backgroundColor: AppPallete.surfaceContainerHighest,
                 backgroundImage: avatarUrl.trim().startsWith('http') ? NetworkImage(avatarUrl.trim()) : null,
+                onBackgroundImageError: avatarUrl.trim().startsWith('http') ? (exception, stackTrace) {} : null,
                 child: !avatarUrl.trim().startsWith('http') 
                   ? const Icon(Icons.person, size: 48, color: AppPallete.onSurfaceVariant)
                   : null,

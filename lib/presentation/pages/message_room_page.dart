@@ -98,6 +98,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                     ? DecorationImage(
                         image: NetworkImage(widget.avatarUrl!.trim()),
                         fit: BoxFit.cover,
+                        onError: (exception, stackTrace) {},
                       )
                     : null,
               ),
@@ -228,6 +229,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                               widget.avatarUrl!.trim(),
                                             ),
                                             fit: BoxFit.cover,
+                                            onError: (exception, stackTrace) {},
                                           )
                                         : null,
                                   ),

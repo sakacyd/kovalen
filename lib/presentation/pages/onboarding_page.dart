@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/main_page.dart';
-import 'package:kovalen/init_dependencies.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/core/common/entities/interest.dart';
 import '../bloc/onboarding_bloc.dart';
@@ -14,10 +13,7 @@ class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
   static route() =>
       MaterialPageRoute(
-        builder: (context) => BlocProvider(
-          create: (_) => serviceLocator<OnboardingBloc>()..add(OnboardingLoadUniversities()),
-          child: const OnboardingPage(),
-        ),
+        builder: (context) => const OnboardingPage(),
       );
 
   @override
@@ -35,6 +31,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   final Set<String> _selectedInterests = {};
   static const int _maxInterests = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<OnboardingBloc>().add(OnboardingLoadUniversities());
+  }
 
   @override
   void dispose() {
@@ -299,7 +301,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       }
                       
                       final String finalAvatarUrl = _avatarUrlController.text.trim().isEmpty 
-                          ? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(_fullNameController.text)}&background=random'
+                          ? 'https://api.dicebear.com/9.x/initials/png?seed=${Uri.encodeComponent(_fullNameController.text)}'
                           : _avatarUrlController.text;
 
                       context.read<OnboardingBloc>().add(
@@ -403,6 +405,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 backgroundColor: AppPallete.surfaceContainerHighest,
                 backgroundImage: _avatarUrlController.text.isNotEmpty
                     ? NetworkImage(_avatarUrlController.text)
+                    : null,
+                onBackgroundImageError: _avatarUrlController.text.isNotEmpty
+                    ? (exception, stackTrace) {}
                     : null,
                 child: _avatarUrlController.text.isEmpty
                     ? const Icon(Icons.person, size: 56, color: AppPallete.onSurfaceVariant)
