@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/main_page.dart';
 import 'package:kovalen/init_dependencies.dart';
+import 'package:kovalen/core/theme/app_pallete.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../widgets/custom_dropdown.dart';
 import '../widgets/selectable_pill.dart';
@@ -42,13 +44,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _toggleInterest(String interest) {
+  void _toggleInterest(String interestId) {
     setState(() {
-      if (_selectedInterests.contains(interest)) {
-        _selectedInterests.remove(interest);
+      if (_selectedInterests.contains(interestId)) {
+        _selectedInterests.remove(interestId);
       } else {
         if (_selectedInterests.length < _maxInterests) {
-          _selectedInterests.add(interest);
+          _selectedInterests.add(interestId);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -105,20 +107,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    _buildSectionHeader('Informasi Dasar', Icons.person_outline),
+                    const SizedBox(height: 24),
+                    _buildAvatarPicker(),
+                    const SizedBox(height: 24),
                     CustomTextField(
                       label: 'Nama Lengkap',
                       hint: 'Masukkan nama lengkap',
                       controller: _fullNameController,
-                      icon: Icons.person_outline,
+                      icon: Icons.badge_outlined,
                     ),
-                    const SizedBox(height: 24),
-                    CustomTextField(
-                      label: 'URL Avatar (Opsional)',
-                      hint: 'Masukkan URL gambar avatar',
-                      controller: _avatarUrlController,
-                      icon: Icons.image_outlined,
-                    ),
+                    const SizedBox(height: 32),
+                    _buildSectionHeader('Latar Belakang Akademik', Icons.school_outlined),
                     const SizedBox(height: 24),
                     BlocBuilder<OnboardingBloc, OnboardingState>(
                       builder: (context, state) {
@@ -151,14 +151,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               onChanged: (val) {
                                 setState(() {
                                   _selectedUniversity = val;
-                                  _selectedProgram = null; // reset program studi ketika universitas berubah
+                                  _selectedProgram = null; 
                                 });
                                 if (val != null) {
                                   context.read<OnboardingBloc>().add(OnboardingLoadStudyPrograms(val));
                                 }
                               },
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
                             CustomDropdown<String>(
                               label: 'Program Studi',
                               hint: 'Pilih Program Studi',
@@ -171,10 +171,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         );
                       }
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
+                          flex: 3,
                           child: CustomDropdown<String>(
                             label: 'Semester Saat Ini',
                             hint: 'Semester',
@@ -195,6 +196,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
+                          flex: 2,
                           child: CustomTextField(
                             label: 'IPK (G-PA)',
                             hint: '0.00',
@@ -205,7 +207,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                    _buildSectionHeader('Fokus & Minat', Icons.lightbulb_outline),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,8 +215,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         Text(
-                          'Minat Belajar',
-                          style: Theme.of(context).textTheme.labelLarge,
+                          'Pilih Topik Minat Belajar',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
                         Text(
                           '${_selectedInterests.length}/$_maxInterests Terpilih',
@@ -223,34 +228,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                 color:
                                     _selectedInterests.length == _maxInterests
                                     ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(context).colorScheme.outline,
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Text(
                       'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     BlocBuilder<OnboardingBloc, OnboardingState>(
                       builder: (context, state) {
                         if (state is OnboardingDataLoaded) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 12,
-                            children: state.availableInterests.map((interest) {
-                              return SelectablePill(
-                                label: interest.name,
-                                isSelected: _selectedInterests.contains(interest.id),
-                                onTap: () => _toggleInterest(interest.id),
-                              );
-                            }).toList(),
-                          );
+                          return _buildInterestsGroup(state.availableInterests);
                         }
                         return const Center(child: CircularProgressIndicator());
                       }
@@ -362,6 +356,136 @@ class _OnboardingPageState extends State<OnboardingPage> {
         color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(100),
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ],
+    );
+  }
+
+  Widget _buildAvatarPicker() {
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 56,
+                backgroundColor: AppPallete.surfaceContainerHighest,
+                backgroundImage: _avatarUrlController.text.isNotEmpty
+                    ? NetworkImage(_avatarUrlController.text)
+                    : null,
+                child: _avatarUrlController.text.isEmpty
+                    ? const Icon(Icons.person, size: 56, color: AppPallete.onSurfaceVariant)
+                    : null,
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppPallete.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppPallete.surface, width: 3),
+                  ),
+                  child: const Icon(Icons.edit, color: AppPallete.onPrimary, size: 16),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          CustomTextField(
+            label: 'URL Avatar (Opsional)',
+            hint: 'https://...',
+            controller: _avatarUrlController,
+            icon: Icons.image_outlined,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInterestsGroup(Map<String, Map<String, List<Interest>>> groupedByType) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: groupedByType.keys.map((typeName) {
+        final groupedByCategory = groupedByType[typeName]!;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
+              child: Text(
+                typeName,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            ...groupedByCategory.keys.map((catName) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      catName,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 12,
+                      children: groupedByCategory[catName]!.map((interest) {
+                        return SelectablePill(
+                          label: interest.name,
+                          isSelected: _selectedInterests.contains(interest.id),
+                          onTap: () => _toggleInterest(interest.id),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+      }).toList(),
     );
   }
 }

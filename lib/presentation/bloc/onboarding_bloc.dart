@@ -45,7 +45,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     final res = await _getUniversitiesData(NoParams());
     final interestsRes = await _getAvailableInterests(NoParams());
     
-    List<Interest> availableInterests = [];
+    Map<String, Map<String, List<Interest>>> availableInterests = {};
     interestsRes.fold(
       (failure) => null, // Just ignore failure for interests, it won't break onboarding entirely
       (interests) => availableInterests = interests,

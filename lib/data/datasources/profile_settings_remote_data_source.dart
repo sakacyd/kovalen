@@ -59,14 +59,31 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
           .eq('id', userId)
           .select();
 
-      await supabaseClient.from('user_interests').delete().eq('user_id', userId);
-      
-      if (interestIds.isNotEmpty) {
-        final interestInserts = interestIds.map((id) => {
+      final uniqueInterestIds = interestIds.toSet().toList();
+
+      if (uniqueInterestIds.isNotEmpty) {
+        // Hapus interests yang sudah tidak dipilih
+        await supabaseClient
+            .from('user_interests')
+            .delete()
+            .eq('user_id', userId)
+            .not('interest_id', 'in', uniqueInterestIds);
+
+        // Upsert interests yang dipilih (tambah baru atau abaikan yang sudah ada)
+        final interestInserts = uniqueInterestIds.map((id) => {
           'user_id': userId,
           'interest_id': id,
         }).toList();
-        await supabaseClient.from('user_interests').insert(interestInserts);
+        
+        await supabaseClient
+            .from('user_interests')
+            .upsert(interestInserts);
+      } else {
+        // Jika tidak ada interest yang dipilih, hapus semua
+        await supabaseClient
+            .from('user_interests')
+            .delete()
+            .eq('user_id', userId);
       }
 
       return UserModel.fromJson(response.first).copyWith(

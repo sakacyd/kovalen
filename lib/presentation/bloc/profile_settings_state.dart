@@ -16,18 +16,18 @@ class ProfileSettingsFailure extends ProfileSettingsState {
 class ProfileSettingsDataLoaded extends ProfileSettingsState {
   final List<University> universities;
   final List<StudyProgram> studyPrograms;
-  final List<Interest> availableInterests;
+  final Map<String, Map<String, List<Interest>>> availableInterests;
 
   ProfileSettingsDataLoaded({
     this.universities = const [],
     this.studyPrograms = const [],
-    this.availableInterests = const [],
+    this.availableInterests = const {},
   });
 
   ProfileSettingsDataLoaded copyWith({
     List<University>? universities,
     List<StudyProgram>? studyPrograms,
-    List<Interest>? availableInterests,
+    Map<String, Map<String, List<Interest>>>? availableInterests,
   }) {
     return ProfileSettingsDataLoaded(
       universities: universities ?? this.universities,

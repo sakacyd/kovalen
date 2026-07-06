@@ -99,7 +99,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     final res = await _getUniversitiesData(NoParams());
     final interestsRes = await _getAvailableInterests(NoParams());
     
-    List<Interest> availableInterests = [];
+    Map<String, Map<String, List<Interest>>> availableInterests = {};
     interestsRes.fold(
       (failure) => null,
       (interests) => availableInterests = interests,

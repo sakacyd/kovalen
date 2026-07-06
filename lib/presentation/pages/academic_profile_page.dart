@@ -9,6 +9,7 @@ import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/bloc/profile_bloc.dart';
 import 'package:kovalen/presentation/widgets/confirmation_modal.dart';
 import 'package:kovalen/presentation/widgets/selectable_pill.dart';
+import 'package:kovalen/core/common/entities/interest.dart';
 
 class AcademicProfilePage extends StatefulWidget {
   static Route route() =>
@@ -214,15 +215,19 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _buildSectionHeader('Informasi Dasar', Icons.person_outline),
+                const SizedBox(height: 24),
                 _buildAvatarSection(),
                 const SizedBox(height: 32),
                 CustomTextField(
                   label: 'Nama Lengkap',
                   hint: 'Masukkan nama lengkap',
                   controller: _nameController,
-                  icon: Icons.person_outline,
+                  icon: Icons.badge_outlined,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 32),
+                _buildSectionHeader('Latar Belakang Akademik', Icons.school_outlined),
+                const SizedBox(height: 24),
                 BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {
                     List<DropdownMenuItem<String>> uniItems = [];
@@ -368,7 +373,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 32),
-                Divider(color: Theme.of(context).colorScheme.outlineVariant),
+                _buildSectionHeader('Fokus & Minat', Icons.lightbulb_outline),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -376,42 +381,34 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      'Minat Belajar',
-                      style: Theme.of(context).textTheme.labelLarge,
+                      'Pilih Topik Minat Belajar',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                     Text(
                       '${_selectedInterests.length}/$_maxInterests Terpilih',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: _selectedInterests.length == _maxInterests
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.outline,
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {
                     if (state is ProfileSettingsDataLoaded) {
-                      return Wrap(
-                        spacing: 8,
-                        runSpacing: 12,
-                        children: state.availableInterests.map((interest) {
-                          return SelectablePill(
-                            label: interest.name,
-                            isSelected: _selectedInterests.contains(interest.id),
-                            onTap: () => _toggleInterest(interest.id),
-                          );
-                        }).toList(),
-                      );
+                      return _buildInterestsGroup(state.availableInterests);
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -436,49 +433,144 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     );
   }
 
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ],
+    );
+  }
+
   Widget _buildAvatarSection() {
     return BlocBuilder<AppUserCubit, AppUserState>(
       builder: (context, state) {
         String avatarUrl = _avatarUrl;
 
         return Center(
-          child: Stack(
+          child: Column(
             children: [
-              CircleAvatar(
-                radius: 48,
-                backgroundColor: AppPallete.surfaceContainerHighest,
-                backgroundImage: avatarUrl.trim().startsWith('http')
-                    ? NetworkImage(avatarUrl.trim())
-                    : null,
-                child: !avatarUrl.trim().startsWith('http')
-                    ? const Icon(
-                        Icons.person,
-                        size: 48,
-                        color: AppPallete.onSurfaceVariant,
-                      )
-                    : null,
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppPallete.primary,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppPallete.surface, width: 2),
+              Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 56,
+                    backgroundColor: AppPallete.surfaceContainerHighest,
+                    backgroundImage: avatarUrl.trim().startsWith('http')
+                        ? NetworkImage(avatarUrl.trim())
+                        : null,
+                    child: !avatarUrl.trim().startsWith('http')
+                        ? const Icon(
+                            Icons.person,
+                            size: 56,
+                            color: AppPallete.onSurfaceVariant,
+                          )
+                        : null,
                   ),
-                  child: const Icon(
-                    Icons.edit,
-                    color: AppPallete.onPrimary,
-                    size: 16,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppPallete.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppPallete.surface, width: 3),
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        color: AppPallete.onPrimary,
+                        size: 16,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
+              const SizedBox(height: 16),
+              // We could optionally allow them to edit the URL manually here too,
+              // but since they already click "edit" or it's fetched, let's keep it simple.
+              // We'll leave out the URL textfield here to save space or let them use the pencil.
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildInterestsGroup(Map<String, Map<String, List<Interest>>> groupedByType) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: groupedByType.keys.map((typeName) {
+        final groupedByCategory = groupedByType[typeName]!;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
+              child: Text(
+                typeName,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            ...groupedByCategory.keys.map((catName) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      catName,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 12,
+                      children: groupedByCategory[catName]!.map((interest) {
+                        return SelectablePill(
+                          label: interest.name,
+                          isSelected: _selectedInterests.contains(interest.id),
+                          onTap: () => _toggleInterest(interest.id),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+      }).toList(),
     );
   }
 }
