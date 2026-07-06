@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/core/common/entities/user.dart';
@@ -11,6 +12,7 @@ abstract interface class OnboardingRepository
   Future<Either<Failure, User>> updateUserData({
     required String fullName,
     required String avatarUrl,
+    File? avatarFile,
     required String universityId,
     required String studyProgramId,
     required int semester,

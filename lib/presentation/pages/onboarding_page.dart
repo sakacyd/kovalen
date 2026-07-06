@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kovalen/core/utils/pick_image.dart';
 import 'package:kovalen/main_page.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/core/common/entities/interest.dart';
@@ -23,6 +25,7 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final _fullNameController = TextEditingController();
   final _avatarUrlController = TextEditingController();
+  File? _avatarFile;
   final _gpaController = TextEditingController();
 
   String? _selectedUniversity;
@@ -62,6 +65,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
         }
       }
     });
+  }
+
+  void _pickAvatar() async {
+    final file = await pickImage();
+    if (file != null) {
+      setState(() {
+        _avatarFile = file;
+      });
+    }
   }
 
   @override
@@ -283,9 +295,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 builder: (context, state) {
                   return ElevatedButton(
                     onPressed: state is OnboardingLoading ? null : () {
-                      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _selectedInterests.isEmpty || _fullNameController.text.isEmpty) {
+                      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _selectedInterests.isEmpty || _fullNameController.text.isEmpty || _avatarFile == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Lengkapi semua data yang wajib')),
+                          const SnackBar(content: Text('Lengkapi semua data yang wajib termasuk foto profil')),
                         );
                         return;
                       }
@@ -300,14 +312,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         return;
                       }
                       
-                      final String finalAvatarUrl = _avatarUrlController.text.trim().isEmpty 
-                          ? 'https://api.dicebear.com/9.x/initials/png?seed=${Uri.encodeComponent(_fullNameController.text)}'
-                          : _avatarUrlController.text;
-
                       context.read<OnboardingBloc>().add(
                         OnboardingSubmit(
                           fullName: _fullNameController.text,
-                          avatarUrl: finalAvatarUrl,
+                          avatarUrl: '', // This will be overwritten by backend upload
+                          avatarFile: _avatarFile,
                           universityId: _selectedUniversity!,
                           studyProgramId: _selectedProgram!,
                           semester: int.parse(_selectedSemester!),
@@ -398,43 +407,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return Center(
       child: Column(
         children: [
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 56,
-                backgroundColor: AppPallete.surfaceContainerHighest,
-                backgroundImage: _avatarUrlController.text.isNotEmpty
-                    ? NetworkImage(_avatarUrlController.text)
-                    : null,
-                onBackgroundImageError: _avatarUrlController.text.isNotEmpty
-                    ? (exception, stackTrace) {}
-                    : null,
-                child: _avatarUrlController.text.isEmpty
-                    ? const Icon(Icons.person, size: 56, color: AppPallete.onSurfaceVariant)
-                    : null,
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppPallete.primary,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppPallete.surface, width: 3),
-                  ),
-                  child: const Icon(Icons.edit, color: AppPallete.onPrimary, size: 16),
+          GestureDetector(
+            onTap: _pickAvatar,
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 56,
+                  backgroundColor: AppPallete.surfaceContainerHighest,
+                  backgroundImage: _avatarFile != null
+                      ? FileImage(_avatarFile!) as ImageProvider
+                      : null,
+                  child: _avatarFile == null
+                      ? const Icon(Icons.person, size: 56, color: AppPallete.onSurfaceVariant)
+                      : null,
                 ),
-              ),
-            ],
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppPallete.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppPallete.surface, width: 3),
+                    ),
+                    child: const Icon(Icons.camera_alt, color: AppPallete.onPrimary, size: 16),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
-          CustomTextField(
-            label: 'URL Avatar (Opsional)',
-            hint: 'https://...',
-            controller: _avatarUrlController,
-            icon: Icons.image_outlined,
-          ),
+
         ],
       ),
     );

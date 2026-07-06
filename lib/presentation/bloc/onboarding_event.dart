@@ -13,6 +13,7 @@ final class OnboardingLoadStudyPrograms extends OnboardingEvent {
 final class OnboardingSubmit extends OnboardingEvent {
   final String fullName;
   final String avatarUrl;
+  final File? avatarFile;
   final String universityId;
   final String studyProgramId;
   final int semester;
@@ -22,6 +23,7 @@ final class OnboardingSubmit extends OnboardingEvent {
   OnboardingSubmit({
     required this.fullName,
     required this.avatarUrl,
+    this.avatarFile,
     required this.universityId,
     required this.studyProgramId,
     required this.semester,

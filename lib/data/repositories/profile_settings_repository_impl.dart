@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/core/error/failures.dart';
@@ -17,6 +18,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
   Future<Either<Failure, User>> updateUserData({
     required String fullName,
     required String avatarUrl,
+    File? avatarFile,
     required String universityId,
     required String studyProgramId,
     required int semester,
@@ -27,6 +29,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
       final userModel = await remoteDataSource.updateUserData(
         fullName: fullName,
         avatarUrl: avatarUrl,
+        avatarFile: avatarFile,
         universityId: universityId,
         studyProgramId: studyProgramId,
         semester: semester,

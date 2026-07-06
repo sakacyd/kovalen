@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,6 +56,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
       UpdateUserProfileParams(
         fullName: event.fullName,
         avatarUrl: event.avatarUrl,
+        avatarFile: event.avatarFile,
         universityId: event.universityId,
         studyProgramId: event.studyProgramId,
         semester: event.semester,

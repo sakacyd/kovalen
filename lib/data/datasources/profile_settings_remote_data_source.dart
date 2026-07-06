@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/data/models/user_model.dart';
 import 'package:kovalen/data/models/university_model.dart';
@@ -9,6 +10,7 @@ abstract interface class ProfileSettingsRemoteDataSource {
   Future<UserModel> updateUserData({
     required String fullName,
     required String avatarUrl,
+    File? avatarFile,
     required String universityId,
     required String studyProgramId,
     required int semester,
@@ -32,6 +34,7 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
   Future<UserModel> updateUserData({
     required String fullName,
     required String avatarUrl,
+    File? avatarFile,
     required String universityId,
     required String studyProgramId,
     required int semester,
@@ -46,11 +49,21 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
 
       final userId = session.user.id;
 
+      String finalAvatarUrl = avatarUrl;
+      if (avatarFile != null) {
+        final fileExtension = avatarFile.path.split('.').last;
+        final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+        final filePath = '$userId/$fileName';
+        
+        await supabaseClient.storage.from('avatars').upload(filePath, avatarFile);
+        finalAvatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+      }
+
       final response = await supabaseClient
           .from('users')
           .update({
             'full_name': fullName,
-            'avatar_url': avatarUrl,
+            'avatar_url': finalAvatarUrl,
             'university_id': universityId,
             'study_program_id': studyProgramId,
             'semester': semester,

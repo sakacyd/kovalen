@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kovalen/core/utils/pick_image.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
@@ -30,6 +32,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   String? _selectedUniversity;
   String? _selectedStudyProgram;
   String _avatarUrl = '';
+  File? _avatarFile;
   final Set<String> _selectedInterests = {};
   static const int _maxInterests = 5;
 
@@ -108,6 +111,15 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     return false;
   }
 
+  void _pickAvatar() async {
+    final file = await pickImage();
+    if (file != null) {
+      setState(() {
+        _avatarFile = file;
+      });
+    }
+  }
+
   void _saveProfile() async {
     final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
 
@@ -137,6 +149,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           UpdateProfileSettingsData(
             fullName: _nameController.text,
             avatarUrl: _avatarUrl,
+            avatarFile: _avatarFile,
             universityId: _selectedUniversity!,
             studyProgramId: _selectedStudyProgram!,
             semester: int.tryParse(_selectedSemester ?? '1') ?? 1,
@@ -474,43 +487,48 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
         return Center(
           child: Column(
             children: [
-              Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 56,
-                    backgroundColor: AppPallete.surfaceContainerHighest,
-                    backgroundImage: avatarUrl.trim().startsWith('http')
-                        ? NetworkImage(avatarUrl.trim())
-                        : null,
-                    onBackgroundImageError: avatarUrl.trim().startsWith('http')
-                        ? (exception, stackTrace) {}
-                        : null,
-                    child: !avatarUrl.trim().startsWith('http')
-                        ? const Icon(
-                            Icons.person,
-                            size: 56,
-                            color: AppPallete.onSurfaceVariant,
-                          )
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppPallete.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppPallete.surface, width: 3),
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: AppPallete.onPrimary,
-                        size: 16,
+              GestureDetector(
+                onTap: _pickAvatar,
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 56,
+                      backgroundColor: AppPallete.surfaceContainerHighest,
+                      backgroundImage: _avatarFile != null 
+                          ? FileImage(_avatarFile!) as ImageProvider
+                          : (avatarUrl.trim().startsWith('http')
+                              ? NetworkImage(avatarUrl.trim())
+                              : null),
+                      onBackgroundImageError: _avatarFile == null && avatarUrl.trim().startsWith('http')
+                          ? (exception, stackTrace) {}
+                          : null,
+                      child: _avatarFile == null && !avatarUrl.trim().startsWith('http')
+                          ? const Icon(
+                              Icons.person,
+                              size: 56,
+                              color: AppPallete.onSurfaceVariant,
+                            )
+                          : null,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppPallete.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppPallete.surface, width: 3),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: AppPallete.onPrimary,
+                          size: 16,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               // We could optionally allow them to edit the URL manually here too,

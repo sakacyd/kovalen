@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:kovalen/core/error/failures.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
@@ -14,6 +15,7 @@ class SubmitOnboardingData implements UseCase<User, SubmitOnboardingDataParams> 
     return await repository.updateUserData(
       fullName: params.fullName,
       avatarUrl: params.avatarUrl,
+      avatarFile: params.avatarFile,
       universityId: params.universityId,
       studyProgramId: params.studyProgramId,
       semester: params.semester,
@@ -26,6 +28,7 @@ class SubmitOnboardingData implements UseCase<User, SubmitOnboardingDataParams> 
 class SubmitOnboardingDataParams {
   final String fullName;
   final String avatarUrl;
+  final File? avatarFile;
   final String universityId;
   final String studyProgramId;
   final int semester;
@@ -35,6 +38,7 @@ class SubmitOnboardingDataParams {
   SubmitOnboardingDataParams({
     required this.fullName,
     required this.avatarUrl,
+    this.avatarFile,
     required this.universityId,
     required this.studyProgramId,
     required this.semester,
