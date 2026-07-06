@@ -23,9 +23,9 @@ class AcademicProfilePage extends StatefulWidget {
 class _AcademicProfilePageState extends State<AcademicProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _semesterController = TextEditingController();
   final _gpaController = TextEditingController();
 
+  String? _selectedSemester;
   String? _selectedUniversity;
   String? _selectedStudyProgram;
   String _avatarUrl = '';
@@ -42,7 +42,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
       _nameController.text = appUserState.user.fullName;
       _selectedUniversity = appUserState.user.universityId;
       _selectedStudyProgram = appUserState.user.studyProgramId;
-      _semesterController.text = appUserState.user.semester.toString();
+      int sem = appUserState.user.semester;
+      _selectedSemester = sem >= 8 ? '8' : sem.toString();
       _gpaController.text = appUserState.user.gpa.toString();
       _avatarUrl = appUserState.user.avatarUrl;
 
@@ -62,7 +63,6 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _semesterController.dispose();
     _gpaController.dispose();
     super.dispose();
   }
@@ -91,7 +91,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
       return _nameController.text != appUserState.user.fullName ||
           _selectedUniversity != appUserState.user.universityId ||
           _selectedStudyProgram != appUserState.user.studyProgramId ||
-          _semesterController.text != appUserState.user.semester.toString() ||
+          _selectedSemester != (appUserState.user.semester >= 8 ? '8' : appUserState.user.semester.toString()) ||
           _gpaController.text != appUserState.user.gpa.toString() ||
           _avatarUrl != appUserState.user.avatarUrl;
     }
@@ -138,7 +138,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             avatarUrl: _avatarUrl,
             universityId: _selectedUniversity!,
             studyProgramId: _selectedStudyProgram!,
-            semester: int.tryParse(_semesterController.text) ?? 1,
+            semester: int.tryParse(_selectedSemester ?? '1') ?? 1,
             gpa: parsedGpa,
             interests: _selectedInterests.toList(),
           ),
@@ -338,11 +338,22 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomTextField(
-                        label: 'Semester',
-                        hint: '1-14',
-                        controller: _semesterController,
-                        icon: Icons.school_outlined,
+                      child: CustomDropdown<String>(
+                        label: 'Semester Saat Ini',
+                        hint: 'Semester',
+                        value: _selectedSemester,
+                        items: const [
+                          DropdownMenuItem(value: '1', child: Text('Semester 1')),
+                          DropdownMenuItem(value: '2', child: Text('Semester 2')),
+                          DropdownMenuItem(value: '3', child: Text('Semester 3')),
+                          DropdownMenuItem(value: '4', child: Text('Semester 4')),
+                          DropdownMenuItem(value: '5', child: Text('Semester 5')),
+                          DropdownMenuItem(value: '6', child: Text('Semester 6')),
+                          DropdownMenuItem(value: '7', child: Text('Semester 7')),
+                          DropdownMenuItem(value: '8', child: Text('Semester 8+')),
+                        ],
+                        onChanged: (val) =>
+                            setState(() => _selectedSemester = val),
                       ),
                     ),
                     const SizedBox(width: 16),

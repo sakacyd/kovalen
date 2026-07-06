@@ -293,6 +293,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         );
                         return;
                       }
+
+                      final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
+                      if (parsedGpa < 0.0 || parsedGpa > 4.0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Nilai IPK harus berada di rentang 0.00 hingga 4.00'),
+                          ),
+                        );
+                        return;
+                      }
                       
                       final String finalAvatarUrl = _avatarUrlController.text.trim().isEmpty 
                           ? 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(_fullNameController.text)}&background=random'
@@ -305,7 +315,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           universityId: _selectedUniversity!,
                           studyProgramId: _selectedProgram!,
                           semester: int.parse(_selectedSemester!),
-                          gpa: double.tryParse(_gpaController.text) ?? 0.0,
+                          gpa: parsedGpa,
                           interests: _selectedInterests.toList(),
                         ),
                       );
