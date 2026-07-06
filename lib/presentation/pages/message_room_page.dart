@@ -92,14 +92,18 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                 shape: BoxShape.circle,
                 color: AppPallete.surfaceContainer,
                 border: Border.all(color: AppPallete.stroke),
-                image: widget.avatarUrl != null && widget.avatarUrl!.trim().startsWith('http')
+                image:
+                    widget.avatarUrl != null &&
+                        widget.avatarUrl!.trim().startsWith('http')
                     ? DecorationImage(
                         image: NetworkImage(widget.avatarUrl!.trim()),
                         fit: BoxFit.cover,
                       )
                     : null,
               ),
-              child: widget.avatarUrl == null || !widget.avatarUrl!.trim().startsWith('http')
+              child:
+                  widget.avatarUrl == null ||
+                      !widget.avatarUrl!.trim().startsWith('http')
                   ? Center(
                       child: Text(
                         widget.name.isNotEmpty
@@ -176,9 +180,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                   }
                 },
                 builder: (context, state) {
-                  if (state is MessageRoomLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is MessageRoomFailure) {
+                  if (state is MessageRoomFailure) {
                     return Center(
                       child: Text(
                         state.message,
@@ -216,7 +218,11 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppPallete.surfaceContainer,
-                                    image: widget.avatarUrl != null && widget.avatarUrl!.trim().startsWith('http')
+                                    image:
+                                        widget.avatarUrl != null &&
+                                            widget.avatarUrl!.trim().startsWith(
+                                              'http',
+                                            )
                                         ? DecorationImage(
                                             image: NetworkImage(
                                               widget.avatarUrl!.trim(),
@@ -225,7 +231,11 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                           )
                                         : null,
                                   ),
-                                  child: widget.avatarUrl == null || !widget.avatarUrl!.trim().startsWith('http')
+                                  child:
+                                      widget.avatarUrl == null ||
+                                          !widget.avatarUrl!.trim().startsWith(
+                                            'http',
+                                          )
                                       ? Center(
                                           child: Text(
                                             widget.name.isNotEmpty
@@ -354,7 +364,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppPallete.surfaceContainerHighest.withValues(alpha: 0.3),
+                      color: AppPallete.surfaceContainerHighest.withValues(
+                        alpha: 0.3,
+                      ),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: AppPallete.stroke.withValues(alpha: 0.5),

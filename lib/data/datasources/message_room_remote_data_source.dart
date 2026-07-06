@@ -3,7 +3,7 @@ import 'package:kovalen/data/models/message_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class MessageRoomRemoteDataSource {
-  Future<List<MessageModel>> getMessageRoomMessages(String roomId);
+  Stream<List<MessageModel>> getMessageRoomMessages(String roomId);
   Future<MessageModel> sendMessage(String roomId, String content);
 }
 
@@ -13,20 +13,19 @@ class MessageRoomRemoteDataSourceImpl implements MessageRoomRemoteDataSource {
   MessageRoomRemoteDataSourceImpl(this.supabaseClient);
 
   @override
-  Future<List<MessageModel>> getMessageRoomMessages(String roomId) async {
-    try {
-      final response = await supabaseClient
-          .from('messages')
-          .select('*')
-          .eq('room_id', roomId)
-          .order('created_at', ascending: true);
-
-      return (response as List).map((m) => MessageModel.fromJson(m)).toList();
-    } on AuthException catch (e) {
-      throw ServerException(e.message);
-    } catch (e) {
+  Stream<List<MessageModel>> getMessageRoomMessages(String roomId) {
+    return supabaseClient
+        .from('messages')
+        .stream(primaryKey: ['id'])
+        .eq('room_id', roomId)
+        .order('created_at', ascending: true)
+        .map((data) => data.map((m) => MessageModel.fromJson(m)).toList())
+        .handleError((e) {
+      if (e is AuthException) {
+        throw ServerException(e.message);
+      }
       throw ServerException(e.toString());
-    }
+    });
   }
 
   @override

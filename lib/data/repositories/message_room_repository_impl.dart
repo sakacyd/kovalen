@@ -14,17 +14,19 @@ class MessageRoomRepositoryImpl implements MessageRoomRepository {
   MessageRoomRepositoryImpl(this.remoteDataSource, this.connectionChecker);
 
   @override
-  Future<Either<Failure, List<Message>>> getMessageRoomMessages(String roomId) async {
+  Stream<Either<Failure, List<Message>>> getMessageRoomMessages(String roomId) async* {
+    if (!await connectionChecker.isConnected) {
+      yield left(Failure(Constants.noConnectionMessage));
+      return;
+    }
     try {
-      if (!await connectionChecker.isConnected) {
-        return left(Failure(Constants.noConnectionMessage));
+      await for (final messages in remoteDataSource.getMessageRoomMessages(roomId)) {
+        yield right(messages);
       }
-      final messages = await remoteDataSource.getMessageRoomMessages(roomId);
-      return right(messages);
     } on ServerException catch (e) {
-      return left(Failure(e.message));
+      yield left(Failure(e.message));
     } catch (e) {
-      return left(Failure(e.toString()));
+      yield left(Failure(e.toString()));
     }
   }
 

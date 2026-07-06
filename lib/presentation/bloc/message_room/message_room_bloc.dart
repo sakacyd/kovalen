@@ -28,13 +28,16 @@ class MessageRoomBloc extends Bloc<MessageRoomEvent, MessageRoomState> {
   ) async {
     emit(MessageRoomLoading());
 
-    final res = await _getMessageRoomMessages(
-      GetMessageRoomMessagesParams(roomId: event.roomId),
-    );
-
-    res.fold(
-      (l) => emit(MessageRoomFailure(l.message)),
-      (r) => emit(MessageRoomSuccess(r)),
+    await emit.forEach(
+      _getMessageRoomMessages(
+        GetMessageRoomMessagesParams(roomId: event.roomId),
+      ),
+      onData: (res) {
+        return res.fold(
+          (l) => MessageRoomFailure(l.message),
+          (r) => MessageRoomSuccess(r),
+        );
+      },
     );
   }
 

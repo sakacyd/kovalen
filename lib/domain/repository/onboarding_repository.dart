@@ -18,6 +18,7 @@ abstract interface class OnboardingRepository
     required List<String> interestIds,
   });
 
+  @override
   Future<Either<Failure, List<Interest>>> getAvailableInterests();
 
   @override
