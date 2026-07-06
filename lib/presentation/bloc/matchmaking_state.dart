@@ -18,3 +18,9 @@ final class MatchmakingFailure extends MatchmakingState {
 
   MatchmakingFailure({required this.message});
 }
+
+final class MatchmakingMatchFound extends MatchmakingState {
+  final List<MatchProfile> matches;
+  
+  MatchmakingMatchFound({required this.matches});
+}

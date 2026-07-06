@@ -291,6 +291,53 @@ ALTER TABLE public.chat_participants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
 -- ==========================================
+-- POLICIES UNTUK MATCHES
+-- ==========================================
+CREATE POLICY "Users can view their own matches"
+ON public.matches
+FOR SELECT
+TO authenticated
+USING (
+  user1_id = auth.uid() OR user2_id = auth.uid()
+);
+
+-- ==========================================
+-- POLICIES UNTUK CHAT_ROOMS & CHAT_PARTICIPANTS
+-- ==========================================
+CREATE POLICY "Users can view their chat rooms"
+ON public.chat_rooms
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM public.chat_participants
+    WHERE chat_participants.room_id = id
+    AND chat_participants.user_id = auth.uid()
+  )
+);
+
+-- Helper function to break infinite recursion in chat_participants
+CREATE OR REPLACE FUNCTION public.is_room_participant(check_room_id uuid)
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.chat_participants
+    WHERE room_id = check_room_id
+    AND user_id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE POLICY "Users can view chat participants of their rooms"
+ON public.chat_participants
+FOR SELECT
+TO authenticated
+USING (
+  user_id = auth.uid() OR
+  public.is_room_participant(room_id)
+);
+
+-- ==========================================
 -- POLICIES UNTUK PUBLIC.MESSAGES (REALTIME CHAT)
 -- ==========================================
 -- Policy: Pengguna hanya dapat MEMBACA pesan di ruang chat yang mereka ikuti

@@ -161,11 +161,13 @@ void _initMatchmaking() {
     // usecases
     ..registerFactory(() => GetPotentialMatches(serviceLocator()))
     ..registerFactory(() => SwipeUser(serviceLocator()))
+    ..registerFactory(() => WatchNewMatches(serviceLocator()))
     // bloc
     ..registerLazySingleton(
       () => MatchmakingBloc(
         getPotentialMatches: serviceLocator(),
         swipeUser: serviceLocator(),
+        watchNewMatches: serviceLocator(),
       ),
     );
 }
@@ -181,11 +183,9 @@ void _initMessages() {
       () => MessagesRepositoryImpl(serviceLocator()),
     )
     // usecases
-    ..registerFactory(() => GetChatRooms(serviceLocator()))
-    ..registerFactory(() => GetMessages(serviceLocator()))
-    ..registerFactory(() => SendMessageUseCase(serviceLocator()))
+    ..registerFactory(() => WatchChatRooms(serviceLocator()))
     // bloc
-    ..registerLazySingleton(() => MessagesBloc(getChatRooms: serviceLocator()));
+    ..registerLazySingleton(() => MessagesBloc(watchChatRooms: serviceLocator()));
 }
 
 void _initOnboarding() {

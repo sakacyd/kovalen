@@ -45,7 +45,21 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
             ),
           ),
           Expanded(
-            child: BlocBuilder<MatchmakingBloc, MatchmakingState>(
+            child: BlocConsumer<MatchmakingBloc, MatchmakingState>(
+              listener: (context, state) {
+                if (state is MatchmakingMatchFound) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('It\'s a Match! 🎉'),
+                      backgroundColor: AppPallete.primary,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  );
+                }
+              },
               builder: (context, state) {
                 if (state is MatchmakingLoading) {
                   return const Center(
@@ -53,12 +67,16 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                   );
                 } else if (state is MatchmakingFailure) {
                   return Center(child: Text(state.message));
-                } else if (state is MatchmakingSuccess) {
-                  if (state.matches.isEmpty) {
+                } else if (state is MatchmakingSuccess || state is MatchmakingMatchFound) {
+                  final matches = (state is MatchmakingSuccess) 
+                      ? state.matches 
+                      : (state as MatchmakingMatchFound).matches;
+                      
+                  if (matches.isEmpty) {
                     return const Center(child: Text('No matches found'));
                   }
                   return _isCardView
-                      ? _buildCardView(state.matches)
+                      ? _buildCardView(matches)
                       : _buildMapView();
                 }
                 return const SizedBox.shrink();

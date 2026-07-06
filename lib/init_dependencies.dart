@@ -49,13 +49,12 @@ import 'package:kovalen/data/repositories/matchmaking_repository_impl.dart';
 import 'package:kovalen/domain/repository/matchmaking_repository.dart';
 import 'package:kovalen/domain/usecases/get_potential_matches.dart';
 import 'package:kovalen/domain/usecases/swipe_user.dart';
+import 'package:kovalen/domain/usecases/watch_new_matches.dart';
 
 import 'package:kovalen/data/datasources/messages_remote_data_source.dart';
 import 'package:kovalen/data/repositories/messages_repository_impl.dart';
 import 'package:kovalen/domain/repository/messages_repository.dart';
-import 'package:kovalen/domain/usecases/get_chat_rooms.dart';
-import 'package:kovalen/domain/usecases/get_messages.dart';
-import 'package:kovalen/domain/usecases/send_message_usecase.dart';
+import 'package:kovalen/domain/usecases/watch_chat_rooms.dart';
 import 'package:kovalen/data/datasources/message_room_remote_data_source.dart';
 import 'package:kovalen/data/repositories/message_room_repository_impl.dart';
 import 'package:kovalen/domain/repository/message_room_repository.dart';

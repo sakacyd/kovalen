@@ -21,12 +21,23 @@ class MatchmakingRepositoryImpl implements MatchmakingRepository {
   }
 
   @override
-  Future<Either<Failure, void>> swipeUser(String swipedId, bool isLiked) async {
+  Future<Either<Failure, bool>> swipeUser(String swipedId, bool isLiked) async {
     try {
-      await remoteDataSource.swipeUser(swipedId, isLiked);
-      return const Right(null);
+      final isMatch = await remoteDataSource.swipeUser(swipedId, isLiked);
+      return Right(isMatch);
     } on ServerException catch (e) {
       return Left(Failure(e.message));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, void>> watchNewMatches() async* {
+    try {
+      await for (final _ in remoteDataSource.watchNewMatches()) {
+        yield const Right(null);
+      }
+    } on ServerException catch (e) {
+      yield Left(Failure(e.message));
     }
   }
 }

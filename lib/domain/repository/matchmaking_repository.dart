@@ -4,5 +4,6 @@ import 'package:kovalen/core/common/entities/match_profile.dart';
 
 abstract interface class MatchmakingRepository {
   Future<Either<Failure, List<MatchProfile>>> getPotentialMatches();
-  Future<Either<Failure, void>> swipeUser(String swipedId, bool isLiked);
+  Future<Either<Failure, bool>> swipeUser(String swipedId, bool isLiked);
+  Stream<Either<Failure, void>> watchNewMatches();
 }

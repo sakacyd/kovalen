@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/data/models/match_profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract interface class MatchmakingRemoteDataSource {
   Future<List<MatchProfileModel>> getPotentialMatches();
-  Future<void> swipeUser(String swipedId, bool isLiked);
+  Future<bool> swipeUser(String swipedId, bool isLiked);
+  Stream<void> watchNewMatches();
 }
 
 class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
@@ -78,7 +80,7 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
   }
 
   @override
-  Future<void> swipeUser(String swipedId, bool isLiked) async {
+  Future<bool> swipeUser(String swipedId, bool isLiked) async {
     try {
       final session = supabaseClient.auth.currentSession;
       if (session == null) throw ServerException('User not logged in');
@@ -88,6 +90,48 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
         'swiped_id': swipedId,
         'is_liked': isLiked,
       });
+
+      if (isLiked) {
+        final res = await supabaseClient
+            .from('swipes')
+            .select('id')
+            .eq('swiper_id', swipedId)
+            .eq('swiped_id', session.user.id)
+            .eq('is_liked', true)
+            .maybeSingle();
+        return res != null;
+      }
+      
+      return false;
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Stream<void> watchNewMatches() async* {
+    try {
+      final session = supabaseClient.auth.currentSession;
+      if (session == null) throw ServerException('User not logged in');
+      
+      final streamController = StreamController<void>();
+      final channel = supabaseClient.channel('public:matches_changes');
+
+      channel.onPostgresChanges(
+        event: PostgresChangeEvent.insert,
+        schema: 'public',
+        table: 'matches',
+        callback: (payload) {
+          final newRecord = payload.newRecord;
+          if (newRecord['user1_id'] == session.user.id || newRecord['user2_id'] == session.user.id) {
+            streamController.add(null);
+          }
+        }
+      ).subscribe();
+
+      yield* streamController.stream;
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

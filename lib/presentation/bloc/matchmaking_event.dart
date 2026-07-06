@@ -11,3 +11,5 @@ final class SwipeUserEvent extends MatchmakingEvent {
 
   SwipeUserEvent({required this.swipedId, required this.isLiked});
 }
+
+class MatchmakingNewMatchReceived extends MatchmakingEvent {}

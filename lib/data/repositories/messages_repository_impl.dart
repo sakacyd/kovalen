@@ -22,6 +22,17 @@ class MessagesRepositoryImpl implements MessagesRepository {
   }
 
   @override
+  Stream<Either<Failure, List<ChatRoom>>> watchChatRooms() async* {
+    try {
+      await for (final rooms in remoteDataSource.watchChatRooms()) {
+        yield Right(rooms);
+      }
+    } on ServerException catch (e) {
+      yield Left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<Message>>> getMessages(String roomId) async {
     try {
       final messages = await remoteDataSource.getMessages(roomId);
