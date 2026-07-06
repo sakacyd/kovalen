@@ -145,6 +145,23 @@ CREATE TABLE public.messages (
 );
 
 -- ==========================================
+-- 10. GROUP_INVITATIONS (Undangan Grup)
+-- ==========================================
+CREATE TABLE public.group_invitations (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  room_id uuid NOT NULL,
+  inviter_id uuid NOT NULL,
+  invitee_id uuid NOT NULL,
+  status character varying NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT group_invitations_pkey PRIMARY KEY (id),
+  CONSTRAINT group_invitations_room_id_fkey FOREIGN KEY (room_id) REFERENCES public.chat_rooms(id) ON DELETE CASCADE,
+  CONSTRAINT group_invitations_inviter_id_fkey FOREIGN KEY (inviter_id) REFERENCES public.users(id) ON DELETE CASCADE,
+  CONSTRAINT group_invitations_invitee_id_fkey FOREIGN KEY (invitee_id) REFERENCES public.users(id) ON DELETE CASCADE,
+  CONSTRAINT check_no_self_invite CHECK (inviter_id != invitee_id)
+);
+
+-- ==========================================
 -- INDEXES FOR PERFORMANCE
 -- ==========================================
 CREATE INDEX idx_users_location ON public.users(latitude, longitude);
@@ -170,6 +187,9 @@ DECLARE
   v_user2 uuid;
   v_match_exists boolean;
   v_room_id uuid;
+  v_user3 uuid;
+  v_user4 uuid;
+  v_group_room_id uuid;
 BEGIN
   -- Only proceed if it's a right swipe (is_liked = true)
   IF NEW.is_liked = true THEN
@@ -206,6 +226,43 @@ BEGIN
         -- Add both users as participants
         INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_room_id, v_user1);
         INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_room_id, v_user2);
+        
+        -- ==========================================
+        -- 4-WAY CLIQUE DETECTION (TARGETED SEARCH)
+        -- ==========================================
+        WITH user1_matches AS (
+            SELECT CASE WHEN user1_id = v_user1 THEN user2_id ELSE user1_id END AS matched_user
+            FROM public.matches WHERE user1_id = v_user1 OR user2_id = v_user1
+        ),
+        user2_matches AS (
+            SELECT CASE WHEN user1_id = v_user2 THEN user2_id ELSE user1_id END AS matched_user
+            FROM public.matches WHERE user1_id = v_user2 OR user2_id = v_user2
+        ),
+        common_matches AS (
+            SELECT u1.matched_user
+            FROM user1_matches u1
+            JOIN user2_matches u2 ON u1.matched_user = u2.matched_user
+        )
+        SELECT c1.matched_user, c2.matched_user
+        INTO v_user3, v_user4
+        FROM common_matches c1
+        JOIN common_matches c2 ON c1.matched_user < c2.matched_user
+        JOIN public.matches m ON 
+            (m.user1_id = c1.matched_user AND m.user2_id = c2.matched_user) OR 
+            (m.user1_id = c2.matched_user AND m.user2_id = c1.matched_user)
+        LIMIT 1;
+
+        IF v_user3 IS NOT NULL AND v_user4 IS NOT NULL THEN
+            -- 4-Clique Found! Create a group chat room
+            INSERT INTO public.chat_rooms (type) VALUES ('group') RETURNING id INTO v_group_room_id;
+            
+            -- Insert all 4 users into the group room
+            INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_group_room_id, v_user1);
+            INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_group_room_id, v_user2);
+            INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_group_room_id, v_user3);
+            INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_group_room_id, v_user4);
+        END IF;
+
       END IF;
     END IF;
   END IF;
@@ -261,4 +318,96 @@ WITH CHECK (
     WHERE chat_participants.room_id = messages.room_id
     AND chat_participants.user_id = auth.uid()
   )
+);
+
+-- ==========================================
+-- GROUP INVITATION RPC FUNCTIONS
+-- ==========================================
+CREATE OR REPLACE FUNCTION public.invite_to_group(p_room_id uuid, p_invitee_id uuid)
+RETURNS uuid AS $$
+DECLARE
+  v_inviter_id uuid := auth.uid();
+  v_is_matched boolean;
+  v_invitation_id uuid;
+BEGIN
+  -- 1. Verify inviter is in the room
+  IF NOT EXISTS (SELECT 1 FROM public.chat_participants WHERE room_id = p_room_id AND user_id = v_inviter_id) THEN
+    RAISE EXCEPTION 'You are not a participant of this room.';
+  END IF;
+
+  -- 2. Verify inviter and invitee are matched
+  SELECT EXISTS (
+    SELECT 1 FROM public.matches 
+    WHERE (user1_id = v_inviter_id AND user2_id = p_invitee_id)
+       OR (user1_id = p_invitee_id AND user2_id = v_inviter_id)
+  ) INTO v_is_matched;
+
+  IF NOT v_is_matched THEN
+    RAISE EXCEPTION 'You can only invite users you have matched with.';
+  END IF;
+  
+  -- 3. Verify room is a group room
+  IF NOT EXISTS (SELECT 1 FROM public.chat_rooms WHERE id = p_room_id AND type = 'group') THEN
+    RAISE EXCEPTION 'Invitations can only be sent for group rooms.';
+  END IF;
+
+  -- 4. Check if already invited or already in room
+  IF EXISTS (SELECT 1 FROM public.chat_participants WHERE room_id = p_room_id AND user_id = p_invitee_id) THEN
+    RAISE EXCEPTION 'User is already in the room.';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.group_invitations WHERE room_id = p_room_id AND invitee_id = p_invitee_id AND status = 'pending') THEN
+    RAISE EXCEPTION 'User already has a pending invitation for this room.';
+  END IF;
+
+  INSERT INTO public.group_invitations (room_id, inviter_id, invitee_id)
+  VALUES (p_room_id, v_inviter_id, p_invitee_id)
+  RETURNING id INTO v_invitation_id;
+
+  RETURN v_invitation_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION public.accept_group_invitation(p_invitation_id uuid)
+RETURNS void AS $$
+DECLARE
+  v_invitee_id uuid := auth.uid();
+  v_room_id uuid;
+  v_status varchar;
+BEGIN
+  SELECT room_id, status INTO v_room_id, v_status
+  FROM public.group_invitations
+  WHERE id = p_invitation_id AND invitee_id = v_invitee_id;
+
+  IF v_room_id IS NULL THEN
+    RAISE EXCEPTION 'Invitation not found or you are not the invitee.';
+  END IF;
+
+  IF v_status != 'pending' THEN
+    RAISE EXCEPTION 'Invitation is no longer pending.';
+  END IF;
+
+  -- Update status
+  UPDATE public.group_invitations
+  SET status = 'accepted'
+  WHERE id = p_invitation_id;
+
+  -- Add to participants
+  INSERT INTO public.chat_participants (room_id, user_id)
+  VALUES (v_room_id, v_invitee_id)
+  ON CONFLICT DO NOTHING;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ==========================================
+-- POLICIES UNTUK GROUP INVITATIONS
+-- ==========================================
+ALTER TABLE public.group_invitations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can see their own invitations"
+ON public.group_invitations
+FOR SELECT
+TO authenticated
+USING (
+  inviter_id = auth.uid() OR invitee_id = auth.uid()
 );
