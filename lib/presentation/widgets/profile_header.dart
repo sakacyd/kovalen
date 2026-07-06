@@ -26,9 +26,9 @@ class ProfileHeader extends StatelessWidget {
                 border: Border.all(color: AppPallete.surface, width: 4),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
+                    color: AppPallete.onSurface.withValues(alpha: 0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
@@ -43,19 +43,19 @@ class ProfileHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Text(
           name,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: AppPallete.textPrimary,
-          ),
+          style: Theme.of(context).textTheme.displayMedium,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
         Text(
           university,
-          style: const TextStyle(fontSize: 16, color: AppPallete.textSecondary),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppPallete.onSurfaceVariant,
+              ),
+          textAlign: TextAlign.center,
         ),
       ],
     );

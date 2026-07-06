@@ -12,29 +12,25 @@ class InterestsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
         color: AppPallete.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppPallete.stroke.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppPallete.stroke),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppPallete.onSurface.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Minat Saya',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppPallete.textPrimary,
-            ),
+            style: Theme.of(context).textTheme.displaySmall,
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -42,18 +38,15 @@ class InterestsSection extends StatelessWidget {
             runSpacing: 8,
             children: interests.map((interest) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
-                  color: AppPallete.surfaceVariant, // Warna aksen pudar
+                  color: AppPallete.surfaceContainerHighest, 
                   borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: AppPallete.stroke),
                 ),
                 child: Text(
                   interest,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppPallete.primary,
-                  ),
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
               );
             }).toList(),

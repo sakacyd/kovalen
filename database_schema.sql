@@ -232,3 +232,33 @@ ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_rooms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_participants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+
+-- ==========================================
+-- POLICIES UNTUK PUBLIC.MESSAGES (REALTIME CHAT)
+-- ==========================================
+-- Policy: Pengguna hanya dapat MEMBACA pesan di ruang chat yang mereka ikuti
+CREATE POLICY "Users can read messages in their rooms"
+ON public.messages
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM public.chat_participants
+    WHERE chat_participants.room_id = messages.room_id
+    AND chat_participants.user_id = auth.uid()
+  )
+);
+
+-- Policy: Pengguna hanya dapat MENGIRIM pesan jika mereka adalah partisipan di ruang tersebut
+CREATE POLICY "Users can insert messages to their rooms"
+ON public.messages
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  auth.uid() = sender_id AND
+  EXISTS (
+    SELECT 1 FROM public.chat_participants
+    WHERE chat_participants.room_id = messages.room_id
+    AND chat_participants.user_id = auth.uid()
+  )
+);

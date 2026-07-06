@@ -41,54 +41,42 @@ class _ProfilePageState extends State<ProfilePage> {
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
             if (state is ProfileSuccess) {
-              return LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 24.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ProfileHeader(
+                        name: state.user.fullName,
+                        university:
+                            state.user.universityName ??
+                            state.user.universityId,
+                        avatarUrl: state.user.avatarUrl,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0,
-                          vertical: 16.0,
-                        ),
-                        child: IntrinsicHeight(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ProfileHeader(
-                                name: state.user.fullName,
-                                university:
-                                    state.user.universityName ??
-                                    state.user.universityId,
-                                avatarUrl: state.user.avatarUrl,
-                              ),
-                              const SizedBox(height: 20),
-                              AcademicInfoGrid(
-                                programStudi:
-                                    state.user.studyProgramName ??
-                                    state.user.studyProgramId,
-                                semester: state.user.semester,
-                                ipk: state.user.gpa,
-                              ),
-                              const SizedBox(height: 16),
-                              InterestsSection(
-                                interests: state.interests.isNotEmpty
-                                    ? state.interests.map((e) => e.name).toList()
-                                    : ['Belum ada minat yang dipilih'],
-                              ),
-                              const Spacer(),
-                              const SizedBox(height: 16),
-                              const ProfileActions(),
-                              const SizedBox(height: 16),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 32),
+                      AcademicInfoGrid(
+                        programStudi:
+                            state.user.studyProgramName ??
+                            state.user.studyProgramId,
+                        semester: state.user.semester,
+                        ipk: state.user.gpa,
                       ),
-                    ),
-                  );
-                },
+                      const SizedBox(height: 24),
+                      InterestsSection(
+                        interests: state.interests.isNotEmpty
+                            ? state.interests.map((e) => e.name).toList()
+                            : ['Belum ada minat yang dipilih'],
+                      ),
+                      const SizedBox(height: 32),
+                      const ProfileActions(),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
               );
             }
 

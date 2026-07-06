@@ -13,22 +13,23 @@ class AcademicInfoGrid extends StatelessWidget {
     required this.ipk,
   });
 
-  Widget _buildInfoCard({
+  Widget _buildInfoCard(
+    BuildContext context, {
     required String title,
     required String value,
     required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
         color: AppPallete.surface,
-        borderRadius: BorderRadius.circular(24), // Sesuai tema Clean Minimalism
-        border: Border.all(color: AppPallete.stroke.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppPallete.stroke),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppPallete.onSurface.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -37,27 +38,24 @@ class AcademicInfoGrid extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: AppPallete.primary),
-              const SizedBox(width: 6),
-              Text(
-                title.toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: AppPallete.primary,
-                  letterSpacing: 0.5,
+              Icon(icon, size: 18, color: AppPallete.primary),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title.toUpperCase(),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppPallete.primary,
+                        letterSpacing: 0.5,
+                      ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppPallete.textPrimary,
-            ),
+            style: Theme.of(context).textTheme.displayMedium,
           ),
         ],
       ),
@@ -69,23 +67,26 @@ class AcademicInfoGrid extends StatelessWidget {
     return Column(
       children: [
         _buildInfoCard(
+          context,
           title: 'Program Studi',
           value: programStudi,
           icon: Icons.school_outlined,
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Row(
           children: [
             Expanded(
               child: _buildInfoCard(
+                context,
                 title: 'Semester',
                 value: semester.toString(),
                 icon: Icons.calendar_today_outlined,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: _buildInfoCard(
+                context,
                 title: 'IPK',
                 value: ipk.toString(),
                 icon: Icons.star_outline,
