@@ -143,10 +143,10 @@ class SettingsPage extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppPallete.surfaceContainerHighest,
-                  backgroundImage: user.avatarUrl.isNotEmpty
-                      ? NetworkImage(user.avatarUrl)
+                  backgroundImage: user.avatarUrl.trim().startsWith('http')
+                      ? NetworkImage(user.avatarUrl.trim())
                       : null,
-                  child: user.avatarUrl.isEmpty
+                  child: !user.avatarUrl.trim().startsWith('http')
                       ? const Icon(
                           Icons.person,
                           size: 32,

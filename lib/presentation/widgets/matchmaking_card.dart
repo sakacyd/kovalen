@@ -56,13 +56,15 @@ class MatchmakingCard extends StatelessWidget {
                           panEnabled: true,
                           minScale: 0.5,
                           maxScale: 4,
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(color: AppPallete.surfaceVariant);
-                            },
-                          ),
+                          child: imageUrl.trim().startsWith('http')
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(color: AppPallete.surfaceVariant);
+                                },
+                              )
+                            : Container(color: AppPallete.surfaceVariant),
                         ),
                         Positioned(
                           top: -16,
@@ -80,13 +82,15 @@ class MatchmakingCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(color: AppPallete.surfaceVariant);
-                  },
-                ),
+                  imageUrl.trim().startsWith('http')
+                    ? Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(color: AppPallete.surfaceVariant);
+                        },
+                      )
+                    : Container(color: AppPallete.surfaceVariant),
                 // Gradient Overlay
                 Positioned.fill(
                   child: DecoratedBox(

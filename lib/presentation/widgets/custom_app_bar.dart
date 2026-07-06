@@ -47,8 +47,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   builder: (context, state) {
                     String? avatarUrl;
                     if (state is AppUserLoggedIn &&
-                        state.user.avatarUrl.isNotEmpty) {
-                      avatarUrl = state.user.avatarUrl;
+                        state.user.avatarUrl.trim().startsWith('http')) {
+                      avatarUrl = state.user.avatarUrl.trim();
                     }
 
                     return Container(

@@ -44,8 +44,10 @@ class ChatListItem extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppPallete.secondaryContainer,
-                  backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-                  child: imageUrl == null && initials != null
+                  backgroundImage: imageUrl != null && imageUrl!.trim().startsWith('http') 
+                      ? NetworkImage(imageUrl!.trim()) 
+                      : null,
+                  child: (imageUrl == null || !imageUrl!.trim().startsWith('http')) && initials != null
                       ? Text(
                           initials!,
                           style: Theme.of(context).textTheme.displaySmall?.copyWith(

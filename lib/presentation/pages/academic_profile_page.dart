@@ -436,10 +436,10 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
               CircleAvatar(
                 radius: 48,
                 backgroundColor: AppPallete.surfaceContainerHighest,
-                backgroundImage: avatarUrl.isNotEmpty
-                    ? NetworkImage(avatarUrl)
+                backgroundImage: avatarUrl.trim().startsWith('http')
+                    ? NetworkImage(avatarUrl.trim())
                     : null,
-                child: avatarUrl.isEmpty
+                child: !avatarUrl.trim().startsWith('http')
                     ? const Icon(
                         Icons.person,
                         size: 48,

@@ -20,14 +20,10 @@ class MessageRoomPage extends StatefulWidget {
     required String roomId,
     required String name,
     String? avatarUrl,
-  }) =>
-      MaterialPageRoute(
-        builder: (context) => MessageRoomPage(
-          roomId: roomId,
-          name: name,
-          avatarUrl: avatarUrl,
-        ),
-      );
+  }) => MaterialPageRoute(
+    builder: (context) =>
+        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl),
+  );
 
   @override
   State<MessageRoomPage> createState() => _MessageRoomPageState();
@@ -53,7 +49,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
   void _sendMessage() {
     final content = _messageController.text.trim();
     if (content.isNotEmpty) {
-      context.read<MessageRoomBloc>().add(SendMessageRoomMessageEvent(widget.roomId, content));
+      context.read<MessageRoomBloc>().add(
+        SendMessageRoomMessageEvent(widget.roomId, content),
+      );
       _messageController.clear();
       // Wait for UI to update then scroll down
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -70,8 +68,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
-    
+    final currentUser =
+        (context.read<AppUserCubit>().state as AppUserLoggedIn).user;
+
     return Scaffold(
       backgroundColor: AppPallete.background,
       appBar: AppBar(
@@ -82,10 +81,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
         titleSpacing: 0,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: AppPallete.stroke,
-            height: 1.0,
-          ),
+          child: Container(color: AppPallete.stroke, height: 1.0),
         ),
         title: Row(
           children: [
@@ -96,17 +92,19 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                 shape: BoxShape.circle,
                 color: AppPallete.surfaceContainer,
                 border: Border.all(color: AppPallete.stroke),
-                image: widget.avatarUrl != null
+                image: widget.avatarUrl != null && widget.avatarUrl!.trim().startsWith('http')
                     ? DecorationImage(
-                        image: NetworkImage(widget.avatarUrl!),
+                        image: NetworkImage(widget.avatarUrl!.trim()),
                         fit: BoxFit.cover,
                       )
                     : null,
               ),
-              child: widget.avatarUrl == null
+              child: widget.avatarUrl == null || !widget.avatarUrl!.trim().startsWith('http')
                   ? Center(
                       child: Text(
-                        widget.name.isNotEmpty ? widget.name[0].toUpperCase() : '?',
+                        widget.name.isNotEmpty
+                            ? widget.name[0].toUpperCase()
+                            : '?',
                         style: const TextStyle(
                           color: AppPallete.onSurface,
                           fontWeight: FontWeight.bold,
@@ -157,10 +155,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
       body: Column(
@@ -173,7 +168,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                   if (state is MessageRoomSuccess) {
                     Future.delayed(const Duration(milliseconds: 100), () {
                       if (_scrollController.hasClients) {
-                        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                        _scrollController.jumpTo(
+                          _scrollController.position.maxScrollExtent,
+                        );
                       }
                     });
                   }
@@ -182,7 +179,12 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                   if (state is MessageRoomLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is MessageRoomFailure) {
-                    return Center(child: Text(state.message, style: const TextStyle(color: AppPallete.error)));
+                    return Center(
+                      child: Text(
+                        state.message,
+                        style: const TextStyle(color: AppPallete.error),
+                      ),
+                    );
                   } else if (state is MessageRoomSuccess) {
                     return ListView.builder(
                       controller: _scrollController,
@@ -191,34 +193,44 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                       itemBuilder: (context, index) {
                         final message = state.messages[index];
                         final isMe = message.senderId == currentUser.id;
-                        
-                        final time = '${message.createdAt.hour.toString().padLeft(2, '0')}:${message.createdAt.minute.toString().padLeft(2, '0')}';
-                        
+
+                        final time =
+                            '${message.createdAt.hour.toString().padLeft(2, '0')}:${message.createdAt.minute.toString().padLeft(2, '0')}';
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Row(
-                            mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                            mainAxisAlignment: isMe
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               if (!isMe)
                                 Container(
                                   width: 24,
                                   height: 24,
-                                  margin: const EdgeInsets.only(right: 8, bottom: 4),
+                                  margin: const EdgeInsets.only(
+                                    right: 8,
+                                    bottom: 4,
+                                  ),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: AppPallete.surfaceContainer,
-                                    image: widget.avatarUrl != null
+                                    image: widget.avatarUrl != null && widget.avatarUrl!.trim().startsWith('http')
                                         ? DecorationImage(
-                                            image: NetworkImage(widget.avatarUrl!),
+                                            image: NetworkImage(
+                                              widget.avatarUrl!.trim(),
+                                            ),
                                             fit: BoxFit.cover,
                                           )
                                         : null,
                                   ),
-                                  child: widget.avatarUrl == null
+                                  child: widget.avatarUrl == null || !widget.avatarUrl!.trim().startsWith('http')
                                       ? Center(
                                           child: Text(
-                                            widget.name.isNotEmpty ? widget.name[0].toUpperCase() : '?',
+                                            widget.name.isNotEmpty
+                                                ? widget.name[0].toUpperCase()
+                                                : '?',
                                             style: const TextStyle(
                                               fontSize: 10,
                                               color: AppPallete.onSurface,
@@ -228,35 +240,50 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                         )
                                       : null,
                                 ),
-                                
+
                               Flexible(
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 10,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: isMe ? AppPallete.primary : AppPallete.surface,
-                                    border: isMe ? null : Border.all(color: AppPallete.stroke),
+                                    color: isMe
+                                        ? AppPallete.primary
+                                        : AppPallete.surface,
+                                    border: isMe
+                                        ? null
+                                        : Border.all(color: AppPallete.stroke),
                                     borderRadius: BorderRadius.only(
                                       topLeft: const Radius.circular(16),
                                       topRight: const Radius.circular(16),
-                                      bottomLeft: Radius.circular(isMe ? 16 : 2),
-                                      bottomRight: Radius.circular(isMe ? 2 : 16),
+                                      bottomLeft: Radius.circular(
+                                        isMe ? 16 : 2,
+                                      ),
+                                      bottomRight: Radius.circular(
+                                        isMe ? 2 : 16,
+                                      ),
                                     ),
                                     boxShadow: const [
                                       BoxShadow(
                                         color: Color(0x05000000),
                                         blurRadius: 2,
                                         offset: Offset(0, 1),
-                                      )
+                                      ),
                                     ],
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                    crossAxisAlignment: isMe
+                                        ? CrossAxisAlignment.end
+                                        : CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         message.content,
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: isMe ? AppPallete.onPrimary : AppPallete.textPrimary,
+                                          color: isMe
+                                              ? AppPallete.onPrimary
+                                              : AppPallete.textPrimary,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -268,7 +295,10 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                             style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
-                                              color: isMe ? AppPallete.onPrimary.withValues(alpha: 0.7) : AppPallete.outline,
+                                              color: isMe
+                                                  ? AppPallete.onPrimary
+                                                        .withValues(alpha: 0.7)
+                                                  : AppPallete.outline,
                                             ),
                                           ),
                                           if (isMe) ...[
@@ -276,7 +306,8 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                             Icon(
                                               Icons.done_all,
                                               size: 14,
-                                              color: AppPallete.onPrimary.withValues(alpha: 0.7),
+                                              color: AppPallete.onPrimary
+                                                  .withValues(alpha: 0.7),
                                             ),
                                           ],
                                         ],
@@ -296,87 +327,85 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
               ),
             ),
           ),
-          
+
           // Input Area
           Container(
-            padding: EdgeInsets.only(
-              left: 12,
-              right: 12,
-              top: 12,
-              bottom: MediaQuery.of(context).padding.bottom > 0 
-                  ? MediaQuery.of(context).padding.bottom 
-                  : 12,
+            padding: EdgeInsets.fromLTRB(
+              16,
+              12,
+              16,
+              MediaQuery.of(context).padding.bottom > 0
+                  ? MediaQuery.of(context).padding.bottom + 8
+                  : 16,
             ),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppPallete.surface,
-              border: Border(
-                top: BorderSide(color: AppPallete.stroke),
-              ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0x05000000),
+                  color: AppPallete.onSurface.withValues(alpha: 0.05),
                   blurRadius: 16,
-                  offset: Offset(0, -4),
-                )
+                  offset: const Offset(0, -4),
+                ),
               ],
             ),
-            child: SafeArea(
-              top: false,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppPallete.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppPallete.stroke),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.attach_file),
-                      color: AppPallete.onSurfaceVariant,
-                      onPressed: () {},
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppPallete.surfaceContainerHighest.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: AppPallete.stroke.withValues(alpha: 0.5),
+                      ),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                        child: TextField(
-                          controller: _messageController,
-                          maxLines: 5,
-                          minLines: 1,
-                          decoration: const InputDecoration(
-                            hintText: 'Tulis pesan...',
-                            hintStyle: TextStyle(
-                              color: AppPallete.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppPallete.textPrimary,
-                          ),
+                    child: TextField(
+                      controller: _messageController,
+                      maxLines: 5,
+                      minLines: 1,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _sendMessage(),
+                      decoration: const InputDecoration(
+                        hintText: 'Tulis pesan...',
+                        hintStyle: TextStyle(
+                          color: AppPallete.onSurfaceVariant,
+                          fontSize: 15,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 2, right: 2),
-                      decoration: BoxDecoration(
-                        color: AppPallete.primary,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.send),
-                        color: AppPallete.onPrimary,
-                        iconSize: 20,
-                        onPressed: _sendMessage,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: AppPallete.textPrimary,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Container(
+                  height: 48,
+                  width: 48,
+                  margin: const EdgeInsets.only(bottom: 0),
+                  decoration: const BoxDecoration(
+                    color: AppPallete.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Padding(
+                      padding: EdgeInsets.only(left: 4.0),
+                      child: Icon(Icons.send_rounded),
+                    ),
+                    color: AppPallete.onPrimary,
+                    iconSize: 22,
+                    onPressed: _sendMessage,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
