@@ -30,6 +30,8 @@ import 'package:kovalen/domain/usecases/user_sign_out.dart';
 import 'package:kovalen/domain/usecases/change_password.dart';
 import 'package:kovalen/domain/usecases/update_user_location.dart';
 import 'package:kovalen/domain/usecases/get_current_user.dart';
+import 'package:kovalen/domain/usecases/get_home_stats.dart';
+import 'package:kovalen/domain/usecases/watch_home_data.dart';
 import 'package:kovalen/domain/usecases/get_user_interests.dart';
 import 'package:kovalen/domain/usecases/submit_onboarding_data.dart';
 import 'package:kovalen/domain/usecases/get_universities_data.dart';

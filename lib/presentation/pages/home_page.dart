@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
+import 'package:kovalen/presentation/pages/message_room_page.dart';
 import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
 import 'package:kovalen/presentation/widgets/group_item.dart';
@@ -76,16 +77,16 @@ class _HomePageState extends State<HomePage> {
                           child: StatsCard(
                             logo: Icons.groups,
                             title: 'Grup Aktif',
-                            value: '${state.user.semester}',
+                            value: '${state.stats.activeGroups}',
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: StatsCard(
                             logo: Icons.handshake,
-                            title: 'Match Hari Ini',
-                            value: '${state.user.semester}',
-                            secondValue: '${state.user.semester}',
+                            title: 'Match',
+                            value: '${state.stats.totalMatches}',
+                            secondValue: '${state.stats.matchesToday}',
                           ),
                         ),
                       ],
@@ -175,22 +176,39 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 16),
 
-                    Column(
-                      children: [
-                        const GroupItem(
-                          title: 'Algoritma & Struktur Data',
-                          subtitle: '3/4 Anggota - Online',
-                          time: 'Hari ini, 19:00',
-                          isAccentColors: false,
+                    if (state.activeGroups.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 32.0),
+                        child: Center(
+                          child: Text('Belum ada grup aktif'),
                         ),
-                        const GroupItem(
-                          title: 'Mobile Development (Flutter)',
-                          subtitle: '2/5 Anggota - Perpustakaan',
-                          time: 'Besok, 10:00',
-                          isAccentColors: true,
-                        ),
-                      ],
-                    ),
+                      )
+                    else
+                      Column(
+                        children: List.generate(state.activeGroups.length, (index) {
+                          final group = state.activeGroups[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MessageRoomPage(
+                                    roomId: group.id,
+                                    name: group.name ?? 'Grup Belajar',
+                                    avatarUrl: null, // Since we don't have avatar yet for group
+                                  ),
+                                ),
+                              );
+                            },
+                            child: GroupItem(
+                              title: group.name ?? 'Grup Belajar',
+                              subtitle: 'Grup Aktif',
+                              time: '',
+                              isAccentColors: index % 2 != 0,
+                            ),
+                          );
+                        }),
+                      ),
                   ],
                 ),
               );

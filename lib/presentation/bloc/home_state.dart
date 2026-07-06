@@ -9,8 +9,10 @@ final class HomeLoading extends HomeState {}
 
 final class HomeSuccess extends HomeState {
   final User user;
+  final HomeStats stats;
+  final List<ChatRoom> activeGroups;
 
-  HomeSuccess(this.user);
+  HomeSuccess(this.user, this.stats, this.activeGroups);
 }
 
 final class HomeFailure extends HomeState {

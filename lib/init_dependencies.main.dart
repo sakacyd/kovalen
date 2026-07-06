@@ -79,10 +79,13 @@ void _initHome() {
     )
     // usecases
     ..registerFactory(() => GetCurrentUser<HomeRepository>(serviceLocator()))
+    ..registerFactory(() => GetHomeStats(serviceLocator()))
+    ..registerFactory(() => WatchHomeData(serviceLocator()))
     // bloc
     ..registerLazySingleton(
       () => HomeBloc(
         getCurrentUser: serviceLocator<GetCurrentUser<HomeRepository>>(),
+        watchHomeData: serviceLocator(),
         appUserCubit: serviceLocator(),
       ),
     );

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:kovalen/core/error/exceptions.dart';
 import 'package:kovalen/core/common/entities/user.dart';
+import 'package:kovalen/core/common/entities/home_stats.dart';
+import 'package:kovalen/core/common/entities/home_data.dart';
 import 'package:kovalen/core/network/connection_checker.dart';
 import 'package:kovalen/data/models/user_model.dart';
 import 'package:fpdart/fpdart.dart';
@@ -47,6 +49,39 @@ class HomeRepositoryImpl implements HomeRepository {
       return right(user);
     } on ServerException catch (e) {
       return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, HomeStats>> getHomeStats() async {
+    try {
+      if (!await connectionChecker.isConnected) {
+        return left(Failure('No internet connection'));
+      }
+      
+      final stats = await homeRemoteDataSource.getHomeStats();
+      return right(stats);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, HomeData>> watchHomeData() async* {
+    if (!await connectionChecker.isConnected) {
+      yield left(Failure('No internet connection'));
+      return;
+    }
+
+    try {
+      yield* homeRemoteDataSource.watchHomeData().map((data) => right<Failure, HomeData>(data)).handleError((error) {
+        if (error is ServerException) {
+          return left(Failure(error.message));
+        }
+        return left(Failure(error.toString()));
+      });
+    } on ServerException catch (e) {
+      yield left(Failure(e.message));
     }
   }
 }
