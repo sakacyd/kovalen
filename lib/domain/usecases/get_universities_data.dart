@@ -12,6 +12,28 @@ class GetUniversitiesData<T extends BaseUniversitiesStudyProgramsRepository>
 
   @override
   Future<Either<Failure, List<University>>> call(NoParams params) async {
-    return await repository.getUniversities();
+    final result = await repository.getUniversities();
+    
+    return result.map((universities) {
+      final sortedUniversities = List<University>.from(universities);
+      sortedUniversities.sort((a, b) {
+        int rankA = _getUniversityRank(a.name);
+        int rankB = _getUniversityRank(b.name);
+        if (rankA != rankB) return rankA.compareTo(rankB);
+        return a.name.compareTo(b.name);
+      });
+      return sortedUniversities;
+    });
+  }
+
+  int _getUniversityRank(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.startsWith('universitas')) return 1;
+    if (lowerName.startsWith('institut')) return 2;
+    if (lowerName.startsWith('sekolah tinggi')) return 3;
+    if (lowerName.startsWith('politeknik')) return 4;
+    if (lowerName.startsWith('akademi komunitas')) return 6;
+    if (lowerName.startsWith('akademi')) return 5;
+    return 99;
   }
 }
