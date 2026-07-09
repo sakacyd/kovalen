@@ -5,6 +5,7 @@ import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 import 'package:kovalen/presentation/pages/academic_profile_page.dart';
+import 'package:kovalen/presentation/pages/matching_preferences_page.dart';
 import 'package:kovalen/presentation/pages/credential_page.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/settings_item.dart';
@@ -74,7 +75,9 @@ class SettingsPage extends StatelessWidget {
                   SettingsItem(
                     icon: Icons.tune_outlined,
                     title: 'Preferensi Pencocokan',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MatchingPreferencesPage.route());
+                    },
                   ),
                   SettingsItem(
                     icon: Icons.notifications_none_outlined,

@@ -31,6 +31,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   String? _selectedUniversity;
   String? _selectedProgram;
   String? _selectedSemester;
+  String? _selectedGender;
+  String? _selectedTujuanBelajar;
+  String? _selectedGayaBelajar;
 
   final Set<String> _selectedInterests = {};
   static const int _maxInterests = 5;
@@ -131,6 +134,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       controller: _fullNameController,
                       icon: Icons.badge_outlined,
                     ),
+                    const SizedBox(height: 16),
+                    CustomDropdown<String>(
+                      label: 'Jenis Kelamin',
+                      hint: 'Pilih Jenis Kelamin',
+                      value: _selectedGender,
+                      items: const [
+                        DropdownMenuItem(value: 'Laki-laki', child: Text('Laki-laki')),
+                        DropdownMenuItem(value: 'Perempuan', child: Text('Perempuan')),
+                      ],
+                      onChanged: (val) =>
+                          setState(() => _selectedGender = val),
+                    ),
                     const SizedBox(height: 32),
                     _buildSectionHeader('Latar Belakang Akademik', Icons.school_outlined),
                     const SizedBox(height: 24),
@@ -223,6 +238,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     const SizedBox(height: 32),
                     _buildSectionHeader('Fokus & Minat', Icons.lightbulb_outline),
                     const SizedBox(height: 16),
+                    CustomDropdown<String>(
+                      label: 'Tujuan Belajar',
+                      hint: 'Pilih Tujuan Belajar Utama Anda',
+                      value: _selectedTujuanBelajar,
+                      items: const [
+                        DropdownMenuItem(value: 'Persiapan UTS', child: Text('Persiapan UTS/UAS')),
+                        DropdownMenuItem(value: 'Nugas sehari-hari atau mingguan', child: Text('Nugas Sehari-hari/Mingguan')),
+                        DropdownMenuItem(value: 'Skripsi/Tugas Akhir', child: Text('Skripsi/Tugas Akhir')),
+                        DropdownMenuItem(value: 'Lain-lain', child: Text('Lain-lain')),
+                      ],
+                      onChanged: (val) =>
+                          setState(() => _selectedTujuanBelajar = val),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomDropdown<String>(
+                      label: 'Gaya Belajar',
+                      hint: 'Pilih Preferensi Gaya Belajar',
+                      value: _selectedGayaBelajar,
+                      items: const [
+                        DropdownMenuItem(value: 'Online', child: Text('Online')),
+                        DropdownMenuItem(value: 'Offline', child: Text('Offline')),
+                      ],
+                      onChanged: (val) =>
+                          setState(() => _selectedGayaBelajar = val),
+                    ),
+                    const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -295,7 +336,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 builder: (context, state) {
                   return ElevatedButton(
                     onPressed: state is OnboardingLoading ? null : () {
-                      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _selectedInterests.isEmpty || _fullNameController.text.isEmpty || _avatarFile == null) {
+                      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _selectedInterests.isEmpty || _fullNameController.text.isEmpty || _avatarFile == null || _selectedGender == null || _selectedTujuanBelajar == null || _selectedGayaBelajar == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Lengkapi semua data yang wajib termasuk foto profil')),
                         );
@@ -320,6 +361,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           universityId: _selectedUniversity!,
                           studyProgramId: _selectedProgram!,
                           semester: int.parse(_selectedSemester!),
+                          gender: _selectedGender!,
+                          tujuanBelajar: _selectedTujuanBelajar!,
+                          gayaBelajar: _selectedGayaBelajar!,
                           gpa: parsedGpa,
                           interests: _selectedInterests.toList(),
                         ),

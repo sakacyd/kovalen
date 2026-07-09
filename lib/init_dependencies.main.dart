@@ -13,6 +13,7 @@ Future<void> initDependencies() async {
   _initMessages();
   _initMessageRoom();
   _initOnboarding();
+  _initMatchingPreferences();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
     throw Exception('Supabase credentials not found');
@@ -245,6 +246,32 @@ void _initMessageRoom() {
       () => MessageRoomBloc(
         getMessageRoomMessages: serviceLocator(),
         sendMessageRoomMessage: serviceLocator(),
+      ),
+    );
+}
+
+void _initMatchingPreferences() {
+  serviceLocator
+    // datasource
+    ..registerFactory<MatchingPreferencesRemoteDataSource>(
+      () => MatchingPreferencesRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<MatchingPreferencesRepository>(
+      () => MatchingPreferencesRepositoryImpl(
+        serviceLocator(),
+        serviceLocator(),
+      ),
+    )
+    // usecases
+    ..registerFactory(() => GetMatchingPreferences(serviceLocator()))
+    ..registerFactory(() => SaveMatchingPreferences(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => MatchingPreferencesBloc(
+        getMatchingPreferences: serviceLocator(),
+        saveMatchingPreferences: serviceLocator(),
+        appUserCubit: serviceLocator(),
       ),
     );
 }

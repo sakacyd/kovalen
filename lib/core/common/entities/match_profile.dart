@@ -5,12 +5,14 @@ class MatchProfile {
   final User user;
   final List<Interest> interests;
   final int commonInterestsCount;
-  final double distanceInKm; // Optional, if we want to add distance
+  final double distanceInKm; 
+  final int matchPercentage;
 
   MatchProfile({
     required this.user,
     required this.interests,
     required this.commonInterestsCount,
     this.distanceInKm = 0.0,
+    this.matchPercentage = 0,
   });
 }

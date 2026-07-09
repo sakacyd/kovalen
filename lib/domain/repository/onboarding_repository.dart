@@ -16,6 +16,9 @@ abstract interface class OnboardingRepository
     required String universityId,
     required String studyProgramId,
     required int semester,
+    required String gender,
+    required String tujuanBelajar,
+    required String gayaBelajar,
     required double gpa,
     required List<String> interestIds,
   });

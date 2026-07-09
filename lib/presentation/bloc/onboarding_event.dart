@@ -17,6 +17,9 @@ final class OnboardingSubmit extends OnboardingEvent {
   final String universityId;
   final String studyProgramId;
   final int semester;
+  final String gender;
+  final String tujuanBelajar;
+  final String gayaBelajar;
   final double gpa;
   final List<String> interests;
 
@@ -27,6 +30,9 @@ final class OnboardingSubmit extends OnboardingEvent {
     required this.universityId,
     required this.studyProgramId,
     required this.semester,
+    required this.gender,
+    required this.tujuanBelajar,
+    required this.gayaBelajar,
     required this.gpa,
     required this.interests,
   });

@@ -6,6 +6,7 @@ import '../widgets/view_toggle.dart';
 import '../widgets/matchmaking_card.dart';
 import '../widgets/custom_app_bar.dart';
 import '../../core/common/entities/match_profile.dart';
+import 'package:kovalen/presentation/pages/matching_preferences_page.dart';
 
 class MatchmakingPage extends StatefulWidget {
   const MatchmakingPage({super.key});
@@ -27,7 +28,27 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.tune_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              Navigator.push(context, MatchingPreferencesPage.route());
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {},
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -130,9 +151,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                         match.user.studyProgramName ??
                         match.user.studyProgramId,
                     distance: '${match.distanceInKm.toStringAsFixed(1)} km',
-                    matchPercentage: match.commonInterestsCount > 0
-                        ? (match.commonInterestsCount * 20).clamp(0, 100)
-                        : 50,
+                    matchPercentage: match.matchPercentage,
                     imageUrl: match.user.avatarUrl,
                     interests: match.interests.map((e) => e.name).toList(),
                   ),

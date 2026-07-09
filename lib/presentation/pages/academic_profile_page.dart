@@ -31,6 +31,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   String? _selectedSemester;
   String? _selectedUniversity;
   String? _selectedStudyProgram;
+  String? _selectedGender;
+  String? _selectedTujuanBelajar;
+  String? _selectedGayaBelajar;
   String _avatarUrl = '';
   File? _avatarFile;
   final Set<String> _selectedInterests = {};
@@ -48,6 +51,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
       _selectedStudyProgram = appUserState.user.studyProgramId;
       int sem = appUserState.user.semester;
       _selectedSemester = sem >= 8 ? '8' : sem.toString();
+      _selectedGender = appUserState.user.gender;
+      _selectedTujuanBelajar = appUserState.user.tujuanBelajar;
+      _selectedGayaBelajar = appUserState.user.gayaBelajar;
       _gpaController.text = appUserState.user.gpa.toString();
       _avatarUrl = appUserState.user.avatarUrl;
 
@@ -96,6 +102,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           _selectedUniversity != appUserState.user.universityId ||
           _selectedStudyProgram != appUserState.user.studyProgramId ||
           _selectedSemester != (appUserState.user.semester >= 8 ? '8' : appUserState.user.semester.toString()) ||
+          _selectedGender != appUserState.user.gender ||
+          _selectedTujuanBelajar != appUserState.user.tujuanBelajar ||
+          _selectedGayaBelajar != appUserState.user.gayaBelajar ||
           _gpaController.text != appUserState.user.gpa.toString() ||
           _avatarUrl != appUserState.user.avatarUrl;
     }
@@ -134,7 +143,10 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
 
     if (_formKey.currentState!.validate() &&
         _selectedUniversity != null &&
-        _selectedStudyProgram != null) {
+        _selectedStudyProgram != null &&
+        _selectedGender != null &&
+        _selectedTujuanBelajar != null &&
+        _selectedGayaBelajar != null) {
       final shouldSave = await ConfirmationModal.show(
         context: context,
         title: 'Simpan Perubahan?',
@@ -153,6 +165,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             universityId: _selectedUniversity!,
             studyProgramId: _selectedStudyProgram!,
             semester: int.tryParse(_selectedSemester ?? '1') ?? 1,
+            gender: _selectedGender!,
+            tujuanBelajar: _selectedTujuanBelajar!,
+            gayaBelajar: _selectedGayaBelajar!,
             gpa: parsedGpa,
             interests: _selectedInterests.toList(),
           ),
@@ -237,6 +252,18 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   hint: 'Masukkan nama lengkap',
                   controller: _nameController,
                   icon: Icons.badge_outlined,
+                ),
+                const SizedBox(height: 16),
+                CustomDropdown<String>(
+                  label: 'Jenis Kelamin',
+                  hint: 'Pilih Jenis Kelamin',
+                  value: _selectedGender,
+                  items: const [
+                    DropdownMenuItem(value: 'Laki-laki', child: Text('Laki-laki')),
+                    DropdownMenuItem(value: 'Perempuan', child: Text('Perempuan')),
+                  ],
+                  onChanged: (val) =>
+                      setState(() => _selectedGender = val),
                 ),
                 const SizedBox(height: 32),
                 _buildSectionHeader('Latar Belakang Akademik', Icons.school_outlined),
@@ -388,6 +415,32 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                 const SizedBox(height: 32),
                 _buildSectionHeader('Fokus & Minat', Icons.lightbulb_outline),
                 const SizedBox(height: 16),
+                CustomDropdown<String>(
+                  label: 'Tujuan Belajar',
+                  hint: 'Pilih Tujuan Belajar Utama Anda',
+                  value: _selectedTujuanBelajar,
+                  items: const [
+                    DropdownMenuItem(value: 'Persiapan UTS', child: Text('Persiapan UTS/UAS')),
+                    DropdownMenuItem(value: 'Nugas sehari-hari atau mingguan', child: Text('Nugas Sehari-hari/Mingguan')),
+                    DropdownMenuItem(value: 'Skripsi/Tugas Akhir', child: Text('Skripsi/Tugas Akhir')),
+                    DropdownMenuItem(value: 'Lain-lain', child: Text('Lain-lain')),
+                  ],
+                  onChanged: (val) =>
+                      setState(() => _selectedTujuanBelajar = val),
+                ),
+                const SizedBox(height: 16),
+                CustomDropdown<String>(
+                  label: 'Gaya Belajar',
+                  hint: 'Pilih Preferensi Gaya Belajar',
+                  value: _selectedGayaBelajar,
+                  items: const [
+                    DropdownMenuItem(value: 'Online', child: Text('Online')),
+                    DropdownMenuItem(value: 'Offline', child: Text('Offline')),
+                  ],
+                  onChanged: (val) =>
+                      setState(() => _selectedGayaBelajar = val),
+                ),
+                const SizedBox(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.baseline,

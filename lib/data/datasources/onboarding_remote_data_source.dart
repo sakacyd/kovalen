@@ -14,6 +14,9 @@ abstract interface class OnboardingRemoteDataSource {
     required String universityId,
     required String studyProgramId,
     required int semester,
+    required String gender,
+    required String tujuanBelajar,
+    required String gayaBelajar,
     required double gpa,
     required List<String> interestIds,
   });
@@ -36,6 +39,9 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
     required String universityId,
     required String studyProgramId,
     required int semester,
+    required String gender,
+    required String tujuanBelajar,
+    required String gayaBelajar,
     required double gpa,
     required List<String> interestIds,
   }) async {
@@ -65,6 +71,9 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
             'university_id': universityId,
             'study_program_id': studyProgramId,
             'semester': semester,
+            'gender': gender,
+            'tujuan_belajar': tujuanBelajar,
+            'gaya_belajar': gayaBelajar,
             'gpa': gpa,
           })
           .eq('id', userId)
