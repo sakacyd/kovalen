@@ -41,9 +41,14 @@ class _MatchingPreferencesPageState extends State<MatchingPreferencesPage> {
             setState(() {
               _distancePreference = state.maxDistance;
             });
+          } else if (state is MatchingPreferencesSaved) {
+            setState(() {
+              _distancePreference = state.maxDistance;
+            });
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Preferensi berhasil disimpan!')),
             );
+            Navigator.of(context).pop();
           } else if (state is MatchingPreferencesFailure) {
             ScaffoldMessenger.of(
               context,
@@ -55,11 +60,11 @@ class _MatchingPreferencesPageState extends State<MatchingPreferencesPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is MatchingPreferencesLoaded &&
-              _distancePreference != state.maxDistance &&
+          if ((state is MatchingPreferencesLoaded || state is MatchingPreferencesSaved) &&
+              _distancePreference != (state is MatchingPreferencesLoaded ? state.maxDistance : (state as MatchingPreferencesSaved).maxDistance) &&
               _distancePreference == 15.0) {
             // Safe initial set if we didn't get to listener somehow, usually listener handles it.
-            _distancePreference = state.maxDistance;
+            _distancePreference = (state is MatchingPreferencesLoaded ? state.maxDistance : (state as MatchingPreferencesSaved).maxDistance);
           }
 
           return Padding(

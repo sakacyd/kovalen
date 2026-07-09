@@ -36,7 +36,12 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              Navigator.push(context, MatchingPreferencesPage.route());
+              Navigator.push(context, MatchingPreferencesPage.route()).then((_) {
+                // Ensure context is still mounted if using Stateful widget or just read safely
+                if (context.mounted) {
+                  context.read<MatchmakingBloc>().add(LoadMatchmakingData());
+                }
+              });
             },
           ),
           IconButton(

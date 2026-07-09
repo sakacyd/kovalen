@@ -12,6 +12,12 @@ class MatchingPreferencesLoaded extends MatchingPreferencesState {
   MatchingPreferencesLoaded(this.maxDistance);
 }
 
+class MatchingPreferencesSaved extends MatchingPreferencesState {
+  final double maxDistance;
+
+  MatchingPreferencesSaved(this.maxDistance);
+}
+
 class MatchingPreferencesFailure extends MatchingPreferencesState {
   final String message;
 

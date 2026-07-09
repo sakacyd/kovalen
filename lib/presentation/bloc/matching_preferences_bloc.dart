@@ -59,7 +59,7 @@ class MatchingPreferencesBloc
           );
           _appUserCubit.updateUser(updatedUser);
         }
-        emit(MatchingPreferencesLoaded(event.maxDistance));
+        emit(MatchingPreferencesSaved(event.maxDistance));
       },
     );
   }
