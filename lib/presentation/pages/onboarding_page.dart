@@ -16,9 +16,7 @@ import '../widgets/custom_text_field.dart';
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
   static route() =>
-      MaterialPageRoute(
-        builder: (context) => const OnboardingPage(),
-      );
+      MaterialPageRoute(builder: (context) => const OnboardingPage());
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -38,7 +36,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   String? _selectedTujuanBelajar;
   String? _selectedGayaBelajar;
 
-  final Set<String> _selectedInterests = {};
+  final Set<String> _selectedAcademicInterests = {};
+  final Set<String> _selectedNonAcademicInterests = {};
   static const int _maxInterests = 5;
 
   int _currentSectionIndex = 0;
@@ -68,17 +67,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _toggleInterest(String interestId) {
+  void _toggleInterest(String interestId, String typeName) {
     setState(() {
-      if (_selectedInterests.contains(interestId)) {
-        _selectedInterests.remove(interestId);
+      final targetSet = typeName == 'Akademik' ? _selectedAcademicInterests : _selectedNonAcademicInterests;
+      if (targetSet.contains(interestId)) {
+        targetSet.remove(interestId);
       } else {
-        if (_selectedInterests.length < _maxInterests) {
-          _selectedInterests.add(interestId);
+        if (targetSet.length < _maxInterests) {
+          targetSet.add(interestId);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Maksimal 5 minat yang dapat dipilih.'),
+            SnackBar(
+              content: Text('Maksimal $_maxInterests minat $typeName yang dapat dipilih.'),
             ),
           );
         }
@@ -97,43 +97,88 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   void _nextSection() {
     if (_currentSectionIndex == 0) {
-      if (_fullNameController.text.isEmpty || _avatarFile == null || _selectedGender == null) {
+      if (_fullNameController.text.isEmpty ||
+          _avatarFile == null ||
+          _selectedGender == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lengkapi informasi dasar dan foto profil terlebih dahulu')),
+          const SnackBar(
+            content: Text(
+              'Lengkapi informasi dasar dan foto profil terlebih dahulu',
+            ),
+          ),
         );
         return;
       }
       setState(() => _currentSectionIndex = 1);
     } else if (_currentSectionIndex == 1) {
-      if (_selectedProgram == null || _selectedSemester == null || _selectedUniversity == null || _gpaController.text.trim().isEmpty) {
+      if (_selectedProgram == null ||
+          _selectedSemester == null ||
+          _selectedUniversity == null ||
+          _gpaController.text.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lengkapi latar belakang akademik terlebih dahulu')),
+          const SnackBar(
+            content: Text('Lengkapi latar belakang akademik terlebih dahulu'),
+          ),
         );
         return;
       }
       final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
       if (parsedGpa < 0.0 || parsedGpa > 4.0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Nilai IPK harus berada di rentang 0.00 hingga 4.00')),
+          const SnackBar(
+            content: Text('Nilai IPK harus berada di rentang 0.00 hingga 4.00'),
+          ),
         );
         return;
       }
       setState(() => _currentSectionIndex = 2);
-    } else {
-      if (_selectedInterests.isEmpty || _selectedTujuanBelajar == null || _selectedGayaBelajar == null) {
+    } else if (_currentSectionIndex == 2) {
+      if (_selectedTujuanBelajar == null || _selectedGayaBelajar == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Lengkapi pilihan fokus & minat terlebih dahulu')),
+          const SnackBar(
+            content: Text(
+              'Lengkapi pilihan fokus dan gaya belajar terlebih dahulu',
+            ),
+          ),
         );
         return;
       }
-      String finalTujuanBelajar = _selectedTujuanBelajar!;
+
       if (_selectedTujuanBelajar == 'Lain-lain') {
         if (_customTujuanBelajarController.text.trim().isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Lengkapi tujuan belajar lainnya terlebih dahulu')),
+            const SnackBar(
+              content: Text(
+                'Lengkapi tujuan belajar lainnya terlebih dahulu',
+              ),
+            ),
           );
           return;
         }
+      }
+      setState(() => _currentSectionIndex = 3);
+    } else if (_currentSectionIndex == 3) {
+      if (_selectedAcademicInterests.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Lengkapi pilihan minat akademik terlebih dahulu (minimal 1)'),
+          ),
+        );
+        return;
+      }
+      setState(() => _currentSectionIndex = 4);
+    } else if (_currentSectionIndex == 4) {
+      if (_selectedNonAcademicInterests.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Lengkapi pilihan minat non-akademik terlebih dahulu (minimal 1)'),
+          ),
+        );
+        return;
+      }
+
+      String finalTujuanBelajar = _selectedTujuanBelajar!;
+      if (_selectedTujuanBelajar == 'Lain-lain') {
         finalTujuanBelajar = _customTujuanBelajarController.text.trim();
       }
 
@@ -150,7 +195,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           tujuanBelajar: finalTujuanBelajar,
           gayaBelajar: _selectedGayaBelajar!,
           gpa: parsedGpa,
-          interests: _selectedInterests.toList(),
+          interests: [..._selectedAcademicInterests, ..._selectedNonAcademicInterests],
         ),
       );
     }
@@ -169,135 +214,174 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Scaffold(
         appBar: CustomAppBar(
           titleWidget: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildProgressIndicator(_currentSectionIndex >= 0),
-            const SizedBox(width: 8),
-            _buildProgressIndicator(_currentSectionIndex >= 1),
-            const SizedBox(width: 8),
-            _buildProgressIndicator(_currentSectionIndex >= 2),
-          ],
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildProgressIndicator(_currentSectionIndex >= 0),
+              const SizedBox(width: 8),
+              _buildProgressIndicator(_currentSectionIndex >= 1),
+              const SizedBox(width: 8),
+              _buildProgressIndicator(_currentSectionIndex >= 2),
+              const SizedBox(width: 8),
+              _buildProgressIndicator(_currentSectionIndex >= 3),
+              const SizedBox(width: 8),
+              _buildProgressIndicator(_currentSectionIndex >= 4),
+            ],
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Profil Akademik',
+                        style: Theme.of(context).textTheme.displayLarge
+                            ?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Bantu kami mencocokkan Anda dengan partner belajar yang memiliki ritme dan fokus serupa.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      if (_currentSectionIndex == 0) _buildSection1(),
+                      if (_currentSectionIndex == 1) _buildSection2(),
+                      if (_currentSectionIndex == 2) _buildSection3(),
+                      if (_currentSectionIndex == 3) _buildSection4(),
+                      if (_currentSectionIndex == 4) _buildSection5(),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Profil Akademik',
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.5),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Bantu kami mencocokkan Anda dengan partner belajar yang memiliki ritme dan fokus serupa.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      offset: const Offset(0, -8),
+                      blurRadius: 24,
                     ),
-                    const SizedBox(height: 24),
-                    if (_currentSectionIndex == 0) _buildSection1(),
-                    if (_currentSectionIndex == 1) _buildSection2(),
-                    if (_currentSectionIndex == 2) _buildSection3(),
                   ],
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(24.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: Border(
-                  top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    offset: const Offset(0, -8),
-                    blurRadius: 24,
-                  ),
-                ],
-              ),
-              child: BlocConsumer<OnboardingBloc, OnboardingState>(
-                listener: (context, state) {
-                  if (state is OnboardingFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                  } else if (state is OnboardingSuccess) {
-                    Navigator.pushReplacement(context, MainPage.route());
-                  }
-                },
-                builder: (context, state) {
-                  return Row(
-                    children: [
-                      if (_currentSectionIndex > 0) ...[
+                child: BlocConsumer<OnboardingBloc, OnboardingState>(
+                  listener: (context, state) {
+                    if (state is OnboardingFailure) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(state.message)));
+                    } else if (state is OnboardingSuccess) {
+                      Navigator.pushReplacement(context, MainPage.route());
+                    }
+                  },
+                  builder: (context, state) {
+                    return Row(
+                      children: [
+                        if (_currentSectionIndex > 0) ...[
+                          Expanded(
+                            flex: 1,
+                            child: OutlinedButton(
+                              onPressed: state is OnboardingLoading
+                                  ? null
+                                  : _previousSection,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                side: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                        ],
                         Expanded(
-                          flex: 1,
-                          child: OutlinedButton(
-                            onPressed: state is OnboardingLoading ? null : _previousSection,
-                            style: OutlinedButton.styleFrom(
+                          flex: 3,
+                          child: ElevatedButton(
+                            onPressed: state is OnboardingLoading
+                                ? null
+                                : _nextSection,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              foregroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              side: BorderSide(color: Theme.of(context).colorScheme.primary),
                             ),
-                            child: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                      Expanded(
-                        flex: 3,
-                        child: ElevatedButton(
-                          onPressed: state is OnboardingLoading ? null : _nextSection,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: state is OnboardingLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      _currentSectionIndex == 2 ? 'Selesai' : 'Lanjutkan',
-                                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.onPrimary,
-                                      ),
+                            child: state is OnboardingLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
                                     ),
-                                    if (_currentSectionIndex < 2) ...[
-                                      const SizedBox(width: 8),
-                                      const Icon(Icons.arrow_forward, size: 20),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        _currentSectionIndex == 4
+                                            ? 'Selesai'
+                                            : 'Lanjutkan',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary,
+                                            ),
+                                      ),
+                                      if (_currentSectionIndex < 2) ...[
+                                        const SizedBox(width: 8),
+                                        const Icon(
+                                          Icons.arrow_forward,
+                                          size: 20,
+                                        ),
+                                      ],
                                     ],
-                                  ],
-                                ),
+                                  ),
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }
+                      ],
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -323,9 +407,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Text(
               'Jenis Kelamin',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -379,10 +463,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
             if (state is OnboardingDataLoaded) {
               uniItems = state.universities.map((u) {
-                return DropdownMenuItem(
-                  value: u.id,
-                  child: Text(u.name),
-                );
+                return DropdownMenuItem(value: u.id, child: Text(u.name));
               }).toList();
 
               progItems = state.studyPrograms.map((p) {
@@ -403,10 +484,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   onChanged: (val) {
                     setState(() {
                       _selectedUniversity = val;
-                      _selectedProgram = null; 
+                      _selectedProgram = null;
                     });
                     if (val != null) {
-                      context.read<OnboardingBloc>().add(OnboardingLoadStudyPrograms(val));
+                      context.read<OnboardingBloc>().add(
+                        OnboardingLoadStudyPrograms(val),
+                      );
                     }
                   },
                 ),
@@ -416,12 +499,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   hint: 'Pilih Program Studi',
                   value: _selectedProgram,
                   items: progItems,
-                  onChanged: (val) =>
-                      setState(() => _selectedProgram = val),
+                  onChanged: (val) => setState(() => _selectedProgram = val),
                 ),
               ],
             );
-          }
+          },
         ),
         const SizedBox(height: 16),
         Row(
@@ -442,8 +524,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   DropdownMenuItem(value: '7', child: Text('Semester 7')),
                   DropdownMenuItem(value: '8', child: Text('Semester 8+')),
                 ],
-                onChanged: (val) =>
-                    setState(() => _selectedSemester = val),
+                onChanged: (val) => setState(() => _selectedSemester = val),
               ),
             ),
             const SizedBox(width: 16),
@@ -454,10 +535,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 hint: '0.00',
                 controller: _gpaController,
                 icon: Icons.grade_outlined,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
                   TextInputFormatter.withFunction((oldValue, newValue) {
-                    return newValue.copyWith(text: newValue.text.replaceAll(',', '.'));
+                    return newValue.copyWith(
+                      text: newValue.text.replaceAll(',', '.'),
+                    );
                   }),
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]')),
                 ],
@@ -481,9 +566,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Text(
               'Tujuan Belajar',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 8),
             Column(
@@ -492,7 +577,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   title: const Text('Persiapan UTS/UAS'),
                   value: 'Persiapan UTS',
                   groupValue: _selectedTujuanBelajar,
-                  onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                  onChanged: (value) =>
+                      setState(() => _selectedTujuanBelajar = value),
                   contentPadding: EdgeInsets.zero,
                   activeColor: Theme.of(context).colorScheme.primary,
                 ),
@@ -500,7 +586,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   title: const Text('Nugas Sehari-hari/Mingguan'),
                   value: 'Nugas sehari-hari atau mingguan',
                   groupValue: _selectedTujuanBelajar,
-                  onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                  onChanged: (value) =>
+                      setState(() => _selectedTujuanBelajar = value),
                   contentPadding: EdgeInsets.zero,
                   activeColor: Theme.of(context).colorScheme.primary,
                 ),
@@ -508,7 +595,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   title: const Text('Skripsi/Tugas Akhir'),
                   value: 'Skripsi/Tugas Akhir',
                   groupValue: _selectedTujuanBelajar,
-                  onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                  onChanged: (value) =>
+                      setState(() => _selectedTujuanBelajar = value),
                   contentPadding: EdgeInsets.zero,
                   activeColor: Theme.of(context).colorScheme.primary,
                 ),
@@ -516,7 +604,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   title: const Text('Lain-lain'),
                   value: 'Lain-lain',
                   groupValue: _selectedTujuanBelajar,
-                  onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                  onChanged: (value) =>
+                      setState(() => _selectedTujuanBelajar = value),
                   contentPadding: EdgeInsets.zero,
                   activeColor: Theme.of(context).colorScheme.primary,
                 ),
@@ -540,9 +629,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Text(
               'Gaya Belajar',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -552,7 +641,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     title: const Text('Online'),
                     value: 'Online',
                     groupValue: _selectedGayaBelajar,
-                    onChanged: (value) => setState(() => _selectedGayaBelajar = value),
+                    onChanged: (value) =>
+                        setState(() => _selectedGayaBelajar = value),
                     contentPadding: EdgeInsets.zero,
                     activeColor: Theme.of(context).colorScheme.primary,
                   ),
@@ -562,7 +652,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     title: const Text('Offline'),
                     value: 'Offline',
                     groupValue: _selectedGayaBelajar,
-                    onChanged: (value) => setState(() => _selectedGayaBelajar = value),
+                    onChanged: (value) =>
+                        setState(() => _selectedGayaBelajar = value),
                     contentPadding: EdgeInsets.zero,
                     activeColor: Theme.of(context).colorScheme.primary,
                   ),
@@ -571,46 +662,113 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+      ],
+    );
+  }
+
+  Widget _buildSection4() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Minat Akademik', Icons.school),
+        const SizedBox(height: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Pilih Topik Minat Belajar',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            Text(
-              '${_selectedInterests.length}/$_maxInterests Terpilih',
-              style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(
-                    color:
-                        _selectedInterests.length == _maxInterests
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  'Pilih Topik Minat Akademik',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  '${_selectedAcademicInterests.length}/$_maxInterests Terpilih',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: _selectedAcademicInterests.length == _maxInterests
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Pilih minimal 1 hingga $_maxInterests topik akademik untuk memfokuskan pencarian studi Anda.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            BlocBuilder<OnboardingBloc, OnboardingState>(
+              builder: (context, state) {
+                if (state is OnboardingDataLoaded) {
+                  final academicInterests = {'Akademik': state.availableInterests['Akademik'] ?? <String, List<Interest>>{}};
+                  return _buildInterestsGroup(academicInterests);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 24),
-        BlocBuilder<OnboardingBloc, OnboardingState>(
-          builder: (context, state) {
-            if (state is OnboardingDataLoaded) {
-              return _buildInterestsGroup(state.availableInterests);
-            }
-            return const Center(child: CircularProgressIndicator());
-          }
+      ],
+    );
+  }
+
+  Widget _buildSection5() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('Minat Non-Akademik', Icons.palette_outlined),
+        const SizedBox(height: 16),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  'Pilih Topik Minat Non-Akademik',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  '${_selectedNonAcademicInterests.length}/$_maxInterests Terpilih',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: _selectedNonAcademicInterests.length == _maxInterests
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Pilih minimal 1 hingga $_maxInterests topik non-akademik yang sesuai dengan minat Anda.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            BlocBuilder<OnboardingBloc, OnboardingState>(
+              builder: (context, state) {
+                if (state is OnboardingDataLoaded) {
+                  final nonAcademicInterests = {'Non Akademik': state.availableInterests['Non Akademik'] ?? <String, List<Interest>>{}};
+                  return _buildInterestsGroup(nonAcademicInterests);
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ],
         ),
       ],
     );
@@ -622,7 +780,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       height: 6,
       width: isActive ? 48 : 24,
       decoration: BoxDecoration(
-        color: isActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: isActive
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(100),
       ),
     );
@@ -636,7 +796,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -656,7 +818,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ],
         ),
         const SizedBox(height: 12),
-        Divider(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        Divider(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
       ],
     );
   }
@@ -676,7 +842,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ? FileImage(_avatarFile!) as ImageProvider
                       : null,
                   child: _avatarFile == null
-                      ? const Icon(Icons.person, size: 56, color: AppPallete.onSurfaceVariant)
+                      ? const Icon(
+                          Icons.person,
+                          size: 56,
+                          color: AppPallete.onSurfaceVariant,
+                        )
                       : null,
                 ),
                 Positioned(
@@ -689,20 +859,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: AppPallete.surface, width: 3),
                     ),
-                    child: const Icon(Icons.camera_alt, color: AppPallete.onPrimary, size: 16),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: AppPallete.onPrimary,
+                      size: 16,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-
         ],
       ),
     );
   }
 
-  Widget _buildInterestsGroup(Map<String, Map<String, List<Interest>>> groupedByType) {
+  Widget _buildInterestsGroup(
+    Map<String, Map<String, List<Interest>>> groupedByType,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: groupedByType.keys.map((typeName) {
@@ -711,16 +886,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
-              child: Text(
-                typeName,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
             ...groupedByCategory.keys.map((catName) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
@@ -741,8 +906,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       children: groupedByCategory[catName]!.map((interest) {
                         return SelectablePill(
                           label: interest.name,
-                          isSelected: _selectedInterests.contains(interest.id),
-                          onTap: () => _toggleInterest(interest.id),
+                          isSelected: _selectedAcademicInterests.contains(interest.id) || _selectedNonAcademicInterests.contains(interest.id),
+                          onTap: () => _toggleInterest(interest.id, typeName),
                         );
                       }).toList(),
                     ),
