@@ -42,6 +42,16 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Future<Either<Failure, void>> changeUserStatus({required String userId, required String status, DateTime? suspendedUntil}) async {
+    try {
+      await remoteDataSource.changeUserStatus(userId, status, suspendedUntil);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> deleteUser({required String userId}) async {
     try {
       await remoteDataSource.deleteUser(userId);

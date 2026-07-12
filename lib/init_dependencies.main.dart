@@ -294,6 +294,7 @@ void _initAdmin() {
     ..registerFactory(() => GetAllUsers(serviceLocator()))
     ..registerFactory(() => GetAllGroups(serviceLocator()))
     ..registerFactory(() => ChangeUserRole(serviceLocator()))
+    ..registerFactory(() => ChangeUserStatus(serviceLocator()))
     ..registerFactory(() => DeleteUser(serviceLocator()))
     ..registerFactory(() => GetGroupDetailsForAdmin(serviceLocator()))
     
@@ -303,6 +304,7 @@ void _initAdmin() {
         getAllUsers: serviceLocator(),
         getAllGroups: serviceLocator(),
         changeUserRole: serviceLocator(),
+        changeUserStatus: serviceLocator(),
         deleteUser: serviceLocator(),
         getGroupDetailsForAdmin: serviceLocator(),
       ),

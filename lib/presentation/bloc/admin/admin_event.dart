@@ -24,3 +24,15 @@ class AdminFetchGroupDetailsEvent extends AdminEvent {
 
   AdminFetchGroupDetailsEvent({required this.roomId});
 }
+
+class AdminChangeUserStatusEvent extends AdminEvent {
+  final String userId;
+  final String status;
+  final DateTime? suspendedUntil;
+
+  AdminChangeUserStatusEvent({
+    required this.userId,
+    required this.status,
+    this.suspendedUntil,
+  });
+}

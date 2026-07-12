@@ -19,6 +19,8 @@ class User {
   final String role;
   final double ratingScore;
   final int ratingCount;
+  final String status;
+  final DateTime? suspendedUntil;
 
   User({
     required this.id,
@@ -41,6 +43,8 @@ class User {
     this.role = 'pelanggan',
     this.ratingScore = 0.0,
     this.ratingCount = 0,
+    this.status = 'active',
+    this.suspendedUntil,
   });
 
   bool get isProfileComplete {
@@ -68,6 +72,8 @@ class User {
     String? role,
     double? ratingScore,
     int? ratingCount,
+    String? status,
+    DateTime? suspendedUntil,
   }) {
     return User(
       id: id ?? this.id,
@@ -90,6 +96,8 @@ class User {
       role: role ?? this.role,
       ratingScore: ratingScore ?? this.ratingScore,
       ratingCount: ratingCount ?? this.ratingCount,
+      status: status ?? this.status,
+      suspendedUntil: suspendedUntil ?? this.suspendedUntil,
     );
   }
 }

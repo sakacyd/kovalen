@@ -9,6 +9,7 @@ abstract interface class AdminRemoteDataSource {
   Future<List<UserModel>> getAllUsers();
   Future<List<ChatRoomModel>> getAllGroups();
   Future<void> changeUserRole(String userId, String newRole);
+  Future<void> changeUserStatus(String userId, String status, DateTime? suspendedUntil);
   Future<void> deleteUser(String userId);
   Future<Map<String, dynamic>> getGroupDetails(String roomId);
 }
@@ -42,6 +43,19 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   Future<void> changeUserRole(String userId, String newRole) async {
     try {
       await supabaseClient.from('users').update({'role': newRole}).eq('id', userId);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> changeUserStatus(String userId, String status, DateTime? suspendedUntil) async {
+    try {
+      final updateData = <String, dynamic>{
+        'status': status,
+        'suspended_until': suspendedUntil?.toIso8601String(),
+      };
+      await supabaseClient.from('users').update(updateData).eq('id', userId);
     } catch (e) {
       throw ServerException(e.toString());
     }

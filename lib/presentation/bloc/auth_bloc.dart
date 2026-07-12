@@ -10,6 +10,8 @@ import 'package:kovalen/domain/usecases/update_user_location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:intl/intl.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -67,9 +69,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _userSignIn(
       UserSignInParams(email: event.email, password: event.password),
     );
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) => _emitAuthSuccess(r, emit),
+    await res.fold(
+      (l) async => emit(AuthFailure(l.message)),
+      (user) async {
+        if (!await _checkUserStatus(user, emit)) return;
+        _emitAuthSuccess(user, emit);
+      },
     );
   }
 
@@ -85,6 +90,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthFailure(l.message));
       },
       (user) async {
+        if (!await _checkUserStatus(user, emit)) return;
+
         // Optimistic UI updates
         _emitAuthSuccess(user, emit);
 
@@ -123,6 +130,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     );
+  }
+
+  Future<bool> _checkUserStatus(User user, Emitter<AuthState> emit) async {
+    if (user.status == 'banned') {
+      await Supabase.instance.client.auth.signOut();
+      _appUserCubit.updateUser(null);
+      emit(const AuthFailure('Akun Anda telah diblokir secara permanen.'));
+      return false;
+    }
+
+    if (user.status == 'suspended' && user.suspendedUntil != null) {
+      if (user.suspendedUntil!.isAfter(DateTime.now())) {
+        await Supabase.instance.client.auth.signOut();
+        _appUserCubit.updateUser(null);
+        final formatter = DateFormat('dd MMM yyyy, HH:mm');
+        final dateStr = formatter.format(user.suspendedUntil!.toLocal());
+        emit(AuthFailure('Akun Anda ditangguhkan hingga $dateStr.'));
+        return false;
+      }
+    }
+    return true;
   }
 
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {

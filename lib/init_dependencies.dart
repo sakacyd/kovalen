@@ -77,6 +77,7 @@ import 'package:kovalen/domain/repository/admin_repository.dart';
 import 'package:kovalen/domain/usecases/admin/get_all_users.dart';
 import 'package:kovalen/domain/usecases/admin/get_all_groups.dart';
 import 'package:kovalen/domain/usecases/admin/change_user_role.dart';
+import 'package:kovalen/domain/usecases/admin/change_user_status.dart';
 import 'package:kovalen/domain/usecases/admin/delete_user.dart';
 import 'package:kovalen/domain/usecases/admin/get_group_details_for_admin.dart';
 import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';

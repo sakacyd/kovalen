@@ -4,6 +4,7 @@ import 'package:kovalen/core/common/entities/chat_room.dart';
 import 'package:kovalen/core/usecase/usecase.dart';
 import 'package:kovalen/domain/usecases/admin/get_all_users.dart';
 import 'package:kovalen/domain/usecases/admin/change_user_role.dart';
+import 'package:kovalen/domain/usecases/admin/change_user_status.dart';
 import 'package:kovalen/domain/usecases/admin/delete_user.dart';
 import 'package:kovalen/domain/usecases/admin/get_all_groups.dart';
 import 'package:kovalen/domain/usecases/admin/get_group_details_for_admin.dart';
@@ -17,6 +18,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final GetAllUsers _getAllUsers;
   final GetAllGroups _getAllGroups;
   final ChangeUserRole _changeUserRole;
+  final ChangeUserStatus _changeUserStatus;
   final DeleteUser _deleteUser;
   final GetGroupDetailsForAdmin _getGroupDetailsForAdmin;
 
@@ -24,11 +26,13 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     required GetAllUsers getAllUsers,
     required GetAllGroups getAllGroups,
     required ChangeUserRole changeUserRole,
+    required ChangeUserStatus changeUserStatus,
     required DeleteUser deleteUser,
     required GetGroupDetailsForAdmin getGroupDetailsForAdmin,
   })  : _getAllUsers = getAllUsers,
         _getAllGroups = getAllGroups,
         _changeUserRole = changeUserRole,
+        _changeUserStatus = changeUserStatus,
         _deleteUser = deleteUser,
         _getGroupDetailsForAdmin = getGroupDetailsForAdmin,
         super(AdminInitial()) {
@@ -36,6 +40,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminFetchGroupsEvent>(_onFetchGroups);
     on<AdminFetchGroupDetailsEvent>(_onFetchGroupDetails);
     on<AdminChangeUserRoleEvent>(_onChangeRole);
+    on<AdminChangeUserStatusEvent>(_onChangeStatus);
     on<AdminDeleteUserEvent>(_onDeleteUser);
   }
 
@@ -76,6 +81,23 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       (failure) => emit(AdminError(failure.message)),
       (_) {
         emit(AdminActionSuccess('Berhasil mengubah role pengguna.'));
+        add(AdminFetchUsersEvent()); // Refresh data
+      },
+    );
+  }
+
+  void _onChangeStatus(AdminChangeUserStatusEvent event, Emitter<AdminState> emit) async {
+    final result = await _changeUserStatus(
+      ChangeUserStatusParams(
+        userId: event.userId,
+        status: event.status,
+        suspendedUntil: event.suspendedUntil,
+      ),
+    );
+    result.fold(
+      (failure) => emit(AdminError(failure.message)),
+      (_) {
+        emit(AdminActionSuccess('Berhasil mengubah status pengguna.'));
         add(AdminFetchUsersEvent()); // Refresh data
       },
     );

@@ -22,6 +22,8 @@ class UserModel extends User {
     super.role = 'pelanggan',
     super.ratingScore = 0.0,
     super.ratingCount = 0,
+    super.status = 'active',
+    super.suspendedUntil,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,8 @@ class UserModel extends User {
       role: json['role'] ?? 'pelanggan',
       ratingScore: (json['rating_score'] as num?)?.toDouble() ?? 0.0,
       ratingCount: json['rating_count'] as int? ?? 0,
+      status: json['status'] ?? 'active',
+      suspendedUntil: json['suspended_until'] != null ? DateTime.parse(json['suspended_until']) : null,
     );
   }
 
@@ -71,6 +75,8 @@ class UserModel extends User {
       'role': role,
       'rating_score': ratingScore,
       'rating_count': ratingCount,
+      'status': status,
+      'suspended_until': suspendedUntil?.toIso8601String(),
     };
   }
 
@@ -96,6 +102,8 @@ class UserModel extends User {
     String? role,
     double? ratingScore,
     int? ratingCount,
+    String? status,
+    DateTime? suspendedUntil,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -118,6 +126,8 @@ class UserModel extends User {
       role: role ?? this.role,
       ratingScore: ratingScore ?? this.ratingScore,
       ratingCount: ratingCount ?? this.ratingCount,
+      status: status ?? this.status,
+      suspendedUntil: suspendedUntil ?? this.suspendedUntil,
     );
   }
 }
