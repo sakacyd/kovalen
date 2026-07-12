@@ -15,8 +15,8 @@ class RatingDialog extends StatefulWidget {
 
 class _RatingDialogState extends State<RatingDialog> {
   int _currentIndex = 0;
-  double _currentScore = 0;
-  final _feedbackController = TextEditingController();
+  int _currentRating = 0;
+  final _reviewController = TextEditingController();
 
   @override
   void initState() {
@@ -26,12 +26,12 @@ class _RatingDialogState extends State<RatingDialog> {
 
   @override
   void dispose() {
-    _feedbackController.dispose();
+    _reviewController.dispose();
     super.dispose();
   }
 
   void _submitRating(User targetUser, List<User> participants) {
-    if (_currentScore == 0) {
+    if (_currentRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Silakan pilih minimal 1 bintang')),
       );
@@ -40,16 +40,16 @@ class _RatingDialogState extends State<RatingDialog> {
 
     context.read<RatingBloc>().add(
       SubmitUserRatingEvent(
-        targetUserId: targetUser.id,
-        score: _currentScore,
-        feedback: _feedbackController.text.trim(),
+        rateeId: targetUser.id,
+        rating: _currentRating,
+        review: _reviewController.text.trim(),
       ),
     );
 
     // Reset untuk form berikutnya
     setState(() {
-      _currentScore = 0;
-      _feedbackController.clear();
+      _currentRating = 0;
+      _reviewController.clear();
       _currentIndex++;
     });
 
@@ -124,13 +124,13 @@ class _RatingDialogState extends State<RatingDialog> {
                     children: List.generate(5, (index) {
                       return IconButton(
                         icon: Icon(
-                          index < _currentScore ? Icons.star : Icons.star_border,
+                          index < _currentRating ? Icons.star : Icons.star_border,
                           color: Colors.amber,
                           size: 32,
                         ),
                         onPressed: () {
                           setState(() {
-                            _currentScore = index + 1.0;
+                            _currentRating = index + 1;
                           });
                         },
                       );
@@ -140,7 +140,7 @@ class _RatingDialogState extends State<RatingDialog> {
                   
                   // Feedback Text Field
                   TextField(
-                    controller: _feedbackController,
+                    controller: _reviewController,
                     maxLines: 2,
                     decoration: const InputDecoration(
                       hintText: 'Komentar tambahan (opsional)',
@@ -156,8 +156,8 @@ class _RatingDialogState extends State<RatingDialog> {
                         onPressed: () {
                           // Skip rating user ini
                           setState(() {
-                            _currentScore = 0;
-                            _feedbackController.clear();
+                            _currentRating = 0;
+                            _reviewController.clear();
                             _currentIndex++;
                           });
                           if (_currentIndex >= participants.length) {

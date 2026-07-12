@@ -4,9 +4,9 @@ import 'package:kovalen/data/models/user_model.dart';
 
 abstract interface class RatingRemoteDataSource {
   Future<void> rateUser({
-    required String targetUserId,
-    required double score,
-    String? feedback,
+    required String rateeId,
+    required int rating,
+    String? review,
   });
   Future<List<UserModel>> getRoomParticipants(String roomId);
 }
@@ -18,17 +18,17 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
 
   @override
   Future<void> rateUser({
-    required String targetUserId,
-    required double score,
-    String? feedback,
+    required String rateeId,
+    required int rating,
+    String? review,
   }) async {
     try {
       final currentUserId = supabaseClient.auth.currentUser!.id;
       await supabaseClient.from('user_ratings').insert({
         'rater_id': currentUserId,
-        'rated_id': targetUserId,
-        'score': score,
-        'feedback': feedback,
+        'ratee_id': rateeId,
+        'rating': rating,
+        'review': review,
       });
     } catch (e) {
       throw ServerException(e.toString());

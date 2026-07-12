@@ -8,13 +8,13 @@ class FetchRoomParticipantsEvent extends RatingEvent {
 }
 
 class SubmitUserRatingEvent extends RatingEvent {
-  final String targetUserId;
-  final double score;
-  final String? feedback;
+  final String rateeId;
+  final int rating;
+  final String? review;
 
   SubmitUserRatingEvent({
-    required this.targetUserId,
-    required this.score,
-    this.feedback,
+    required this.rateeId,
+    required this.rating,
+    this.review,
   });
 }

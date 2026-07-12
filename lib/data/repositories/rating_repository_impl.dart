@@ -12,15 +12,15 @@ class RatingRepositoryImpl implements RatingRepository {
 
   @override
   Future<Either<Failure, void>> rateUser({
-    required String targetUserId,
-    required double score,
-    String? feedback,
+    required String rateeId,
+    required int rating,
+    String? review,
   }) async {
     try {
       await remoteDataSource.rateUser(
-        targetUserId: targetUserId,
-        score: score,
-        feedback: feedback,
+        rateeId: rateeId,
+        rating: rating,
+        review: review,
       );
       return right(null);
     } on ServerException catch (e) {

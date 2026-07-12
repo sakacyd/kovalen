@@ -4,9 +4,9 @@ import 'package:kovalen/core/common/entities/user.dart';
 
 abstract interface class RatingRepository {
   Future<Either<Failure, void>> rateUser({
-    required String targetUserId,
-    required double score,
-    String? feedback,
+    required String rateeId,
+    required int rating,
+    String? review,
   });
   Future<Either<Failure, List<User>>> getRoomParticipants(String roomId);
 }

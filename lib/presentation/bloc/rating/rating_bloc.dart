@@ -39,9 +39,9 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
 
     emit(RatingLoading());
     final result = await _rateUser(RateUserParams(
-      targetUserId: event.targetUserId,
-      score: event.score,
-      feedback: event.feedback,
+      rateeId: event.rateeId,
+      rating: event.rating,
+      review: event.review,
     ));
 
     result.fold(
