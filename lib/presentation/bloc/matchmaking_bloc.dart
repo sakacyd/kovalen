@@ -35,8 +35,12 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
     _newMatchesSubscription = _watchNewMatches(NoParams()).listen((result) {
       result.fold(
         (failure) {}, // Ignore errors for the stream
-        (_) {
-          add(MatchmakingNewMatchReceived());
+        (isNewMatch) {
+          if (isNewMatch) {
+            add(MatchmakingNewMatchReceived());
+          } else {
+            add(LoadMatchmakingData());
+          }
         },
       );
     });

@@ -56,6 +56,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             state.user.universityName ??
                             state.user.universityId,
                         avatarUrl: state.user.avatarUrl,
+                        ratingScore: state.user.ratingScore,
+                        ratingCount: state.user.ratingCount,
                       ),
                       const SizedBox(height: 32),
                       AcademicInfoGrid(

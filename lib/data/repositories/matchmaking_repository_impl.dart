@@ -31,10 +31,10 @@ class MatchmakingRepositoryImpl implements MatchmakingRepository {
   }
 
   @override
-  Stream<Either<Failure, void>> watchNewMatches() async* {
+  Stream<Either<Failure, bool>> watchNewMatches() async* {
     try {
-      await for (final _ in remoteDataSource.watchNewMatches()) {
-        yield const Right(null);
+      await for (final isNewMatch in remoteDataSource.watchNewMatches()) {
+        yield Right(isNewMatch);
       }
     } on ServerException catch (e) {
       yield Left(Failure(e.message));

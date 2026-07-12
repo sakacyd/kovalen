@@ -71,6 +71,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 roomId: room.id,
                 name: name,
                 avatarUrl: imageUrl,
+                isGroup: room.type == 'group',
               ),
             );
           },

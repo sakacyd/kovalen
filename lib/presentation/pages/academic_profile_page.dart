@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/utils/pick_image.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
@@ -27,6 +28,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _gpaController = TextEditingController();
+  final _customTujuanBelajarController = TextEditingController();
 
   String? _selectedSemester;
   String? _selectedUniversity;
@@ -52,7 +54,13 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
       int sem = appUserState.user.semester;
       _selectedSemester = sem >= 8 ? '8' : sem.toString();
       _selectedGender = appUserState.user.gender;
-      _selectedTujuanBelajar = appUserState.user.tujuanBelajar;
+      final predefinedTujuan = ['Persiapan UTS', 'Nugas sehari-hari atau mingguan', 'Skripsi/Tugas Akhir'];
+      if (predefinedTujuan.contains(appUserState.user.tujuanBelajar)) {
+        _selectedTujuanBelajar = appUserState.user.tujuanBelajar;
+      } else if (appUserState.user.tujuanBelajar != null && appUserState.user.tujuanBelajar!.isNotEmpty) {
+        _selectedTujuanBelajar = 'Lain-lain';
+        _customTujuanBelajarController.text = appUserState.user.tujuanBelajar ?? '';
+      }
       _selectedGayaBelajar = appUserState.user.gayaBelajar;
       _gpaController.text = appUserState.user.gpa.toString();
       _avatarUrl = appUserState.user.avatarUrl;
@@ -74,6 +82,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   void dispose() {
     _nameController.dispose();
     _gpaController.dispose();
+    _customTujuanBelajarController.dispose();
     super.dispose();
   }
 
@@ -103,7 +112,9 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
           _selectedStudyProgram != appUserState.user.studyProgramId ||
           _selectedSemester != (appUserState.user.semester >= 8 ? '8' : appUserState.user.semester.toString()) ||
           _selectedGender != appUserState.user.gender ||
-          _selectedTujuanBelajar != appUserState.user.tujuanBelajar ||
+          (_selectedTujuanBelajar == 'Lain-lain' 
+              ? _customTujuanBelajarController.text.trim() != appUserState.user.tujuanBelajar 
+              : _selectedTujuanBelajar != appUserState.user.tujuanBelajar) ||
           _selectedGayaBelajar != appUserState.user.gayaBelajar ||
           _gpaController.text != appUserState.user.gpa.toString() ||
           _avatarUrl != appUserState.user.avatarUrl;
@@ -130,6 +141,15 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   }
 
   void _saveProfile() async {
+    if (_gpaController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nilai IPK wajib diisi'),
+        ),
+      );
+      return;
+    }
+
     final double parsedGpa = double.tryParse(_gpaController.text) ?? 0.0;
 
     if (parsedGpa < 0.0 || parsedGpa > 4.0) {
@@ -157,6 +177,18 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
 
       if (shouldSave == true) {
         if (!mounted) return;
+        
+        String finalTujuanBelajar = _selectedTujuanBelajar!;
+        if (_selectedTujuanBelajar == 'Lain-lain') {
+          if (_customTujuanBelajarController.text.trim().isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Lengkapi tujuan belajar lainnya terlebih dahulu')),
+            );
+            return;
+          }
+          finalTujuanBelajar = _customTujuanBelajarController.text.trim();
+        }
+
         context.read<ProfileSettingsBloc>().add(
           UpdateProfileSettingsData(
             fullName: _nameController.text,
@@ -166,7 +198,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             studyProgramId: _selectedStudyProgram!,
             semester: int.tryParse(_selectedSemester ?? '1') ?? 1,
             gender: _selectedGender!,
-            tujuanBelajar: _selectedTujuanBelajar!,
+            tujuanBelajar: finalTujuanBelajar,
             gayaBelajar: _selectedGayaBelajar!,
             gpa: parsedGpa,
             interests: _selectedInterests.toList(),
@@ -254,16 +286,50 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   icon: Icons.badge_outlined,
                 ),
                 const SizedBox(height: 16),
-                CustomDropdown<String>(
-                  label: 'Jenis Kelamin',
-                  hint: 'Pilih Jenis Kelamin',
-                  value: _selectedGender,
-                  items: const [
-                    DropdownMenuItem(value: 'Laki-laki', child: Text('Laki-laki')),
-                    DropdownMenuItem(value: 'Perempuan', child: Text('Perempuan')),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Jenis Kelamin',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Laki-laki'),
+                            value: 'Laki-laki',
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value;
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Perempuan'),
+                            value: 'Perempuan',
+                            groupValue: _selectedGender,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedGender = value;
+                              });
+                            },
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                  onChanged: (val) =>
-                      setState(() => _selectedGender = val),
                 ),
                 const SizedBox(height: 32),
                 _buildSectionHeader('Latar Belakang Akademik', Icons.school_outlined),
@@ -408,6 +474,13 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                         hint: '0.00 - 4.00',
                         controller: _gpaController,
                         icon: Icons.grade_outlined,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            return newValue.copyWith(text: newValue.text.replaceAll(',', '.'));
+                          }),
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9\.]')),
+                        ],
                       ),
                     ),
                   ],
@@ -415,30 +488,101 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                 const SizedBox(height: 32),
                 _buildSectionHeader('Fokus & Minat', Icons.lightbulb_outline),
                 const SizedBox(height: 16),
-                CustomDropdown<String>(
-                  label: 'Tujuan Belajar',
-                  hint: 'Pilih Tujuan Belajar Utama Anda',
-                  value: _selectedTujuanBelajar,
-                  items: const [
-                    DropdownMenuItem(value: 'Persiapan UTS', child: Text('Persiapan UTS/UAS')),
-                    DropdownMenuItem(value: 'Nugas sehari-hari atau mingguan', child: Text('Nugas Sehari-hari/Mingguan')),
-                    DropdownMenuItem(value: 'Skripsi/Tugas Akhir', child: Text('Skripsi/Tugas Akhir')),
-                    DropdownMenuItem(value: 'Lain-lain', child: Text('Lain-lain')),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tujuan Belajar',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Column(
+                      children: [
+                        RadioListTile<String>(
+                          title: const Text('Persiapan UTS/UAS'),
+                          value: 'Persiapan UTS',
+                          groupValue: _selectedTujuanBelajar,
+                          onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Nugas Sehari-hari/Mingguan'),
+                          value: 'Nugas sehari-hari atau mingguan',
+                          groupValue: _selectedTujuanBelajar,
+                          onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Skripsi/Tugas Akhir'),
+                          value: 'Skripsi/Tugas Akhir',
+                          groupValue: _selectedTujuanBelajar,
+                          onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                        RadioListTile<String>(
+                          title: const Text('Lain-lain'),
+                          value: 'Lain-lain',
+                          groupValue: _selectedTujuanBelajar,
+                          onChanged: (value) => setState(() => _selectedTujuanBelajar = value),
+                          contentPadding: EdgeInsets.zero,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                    if (_selectedTujuanBelajar == 'Lain-lain') ...[
+                      const SizedBox(height: 8),
+                      CustomTextField(
+                        label: 'Tujuan Belajar Lainnya',
+                        hint: 'Ketik tujuan belajar Anda...',
+                        controller: _customTujuanBelajarController,
+                        icon: Icons.edit_outlined,
+                      ),
+                    ],
                   ],
-                  onChanged: (val) =>
-                      setState(() => _selectedTujuanBelajar = val),
                 ),
                 const SizedBox(height: 16),
-                CustomDropdown<String>(
-                  label: 'Gaya Belajar',
-                  hint: 'Pilih Preferensi Gaya Belajar',
-                  value: _selectedGayaBelajar,
-                  items: const [
-                    DropdownMenuItem(value: 'Online', child: Text('Online')),
-                    DropdownMenuItem(value: 'Offline', child: Text('Offline')),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Gaya Belajar',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Online'),
+                            value: 'Online',
+                            groupValue: _selectedGayaBelajar,
+                            onChanged: (value) => setState(() => _selectedGayaBelajar = value),
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        Expanded(
+                          child: RadioListTile<String>(
+                            title: const Text('Offline'),
+                            value: 'Offline',
+                            groupValue: _selectedGayaBelajar,
+                            onChanged: (value) => setState(() => _selectedGayaBelajar = value),
+                            contentPadding: EdgeInsets.zero,
+                            activeColor: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
-                  onChanged: (val) =>
-                      setState(() => _selectedGayaBelajar = val),
                 ),
                 const SizedBox(height: 32),
                 Row(

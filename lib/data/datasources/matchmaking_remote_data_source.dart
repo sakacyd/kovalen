@@ -7,7 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract interface class MatchmakingRemoteDataSource {
   Future<List<MatchProfileModel>> getPotentialMatches();
   Future<bool> swipeUser(String swipedId, bool isLiked);
-  Stream<void> watchNewMatches();
+  Stream<bool> watchNewMatches();
 }
 
 class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
@@ -56,7 +56,8 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
       // Fetch potential matches, explicitly filtering out swiped users on the database side
       var query = supabaseClient
           .from('users')
-          .select('*, universities(name), study_programs(name, education_level), user_interests(interests(*, interest_categories(*)))');
+          .select('*, universities(name), study_programs(name, education_level), user_interests(interests(*, interest_categories(*)))')
+          .eq('role', 'pelanggan');
       
       if (swipedIds.isNotEmpty) {
         query = query.not('id', 'in', swipedIds);
@@ -198,12 +199,12 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
   }
 
   @override
-  Stream<void> watchNewMatches() async* {
+  Stream<bool> watchNewMatches() async* {
     try {
       final session = supabaseClient.auth.currentSession;
       if (session == null) throw ServerException('User not logged in');
       
-      final streamController = StreamController<void>();
+      final streamController = StreamController<bool>();
       final channel = supabaseClient.channel('public:matches_changes');
 
       channel.onPostgresChanges(
@@ -213,8 +214,15 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
         callback: (payload) {
           final newRecord = payload.newRecord;
           if (newRecord['user1_id'] == session.user.id || newRecord['user2_id'] == session.user.id) {
-            streamController.add(null);
+            streamController.add(true);
           }
+        }
+      ).onPostgresChanges(
+        event: PostgresChangeEvent.update,
+        schema: 'public',
+        table: 'users',
+        callback: (payload) {
+          streamController.add(false);
         }
       ).subscribe();
 

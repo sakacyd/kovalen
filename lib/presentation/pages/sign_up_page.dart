@@ -14,15 +14,15 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final fullNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    fullNameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -71,13 +71,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 32),
 
-                  CustomTextField(
-                    label: 'Nama Lengkap',
-                    hint: 'John Doe',
-                    controller: fullNameController,
-                    icon: Icons.person_outline,
-                  ),
-                  const SizedBox(height: 24),
 
                   CustomTextField(
                     label: 'Email Institusi',
@@ -92,6 +85,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     label: 'Password',
                     hint: '••••••••',
                     controller: passwordController,
+                    icon: Icons.lock_outline,
+                    isPassword: true,
+                  ),
+                  const SizedBox(height: 24),
+
+                  CustomTextField(
+                    label: 'Konfirmasi Password',
+                    hint: '••••••••',
+                    controller: confirmPasswordController,
                     icon: Icons.lock_outline,
                     isPassword: true,
                   ),
@@ -126,9 +128,15 @@ class _SignUpPageState extends State<SignUpPage> {
                               ? null
                               : () {
                                   if (formKey.currentState!.validate()) {
+                                    if (passwordController.text != confirmPasswordController.text) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Password dan Konfirmasi Password tidak cocok')),
+                                      );
+                                      return;
+                                    }
                                     context.read<AuthBloc>().add(
                                       AuthSignUp(
-                                        fullName: fullNameController.text,
+                                        fullName: '',
                                         email: emailController.text.trim(),
                                         password: passwordController.text
                                             .trim(),

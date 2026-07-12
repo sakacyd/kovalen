@@ -6,6 +6,7 @@ class CustomDropdown<T> extends StatefulWidget {
   final T? value;
   final List<DropdownMenuItem<T>> items;
   final void Function(T?)? onChanged;
+  final bool? showSearchBox;
 
   const CustomDropdown({
     super.key,
@@ -14,6 +15,7 @@ class CustomDropdown<T> extends StatefulWidget {
     required this.items,
     this.value,
     this.onChanged,
+    this.showSearchBox,
   });
 
   @override
@@ -57,6 +59,7 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
           getItemText: _getItemText,
           title: widget.label,
           selectedValue: widget.value,
+          showSearchBox: widget.showSearchBox ?? widget.items.length > 15,
           onSelected: (value) {
             Navigator.pop(context);
             if (widget.onChanged != null) {
@@ -130,6 +133,7 @@ class _SearchDropdownModal<T> extends StatefulWidget {
   final String title;
   final T? selectedValue;
   final void Function(T) onSelected;
+  final bool showSearchBox;
 
   const _SearchDropdownModal({
     required this.items,
@@ -137,6 +141,7 @@ class _SearchDropdownModal<T> extends StatefulWidget {
     required this.title,
     required this.selectedValue,
     required this.onSelected,
+    required this.showSearchBox,
   });
 
   @override
@@ -198,29 +203,31 @@ class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Cari ${widget.title}...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
+              if (widget.showSearchBox) ...[
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Cari ${widget.title}...',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-              ),
+              ],
               const SizedBox(height: 16),
               Expanded(
                 child: _filteredItems.isEmpty

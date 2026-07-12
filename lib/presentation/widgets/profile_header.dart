@@ -5,12 +5,16 @@ class ProfileHeader extends StatelessWidget {
   final String name;
   final String university;
   final String avatarUrl;
+  final double ratingScore;
+  final int ratingCount;
 
   const ProfileHeader({
     super.key,
     required this.name,
     required this.university,
     required this.avatarUrl,
+    this.ratingScore = 0.0,
+    this.ratingCount = 0,
   });
 
   @override
@@ -58,6 +62,20 @@ class ProfileHeader extends StatelessWidget {
               ),
           textAlign: TextAlign.center,
         ),
+        if (ratingCount > 0) ...[
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.star, color: Colors.amber, size: 20),
+              const SizedBox(width: 4),
+              Text(
+                '${ratingScore.toStringAsFixed(1)} ($ratingCount ulasan)',
+                style: const TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }

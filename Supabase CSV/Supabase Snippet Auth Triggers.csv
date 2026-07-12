@@ -1,0 +1,2 @@
+schemaname,tablename,triggername,functionname,action_timing,operation
+auth,users,on_auth_user_created,handle_new_user,AFTER,INSERT

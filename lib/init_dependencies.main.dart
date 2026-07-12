@@ -14,6 +14,10 @@ Future<void> initDependencies() async {
   _initMessageRoom();
   _initOnboarding();
   _initMatchingPreferences();
+  _initAdmin();
+  _initGroupSchedule();
+  _initGroupActivity();
+  _initRating();
 
   if (AppSecrets.supabaseUrl == null || AppSecrets.supabaseKey == null) {
     throw Exception('Supabase credentials not found');
@@ -275,6 +279,99 @@ void _initMatchingPreferences() {
       ),
     );
 }
+
+void _initAdmin() {
+  serviceLocator
+    // datasource
+    ..registerFactory<AdminRemoteDataSource>(
+      () => AdminRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<AdminRepository>(
+      () => AdminRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetAllUsers(serviceLocator()))
+    ..registerFactory(() => GetAllGroups(serviceLocator()))
+    ..registerFactory(() => ChangeUserRole(serviceLocator()))
+    ..registerFactory(() => DeleteUser(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => AdminBloc(
+        getAllUsers: serviceLocator(),
+        getAllGroups: serviceLocator(),
+        changeUserRole: serviceLocator(),
+        deleteUser: serviceLocator(),
+      ),
+    );
+}
+
+void _initGroupSchedule() {
+  serviceLocator
+    // datasource
+    ..registerFactory<GroupScheduleRemoteDataSource>(
+      () => GroupScheduleRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<GroupScheduleRepository>(
+      () => GroupScheduleRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetActiveSchedule(serviceLocator()))
+    ..registerFactory(() => CreateSchedule(serviceLocator()))
+    ..registerFactory(() => CompleteSchedule(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => GroupScheduleBloc(
+        getActiveSchedule: serviceLocator(),
+        createSchedule: serviceLocator(),
+        completeSchedule: serviceLocator(),
+      ),
+    );
+}
+
+void _initGroupActivity() {
+  serviceLocator
+    // datasource
+    ..registerFactory<GroupActivityRemoteDataSource>(
+      () => GroupActivityRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<GroupActivityRepository>(
+      () => GroupActivityRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => CreateGroupActivity(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => GroupActivityBloc(
+        createGroupActivity: serviceLocator(),
+      ),
+    );
+}
+
+void _initRating() {
+  serviceLocator
+    // datasource
+    ..registerFactory<RatingRemoteDataSource>(
+      () => RatingRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<RatingRepository>(
+      () => RatingRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => RateUser(serviceLocator()))
+    ..registerFactory(() => GetRoomParticipants(serviceLocator()))
+    // bloc
+    ..registerLazySingleton(
+      () => RatingBloc(
+        rateUser: serviceLocator(),
+        getRoomParticipants: serviceLocator(),
+      ),
+    );
+}
+
 
 /* void _initAssignment() {
   serviceLocator

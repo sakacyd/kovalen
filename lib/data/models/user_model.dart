@@ -19,6 +19,9 @@ class UserModel extends User {
     required super.studyProgramId,
     super.universityName,
     super.studyProgramName,
+    super.role = 'pelanggan',
+    super.ratingScore = 0.0,
+    super.ratingCount = 0,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +43,9 @@ class UserModel extends User {
       studyProgramId: json['study_program_id'] ?? '',
       universityName: json['university_name'],
       studyProgramName: json['study_program_name'],
+      role: json['role'] ?? 'pelanggan',
+      ratingScore: (json['rating_score'] as num?)?.toDouble() ?? 0.0,
+      ratingCount: json['rating_count'] as int? ?? 0,
     );
   }
 
@@ -62,6 +68,9 @@ class UserModel extends User {
       'study_program_id': studyProgramId,
       'university_name': universityName,
       'study_program_name': studyProgramName,
+      'role': role,
+      'rating_score': ratingScore,
+      'rating_count': ratingCount,
     };
   }
 
@@ -84,6 +93,9 @@ class UserModel extends User {
     String? studyProgramId,
     String? universityName,
     String? studyProgramName,
+    String? role,
+    double? ratingScore,
+    int? ratingCount,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -103,6 +115,9 @@ class UserModel extends User {
       studyProgramId: studyProgramId ?? this.studyProgramId,
       universityName: universityName ?? this.universityName,
       studyProgramName: studyProgramName ?? this.studyProgramName,
+      role: role ?? this.role,
+      ratingScore: ratingScore ?? this.ratingScore,
+      ratingCount: ratingCount ?? this.ratingCount,
     );
   }
 }

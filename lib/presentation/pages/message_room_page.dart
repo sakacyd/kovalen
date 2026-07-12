@@ -3,26 +3,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
+import 'package:kovalen/presentation/pages/group_schedule_page.dart';
 
 class MessageRoomPage extends StatefulWidget {
   final String roomId;
   final String name;
   final String? avatarUrl;
+  final bool isGroup;
 
   const MessageRoomPage({
     super.key,
     required this.roomId,
     required this.name,
     this.avatarUrl,
+    this.isGroup = false,
   });
 
   static route({
     required String roomId,
     required String name,
     String? avatarUrl,
+    bool isGroup = false,
   }) => MaterialPageRoute(
     builder: (context) =>
-        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl),
+        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl, isGroup: isGroup),
   );
 
   @override
@@ -160,6 +164,14 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
           ],
         ),
         actions: [
+          if (widget.isGroup)
+            IconButton(
+              icon: const Icon(Icons.calendar_month_outlined),
+              tooltip: 'Jadwal Pertemuan',
+              onPressed: () {
+                Navigator.push(context, GroupSchedulePage.route(roomId: widget.roomId));
+              },
+            ),
           IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),

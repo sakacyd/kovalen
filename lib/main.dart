@@ -16,6 +16,10 @@ import 'package:kovalen/presentation/bloc/messages_bloc.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import 'package:kovalen/presentation/bloc/onboarding_bloc.dart';
 import 'package:kovalen/presentation/bloc/matching_preferences_bloc.dart';
+import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';
+import 'package:kovalen/presentation/bloc/group_schedule/group_schedule_bloc.dart';
+import 'package:kovalen/presentation/bloc/group_activity/group_activity_bloc.dart';
+import 'package:kovalen/presentation/bloc/rating/rating_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 import 'package:kovalen/presentation/pages/onboarding_page.dart';
 
@@ -39,6 +43,10 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<MessageRoomBloc>()),
         BlocProvider(create: (_) => serviceLocator<OnboardingBloc>()),
         BlocProvider(create: (_) => serviceLocator<MatchingPreferencesBloc>()),
+        BlocProvider(create: (_) => serviceLocator<AdminBloc>()),
+        BlocProvider(create: (_) => serviceLocator<GroupScheduleBloc>()),
+        BlocProvider(create: (_) => serviceLocator<GroupActivityBloc>()),
+        BlocProvider(create: (_) => serviceLocator<RatingBloc>()),
         /*
         BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()), */
         BlocProvider(create: (_) => BottomNavCubit()),

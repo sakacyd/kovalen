@@ -194,6 +194,11 @@ DECLARE
   v_user3 uuid;
   v_user4 uuid;
   v_group_room_id uuid;
+  v_name1 character varying;
+  v_name2 character varying;
+  v_name3 character varying;
+  v_name4 character varying;
+  v_group_name character varying;
 BEGIN
   -- Only proceed if it's a right swipe (is_liked = true)
   IF NEW.is_liked = true THEN
@@ -257,8 +262,16 @@ BEGIN
         LIMIT 1;
 
         IF v_user3 IS NOT NULL AND v_user4 IS NOT NULL THEN
-            -- 4-Clique Found! Create a group chat room
-            INSERT INTO public.chat_rooms (type) VALUES ('group') RETURNING id INTO v_group_room_id;
+            -- Fetch first names of the 4 users
+            SELECT split_part(full_name, ' ', 1) INTO v_name1 FROM public.users WHERE id = v_user1;
+            SELECT split_part(full_name, ' ', 1) INTO v_name2 FROM public.users WHERE id = v_user2;
+            SELECT split_part(full_name, ' ', 1) INTO v_name3 FROM public.users WHERE id = v_user3;
+            SELECT split_part(full_name, ' ', 1) INTO v_name4 FROM public.users WHERE id = v_user4;
+            
+            v_group_name := v_name1 || ', ' || v_name2 || ', ' || v_name3 || ', ' || v_name4;
+
+            -- 4-Clique Found! Create a group chat room with combined names
+            INSERT INTO public.chat_rooms (type, name) VALUES ('group', v_group_name) RETURNING id INTO v_group_room_id;
             
             -- Insert all 4 users into the group room
             INSERT INTO public.chat_participants (room_id, user_id) VALUES (v_group_room_id, v_user1);

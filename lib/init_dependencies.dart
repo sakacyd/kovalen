@@ -71,4 +71,34 @@ import 'package:kovalen/domain/usecases/get_matching_preferences.dart';
 import 'package:kovalen/domain/usecases/save_matching_preferences.dart';
 import 'package:kovalen/presentation/bloc/matching_preferences_bloc.dart';
 
+import 'package:kovalen/data/datasources/admin_remote_data_source.dart';
+import 'package:kovalen/data/repositories/admin_repository_impl.dart';
+import 'package:kovalen/domain/repository/admin_repository.dart';
+import 'package:kovalen/domain/usecases/admin/get_all_users.dart';
+import 'package:kovalen/domain/usecases/admin/get_all_groups.dart';
+import 'package:kovalen/domain/usecases/admin/change_user_role.dart';
+import 'package:kovalen/domain/usecases/admin/delete_user.dart';
+import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';
+
+import 'package:kovalen/data/datasources/group_schedule_remote_data_source.dart';
+import 'package:kovalen/data/repositories/group_schedule_repository_impl.dart';
+import 'package:kovalen/domain/repository/group_schedule_repository.dart';
+import 'package:kovalen/domain/usecases/group_schedule/get_active_schedule.dart';
+import 'package:kovalen/domain/usecases/group_schedule/create_schedule.dart';
+import 'package:kovalen/domain/usecases/group_schedule/complete_schedule.dart';
+import 'package:kovalen/presentation/bloc/group_schedule/group_schedule_bloc.dart';
+
+import 'package:kovalen/data/datasources/group_activity_remote_data_source.dart';
+import 'package:kovalen/data/repositories/group_activity_repository_impl.dart';
+import 'package:kovalen/domain/repository/group_activity_repository.dart';
+import 'package:kovalen/domain/usecases/group_activity/create_group_activity.dart';
+import 'package:kovalen/presentation/bloc/group_activity/group_activity_bloc.dart';
+
+import 'package:kovalen/data/datasources/rating_remote_data_source.dart';
+import 'package:kovalen/data/repositories/rating_repository_impl.dart';
+import 'package:kovalen/domain/repository/rating_repository.dart';
+import 'package:kovalen/domain/usecases/rating/get_room_participants.dart';
+import 'package:kovalen/domain/usecases/rating/rate_user.dart';
+import 'package:kovalen/presentation/bloc/rating/rating_bloc.dart';
+
 part 'init_dependencies.main.dart';

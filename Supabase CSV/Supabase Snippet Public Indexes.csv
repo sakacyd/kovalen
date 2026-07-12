@@ -1,0 +1,30 @@
+schemaname,tablename,indexname,index_definition
+public,keep-alive,keep-alive_pkey,"CREATE UNIQUE INDEX ""keep-alive_pkey"" ON public.""keep-alive"" USING btree (id)"
+public,universities,universities_kode_pt_key,CREATE UNIQUE INDEX universities_kode_pt_key ON public.universities USING btree (institution_code)
+public,universities,universities_pkey,CREATE UNIQUE INDEX universities_pkey ON public.universities USING btree (id)
+public,chat_participants,chat_participants_pkey,"CREATE UNIQUE INDEX chat_participants_pkey ON public.chat_participants USING btree (room_id, user_id)"
+public,chat_participants,idx_chat_participants_user_id,CREATE INDEX idx_chat_participants_user_id ON public.chat_participants USING btree (user_id)
+public,study_programs,study_programs_pkey,CREATE UNIQUE INDEX study_programs_pkey ON public.study_programs USING btree (id)
+public,messages,messages_pkey,CREATE UNIQUE INDEX messages_pkey ON public.messages USING btree (id)
+public,messages,idx_messages_room_id,CREATE INDEX idx_messages_room_id ON public.messages USING btree (room_id)
+public,messages,idx_messages_created_at,CREATE INDEX idx_messages_created_at ON public.messages USING btree (created_at DESC)
+public,user_interests,user_interests_pkey,"CREATE UNIQUE INDEX user_interests_pkey ON public.user_interests USING btree (user_id, interest_id)"
+public,user_interests,idx_user_interests_user_id,CREATE INDEX idx_user_interests_user_id ON public.user_interests USING btree (user_id)
+public,user_interests,idx_user_interests_interest_id,CREATE INDEX idx_user_interests_interest_id ON public.user_interests USING btree (interest_id)
+public,swipes,swipes_pkey,CREATE UNIQUE INDEX swipes_pkey ON public.swipes USING btree (id)
+public,swipes,unique_swipe,"CREATE UNIQUE INDEX unique_swipe ON public.swipes USING btree (swiper_id, swiped_id)"
+public,swipes,idx_swipes_swiper_id,CREATE INDEX idx_swipes_swiper_id ON public.swipes USING btree (swiper_id)
+public,swipes,idx_swipes_swiped_id,CREATE INDEX idx_swipes_swiped_id ON public.swipes USING btree (swiped_id)
+public,chat_rooms,chat_rooms_pkey,CREATE UNIQUE INDEX chat_rooms_pkey ON public.chat_rooms USING btree (id)
+public,interest_categories,interest_categories_pkey,CREATE UNIQUE INDEX interest_categories_pkey ON public.interest_categories USING btree (id)
+public,interest_categories,interest_categories_name_key,CREATE UNIQUE INDEX interest_categories_name_key ON public.interest_categories USING btree (name)
+public,users,users_email_key,CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)
+public,users,users_pkey,CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)
+public,users,idx_users_location,"CREATE INDEX idx_users_location ON public.users USING btree (latitude, longitude)"
+public,interests,interests_pkey,CREATE UNIQUE INDEX interests_pkey ON public.interests USING btree (id)
+public,interests,interests_name_key,CREATE UNIQUE INDEX interests_name_key ON public.interests USING btree (name)
+public,matches,matches_pkey,CREATE UNIQUE INDEX matches_pkey ON public.matches USING btree (id)
+public,matches,unique_match,"CREATE UNIQUE INDEX unique_match ON public.matches USING btree (user1_id, user2_id)"
+public,matches,idx_matches_user1_id,CREATE INDEX idx_matches_user1_id ON public.matches USING btree (user1_id)
+public,matches,idx_matches_user2_id,CREATE INDEX idx_matches_user2_id ON public.matches USING btree (user2_id)
+public,group_invitations,group_invitations_pkey,CREATE UNIQUE INDEX group_invitations_pkey ON public.group_invitations USING btree (id)

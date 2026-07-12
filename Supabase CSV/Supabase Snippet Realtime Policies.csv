@@ -1,0 +1,3 @@
+schemaname,tablename,policyname,permissive,roles,operation,using_expression,with_check_expression
+realtime,messages,Allow listening for broadcasts for authenticated users only,PERMISSIVE,{authenticated},SELECT,true,null
+realtime,messages,Allow pushing broadcasts for authenticated users only,PERMISSIVE,{authenticated},INSERT,null,true

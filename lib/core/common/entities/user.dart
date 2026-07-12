@@ -16,6 +16,9 @@ class User {
   final String studyProgramId;
   final String? universityName;
   final String? studyProgramName;
+  final String role;
+  final double ratingScore;
+  final int ratingCount;
 
   User({
     required this.id,
@@ -35,6 +38,9 @@ class User {
     required this.studyProgramId,
     this.universityName,
     this.studyProgramName,
+    this.role = 'pelanggan',
+    this.ratingScore = 0.0,
+    this.ratingCount = 0,
   });
 
   bool get isProfileComplete {
@@ -59,6 +65,9 @@ class User {
     String? studyProgramId,
     String? universityName,
     String? studyProgramName,
+    String? role,
+    double? ratingScore,
+    int? ratingCount,
   }) {
     return User(
       id: id ?? this.id,
@@ -78,6 +87,9 @@ class User {
       studyProgramId: studyProgramId ?? this.studyProgramId,
       universityName: universityName ?? this.universityName,
       studyProgramName: studyProgramName ?? this.studyProgramName,
+      role: role ?? this.role,
+      ratingScore: ratingScore ?? this.ratingScore,
+      ratingCount: ratingCount ?? this.ratingCount,
     );
   }
 }

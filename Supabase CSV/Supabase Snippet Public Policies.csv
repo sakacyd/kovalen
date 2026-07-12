@@ -1,0 +1,27 @@
+schemaname,tablename,policyname,permissive,roles,operation,using_expression,with_check_expression
+public,universities,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,chat_participants,Users can view chat participants of their rooms,PERMISSIVE,{authenticated},SELECT,((user_id = auth.uid()) OR is_room_participant(room_id)),null
+public,study_programs,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,messages,Users can insert messages to their rooms,PERMISSIVE,{authenticated},INSERT,null,"((auth.uid() = sender_id) AND (EXISTS ( SELECT 1
+   FROM chat_participants
+  WHERE ((chat_participants.room_id = messages.room_id) AND (chat_participants.user_id = auth.uid())))))"
+public,messages,Users can read messages in their rooms,PERMISSIVE,{authenticated},SELECT,"(EXISTS ( SELECT 1
+   FROM chat_participants
+  WHERE ((chat_participants.room_id = messages.room_id) AND (chat_participants.user_id = auth.uid()))))",null
+public,user_interests,Enable insert for users based on user_id,PERMISSIVE,{public},INSERT,null,(( SELECT auth.uid() AS uid) = user_id)
+public,user_interests,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,user_interests,Enable update for users based on user_id,PERMISSIVE,{authenticated},UPDATE,(( SELECT auth.uid() AS uid) = user_id),(( SELECT auth.uid() AS uid) = user_id)
+public,swipes,Enable insert for users,PERMISSIVE,{public},INSERT,null,true
+public,swipes,Enable insert for users based on swiper_id,PERMISSIVE,{public},INSERT,null,(( SELECT auth.uid() AS uid) = swiper_id)
+public,swipes,Enable select for users based on swiper_id,PERMISSIVE,{public},SELECT,(auth.uid() = swiper_id),null
+public,chat_rooms,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,chat_rooms,Users can view their chat rooms,PERMISSIVE,{authenticated},SELECT,"(EXISTS ( SELECT 1
+   FROM chat_participants
+  WHERE ((chat_participants.room_id = chat_rooms.id) AND (chat_participants.user_id = auth.uid()))))",null
+public,interest_categories,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,users,Enable insert access,PERMISSIVE,{public},INSERT,null,true
+public,users,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,users,Enable update access for their own profile,PERMISSIVE,{public},UPDATE,(auth.uid() = id),null
+public,interests,Enable read access for all users,PERMISSIVE,{public},SELECT,true,null
+public,matches,Users can view their own matches,PERMISSIVE,{authenticated},SELECT,((user1_id = auth.uid()) OR (user2_id = auth.uid())),null
+public,group_invitations,Users can see their own invitations,PERMISSIVE,{authenticated},SELECT,((inviter_id = auth.uid()) OR (invitee_id = auth.uid())),null
