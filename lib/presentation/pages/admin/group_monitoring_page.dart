@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';
 import 'package:kovalen/presentation/pages/admin/group_monitoring_detail_page.dart';
+import 'package:kovalen/init_dependencies.dart';
 
 class GroupMonitoringPage extends StatefulWidget {
   const GroupMonitoringPage({super.key});
@@ -56,9 +57,12 @@ class _GroupMonitoringPageState extends State<GroupMonitoringPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => GroupMonitoringDetailPage(
-                            roomId: group.id,
-                            groupName: group.name ?? 'Grup Tanpa Nama',
+                          builder: (_) => BlocProvider(
+                            create: (_) => serviceLocator<AdminBloc>(),
+                            child: GroupMonitoringDetailPage(
+                              roomId: group.id,
+                              groupName: group.name ?? 'Grup Tanpa Nama',
+                            ),
                           ),
                         ),
                       );
