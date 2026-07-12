@@ -63,7 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Silakan daftar menggunakan kredensial universitas Anda.',
+                    'Silakan daftar menggunakan kredensial akun Anda.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -73,13 +73,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
 
                   CustomTextField(
-                    label: 'Email Institusi',
+                    label: 'Email',
                     hint: 'nama@kampus.ac.id',
                     controller: emailController,
                     icon: Icons.mail_outline,
-                    infoText: 'Gunakan email dengan domain .ac.id atau .edu',
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 36),
 
                   CustomTextField(
                     label: 'Password',
@@ -88,7 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.lock_outline,
                     isPassword: true,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 18),
 
                   CustomTextField(
                     label: 'Konfirmasi Password',
@@ -185,7 +184,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       children: [
                         TextSpan(
-                          text: 'Sudah memiliki profil akademik? ',
+                          text: 'Sudah memiliki akun? ',
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                         TextSpan(

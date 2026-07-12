@@ -38,7 +38,9 @@ class _SignInPageState extends State<SignInPage> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -52,7 +54,11 @@ class _SignInPageState extends State<SignInPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.school, color: Theme.of(context).colorScheme.primary, size: 40),
+                  Icon(
+                    Icons.school,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 40,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Kovalen',
@@ -62,7 +68,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Silakan masuk menggunakan kredensial universitas Anda.',
+                    'Silakan masuk menggunakan kredensial akun Anda.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -71,35 +77,15 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(height: 32),
 
                   CustomTextField(
-                    label: 'Email Institusi',
+                    label: 'Email',
                     hint: 'nama@kampus.ac.id',
                     controller: emailController,
                     icon: Icons.mail_outline,
-                    infoText: 'Gunakan email dengan domain .ac.id atau .edu',
                   ),
                   const SizedBox(height: 24),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Kata Sandi',
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Handle forgot password logic
-                        },
-                        child: Text(
-                          'Lupa sandi?',
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: Theme.of(context).colorScheme.primary),
-                        ),
-                      ),
-                    ],
-                  ),
                   CustomTextField(
-                    label: '',
+                    label: 'Kata Sandi',
                     hint: '••••••••',
                     controller: passwordController,
                     icon: Icons.lock_outline,
@@ -127,7 +113,9 @@ class _SignInPageState extends State<SignInPage> {
                         height: 48,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -186,13 +174,15 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       children: [
                         TextSpan(
-                          text: 'Belum memiliki profil akademik? ',
+                          text: 'Belum memiliki akun? ',
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                         TextSpan(
                           text: 'Daftar sekarang',
                           style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Navigator.push(context, SignUpPage.route());
