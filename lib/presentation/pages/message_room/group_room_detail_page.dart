@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
+import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 
 class GroupRoomDetailPage extends StatefulWidget {
   final String roomId;
@@ -24,7 +25,9 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
   @override
   void initState() {
     super.initState();
-    context.read<RoomDetailBloc>().add(FetchGroupRoomDetailEvent(widget.roomId));
+    context.read<RoomDetailBloc>().add(
+      FetchGroupRoomDetailEvent(widget.roomId),
+    );
   }
 
   void _editGroupName(String currentName) {
@@ -34,7 +37,10 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppPallete.surface,
-          title: const Text('Edit Nama Grup', style: TextStyle(color: AppPallete.onSurface)),
+          title: const Text(
+            'Edit Nama Grup',
+            style: TextStyle(color: AppPallete.onSurface),
+          ),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
@@ -52,7 +58,10 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                 final newName = controller.text.trim();
                 if (newName.isNotEmpty && newName != currentName) {
                   context.read<RoomDetailBloc>().add(
-                    UpdateGroupProfileEvent(roomId: widget.roomId, name: newName),
+                    UpdateGroupProfileEvent(
+                      roomId: widget.roomId,
+                      name: newName,
+                    ),
                   );
                 }
                 Navigator.pop(context);
@@ -82,28 +91,27 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: AppBar(
-        title: const Text('Profil Grup'),
-        backgroundColor: AppPallete.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppPallete.onSurfaceVariant),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: AppPallete.stroke, height: 1.0),
+      appBar: CustomAppBar(
+        title: 'Profil Grup',
+        showAvatar: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppPallete.onSurface),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: BlocConsumer<RoomDetailBloc, RoomDetailState>(
         listener: (context, state) {
           if (state is RoomDetailFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
           if (state is RoomDetailLoading) {
-            return const Center(child: CircularProgressIndicator(color: AppPallete.primary));
+            return const Center(
+              child: CircularProgressIndicator(color: AppPallete.primary),
+            );
           } else if (state is GroupRoomDetailLoaded) {
             final room = state.room;
             final participants = state.participants;
@@ -111,7 +119,9 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<RoomDetailBloc>().add(FetchGroupRoomDetailEvent(widget.roomId));
+                context.read<RoomDetailBloc>().add(
+                  FetchGroupRoomDetailEvent(widget.roomId),
+                );
               },
               child: ListView(
                 padding: const EdgeInsets.all(24.0),
@@ -132,10 +142,17 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                                     fit: BoxFit.cover,
                                   )
                                 : null,
-                            border: Border.all(color: AppPallete.stroke, width: 2),
+                            border: Border.all(
+                              color: AppPallete.stroke,
+                              width: 2,
+                            ),
                           ),
                           child: room.avatarUrl == null
-                              ? const Icon(Icons.group, size: 64, color: AppPallete.onSurfaceVariant)
+                              ? const Icon(
+                                  Icons.group,
+                                  size: 64,
+                                  color: AppPallete.onSurfaceVariant,
+                                )
                               : null,
                         ),
                         Positioned(
@@ -149,7 +166,11 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                                 color: AppPallete.primary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.camera_alt, color: AppPallete.surface, size: 20),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: AppPallete.surface,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -157,7 +178,7 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Group Name
                   Center(
                     child: Row(
@@ -165,14 +186,19 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                       children: [
                         Text(
                           name,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
                                 color: AppPallete.onSurface,
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.edit, color: AppPallete.primary, size: 20),
+                          icon: const Icon(
+                            Icons.edit,
+                            color: AppPallete.primary,
+                            size: 20,
+                          ),
                           onPressed: () => _editGroupName(name),
                         ),
                       ],
@@ -183,21 +209,21 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                     child: Text(
                       '${participants.length} Partisipan',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppPallete.textSecondary,
-                          ),
+                        color: AppPallete.textSecondary,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 32),
                   const Divider(color: AppPallete.stroke),
                   const SizedBox(height: 16),
-                  
+
                   // Participants List
                   Text(
                     'DAFTAR PARTISIPAN',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          letterSpacing: 1.2,
-                          color: AppPallete.textSecondary,
-                        ),
+                      letterSpacing: 1.2,
+                      color: AppPallete.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ListView.builder(
@@ -216,17 +242,25 @@ class _GroupRoomDetailPageState extends State<GroupRoomDetailPage> {
                           child: participant.avatarUrl.isEmpty
                               ? Text(
                                   participant.fullName[0].toUpperCase(),
-                                  style: const TextStyle(color: AppPallete.onSurface),
+                                  style: const TextStyle(
+                                    color: AppPallete.onSurface,
+                                  ),
                                 )
                               : null,
                         ),
                         title: Text(
                           participant.fullName,
-                          style: const TextStyle(color: AppPallete.onSurface, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            color: AppPallete.onSurface,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         subtitle: Text(
-                          participant.studyProgramName ?? participant.studyProgramId,
-                          style: const TextStyle(color: AppPallete.textSecondary),
+                          participant.studyProgramName ??
+                              participant.studyProgramId,
+                          style: const TextStyle(
+                            color: AppPallete.textSecondary,
+                          ),
                         ),
                       );
                     },

@@ -4,6 +4,7 @@ import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/core/utils/matchmaking_utils.dart';
 import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
+import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/matchmaking_card.dart';
 
 class PersonalRoomDetailPage extends StatefulWidget {
@@ -23,22 +24,21 @@ class _PersonalRoomDetailPageState extends State<PersonalRoomDetailPage> {
   @override
   void initState() {
     super.initState();
-    context.read<RoomDetailBloc>().add(FetchPersonalRoomDetailEvent(widget.userId));
+    context.read<RoomDetailBloc>().add(
+      FetchPersonalRoomDetailEvent(widget.userId),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppPallete.background,
-      appBar: AppBar(
-        title: const Text('Profil Pengguna'),
-        backgroundColor: AppPallete.surface,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        iconTheme: const IconThemeData(color: AppPallete.onSurfaceVariant),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(color: AppPallete.stroke, height: 1.0),
+      appBar: CustomAppBar(
+        title: 'Profil Pengguna',
+        showAvatar: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppPallete.onSurface),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: BlocBuilder<RoomDetailBloc, RoomDetailState>(
@@ -52,19 +52,25 @@ class _PersonalRoomDetailPageState extends State<PersonalRoomDetailPage> {
           } else if (state is PersonalRoomDetailLoaded) {
             final user = state.user;
             final interests = user.interests;
-            
+
             // Calculate distance and match percentage
             final currentUser = context.read<AppUserCubit>().state;
             double distance = 0.0;
             int matchPercentage = 0;
-            
+
             if (currentUser is AppUserLoggedIn) {
               final myUser = currentUser.user;
               distance = MatchmakingUtils.calculateDistance(
-                myUser.latitude, myUser.longitude,
-                user.latitude, user.longitude
+                myUser.latitude,
+                myUser.longitude,
+                user.latitude,
+                user.longitude,
               );
-              matchPercentage = MatchmakingUtils.calculateMatchPercentage(myUser, user, distance);
+              matchPercentage = MatchmakingUtils.calculateMatchPercentage(
+                myUser,
+                user,
+                distance,
+              );
             }
 
             return SafeArea(
