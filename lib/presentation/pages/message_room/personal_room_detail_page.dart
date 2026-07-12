@@ -79,6 +79,7 @@ class _PersonalRoomDetailPageState extends State<PersonalRoomDetailPage> {
                 child: MatchmakingCard(
                   name: user.fullName,
                   semester: user.semester.toString(),
+                  university: user.universityName ?? user.universityId,
                   major: user.studyProgramName ?? user.studyProgramId,
                   distance: '${distance.toStringAsFixed(1)} km',
                   matchPercentage: matchPercentage,

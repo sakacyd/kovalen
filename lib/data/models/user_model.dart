@@ -45,7 +45,7 @@ class UserModel extends User {
       universityId: json['university_id'] ?? '',
       studyProgramId: json['study_program_id'] ?? '',
       universityName: json['university_name'] ?? (json['university'] != null ? json['university']['name'] : null),
-      studyProgramName: json['study_program_name'] ?? (json['study_program'] != null ? json['study_program']['name'] : null),
+      studyProgramName: json['study_program_name'] ?? (json['study_program'] != null ? '${json['study_program']['education_level']} ${json['study_program']['name']}' : null),
       role: json['role'] ?? 'pelanggan',
       ratingScore: (json['rating_score'] as num?)?.toDouble() ?? 0.0,
       ratingCount: json['rating_count'] as int? ?? 0,

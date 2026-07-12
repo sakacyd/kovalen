@@ -128,6 +128,9 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                   child: MatchmakingCard(
                     name: match.user.fullName,
                     semester: match.user.semester.toString(),
+                    university:
+                        match.user.universityName ??
+                        match.user.universityId,
                     major:
                         match.user.studyProgramName ??
                         match.user.studyProgramId,

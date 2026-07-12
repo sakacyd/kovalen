@@ -4,6 +4,7 @@ import '../../core/theme/app_pallete.dart';
 class MatchmakingCard extends StatelessWidget {
   final String name;
   final String semester;
+  final String university;
   final String major;
   final String distance;
   final int matchPercentage;
@@ -16,6 +17,7 @@ class MatchmakingCard extends StatelessWidget {
     super.key,
     required this.name,
     required this.semester,
+    required this.university,
     required this.major,
     required this.distance,
     required this.matchPercentage,
@@ -194,6 +196,19 @@ class MatchmakingCard extends StatelessWidget {
                 child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.account_balance_outlined, size: 20, color: AppPallete.textSecondary),
+                      const SizedBox(width: 8),
+                      Text(
+                        university,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       const Icon(Icons.school_outlined, size: 20, color: AppPallete.textSecondary),
