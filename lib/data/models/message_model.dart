@@ -9,6 +9,7 @@ class MessageModel extends Message {
     required super.createdAt,
     super.senderName,
     super.senderAvatarUrl,
+    super.isSystemMessage,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +21,7 @@ class MessageModel extends Message {
       createdAt: DateTime.parse(json['created_at']),
       senderName: json['sender']?['full_name'] as String?,
       senderAvatarUrl: json['sender']?['avatar_url'] as String?,
+      isSystemMessage: json['is_system_message'] as bool? ?? false,
     );
   }
 
@@ -30,6 +32,7 @@ class MessageModel extends Message {
       'sender_id': senderId,
       'content': content,
       'created_at': createdAt.toIso8601String(),
+      'is_system_message': isSystemMessage,
     };
   }
 }

@@ -46,6 +46,7 @@ class MessageRoomRemoteDataSourceImpl implements MessageRoomRemoteDataSource {
                 createdAt: DateTime.parse(m['created_at']),
                 senderName: user?['full_name'] as String?,
                 senderAvatarUrl: user?['avatar_url'] as String?,
+                isSystemMessage: m['is_system_message'] as bool? ?? false,
               );
             }).toList();
           });

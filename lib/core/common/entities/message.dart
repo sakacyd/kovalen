@@ -6,6 +6,7 @@ class Message {
   final DateTime createdAt;
   final String? senderName;
   final String? senderAvatarUrl;
+  final bool isSystemMessage;
 
   Message({
     required this.id,
@@ -15,5 +16,6 @@ class Message {
     required this.createdAt,
     this.senderName,
     this.senderAvatarUrl,
+    this.isSystemMessage = false,
   });
 }

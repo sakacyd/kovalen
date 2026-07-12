@@ -269,12 +269,14 @@ void _initRoomDetail() {
     ..registerFactory(() => GetUserById(serviceLocator()))
     ..registerFactory(() => GetGroupDetail(serviceLocator()))
     ..registerFactory(() => UpdateGroupProfile(serviceLocator()))
+    ..registerFactory(() => AddUserToGroup(serviceLocator()))
     // bloc
     ..registerFactory(
       () => RoomDetailBloc(
         getUserById: serviceLocator(),
         getGroupDetail: serviceLocator(),
         updateGroupProfile: serviceLocator(),
+        addUserToGroup: serviceLocator(),
       ),
     );
 }

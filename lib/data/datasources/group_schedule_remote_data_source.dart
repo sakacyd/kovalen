@@ -58,12 +58,13 @@ class GroupScheduleRemoteDataSourceImpl implements GroupScheduleRemoteDataSource
 
       final formattedDate = DateFormat('EEEE, dd MMMM yyyy HH:mm', 'id_ID').format(meetingTime.toLocal());
       final locationUrlString = (locationUrl != null && locationUrl.isNotEmpty) ? '\n🔗 Tautan: $locationUrl' : '';
-      final messageContent = '📅 Saya telah membuat jadwal pertemuan baru:\n**$title**\n🕒 Waktu: $formattedDate\n📍 Lokasi: $locationName$locationUrlString';
+      final messageContent = 'membuat jadwal pertemuan baru:\n**$title**\n🕒 Waktu: $formattedDate\n📍 Lokasi: $locationName$locationUrlString';
       
       await supabaseClient.from('messages').insert({
         'room_id': roomId,
         'sender_id': userId,
         'content': messageContent,
+        'is_system_message': true,
       });
 
       return GroupScheduleModel.fromJson(response);

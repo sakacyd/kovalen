@@ -9,6 +9,7 @@ abstract interface class RoomDetailRemoteDataSource {
   Future<ChatRoomModel> getGroupDetail(String roomId);
   Future<List<UserModel>> getGroupParticipants(String roomId);
   Future<ChatRoomModel> updateGroupProfile(String roomId, String name, File? avatarFile);
+  Future<void> addUserToGroup(String roomId, String userId);
 }
 
 class RoomDetailRemoteDataSourceImpl implements RoomDetailRemoteDataSource {
@@ -102,6 +103,25 @@ class RoomDetailRemoteDataSourceImpl implements RoomDetailRemoteDataSource {
 
       return ChatRoomModel.fromJson(response);
     } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> addUserToGroup(String roomId, String userId) async {
+    try {
+      await supabaseClient.from('chat_participants').insert({
+        'room_id': roomId,
+        'user_id': userId,
+      });
+    } on AuthException catch (e) {
+      throw ServerException(e.message);
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
+        throw ServerException('User sudah berada di dalam grup.');
+      }
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());

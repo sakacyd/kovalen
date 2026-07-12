@@ -24,3 +24,10 @@ class UpdateGroupProfileEvent extends RoomDetailEvent {
     this.avatarFile,
   });
 }
+
+class AddUserToGroupEvent extends RoomDetailEvent {
+  final String roomId;
+  final String userId;
+
+  AddUserToGroupEvent({required this.roomId, required this.userId});
+}

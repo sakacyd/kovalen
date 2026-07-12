@@ -51,4 +51,14 @@ class RoomDetailRepositoryImpl implements RoomDetailRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addUserToGroup(String roomId, String userId) async {
+    try {
+      await remoteDataSource.addUserToGroup(roomId, userId);
+      return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import 'package:kovalen/presentation/bloc/messages_bloc.dart';
+import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/pages/group_schedule_page.dart';
 import 'package:kovalen/presentation/pages/message_room/personal_room_detail_page.dart';
 import 'package:kovalen/presentation/pages/message_room/group_room_detail_page.dart';
+import 'package:kovalen/init_dependencies.dart';
 
 class MessageRoomPage extends StatefulWidget {
   final String roomId;
@@ -74,6 +76,189 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
         }
       });
     }
+  }
+
+  void _showAddGroupBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppPallete.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        return BlocProvider(
+          create: (_) => serviceLocator<RoomDetailBloc>(),
+          child: Builder(
+            builder: (blocContext) {
+              return BlocListener<RoomDetailBloc, RoomDetailState>(
+                listener: (context, state) {
+                  if (state is RoomDetailFailure) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message, style: const TextStyle(color: AppPallete.error))),
+                    );
+                  } else if (state is AddUserToGroupSuccess) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Berhasil menambahkan ${widget.name} ke grup"),
+                        backgroundColor: AppPallete.success,
+                      ),
+                    );
+                  }
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
+                  ),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(bottomSheetContext).size.height * 0.7,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Drag Handle
+                        Container(
+                          margin: const EdgeInsets.symmetric(vertical: 12),
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppPallete.stroke,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Undang ke Grup',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppPallete.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Pilih grup untuk menambahkan ${widget.name}.',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppPallete.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1, color: AppPallete.stroke),
+                        Flexible(
+                          child: BlocBuilder<MessagesBloc, MessagesState>(
+                            builder: (context, messagesState) {
+                              if (messagesState is MessagesSuccess) {
+                                final groupRooms = messagesState.rooms.where((r) => r.type == 'group').toList();
+                                
+                                if (groupRooms.isEmpty) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(32),
+                                    child: Center(
+                                      child: Text(
+                                        'Anda belum bergabung dengan grup manapun.',
+                                        style: TextStyle(color: AppPallete.onSurfaceVariant),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: groupRooms.length,
+                                  itemBuilder: (context, index) {
+                                    final group = groupRooms[index];
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: AppPallete.surfaceContainer,
+                                        backgroundImage: group.avatarUrl != null && group.avatarUrl!.trim().startsWith('http')
+                                            ? NetworkImage(group.avatarUrl!.trim())
+                                            : null,
+                                        child: group.avatarUrl == null || !group.avatarUrl!.trim().startsWith('http')
+                                            ? Text(
+                                                (group.name?.isNotEmpty ?? false) ? group.name![0].toUpperCase() : 'G',
+                                                style: const TextStyle(
+                                                  color: AppPallete.onSurface,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            : null,
+                                      ),
+                                      title: Text(
+                                        group.name ?? 'Group',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: AppPallete.textPrimary,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (dialogContext) {
+                                            return AlertDialog(
+                                              backgroundColor: AppPallete.surface,
+                                              title: const Text('Konfirmasi', style: TextStyle(color: AppPallete.textPrimary)),
+                                              content: Text(
+                                                'Apakah Anda yakin ingin menambahkan ${widget.name} ke grup ${group.name}?',
+                                                style: const TextStyle(color: AppPallete.onSurfaceVariant),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(dialogContext),
+                                                  child: const Text('Batal', style: TextStyle(color: AppPallete.onSurfaceVariant)),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(dialogContext);
+                                                    if (widget.partnerId != null) {
+                                                      blocContext.read<RoomDetailBloc>().add(
+                                                        AddUserToGroupEvent(
+                                                          roomId: group.id,
+                                                          userId: widget.partnerId!,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: const Text('Ya, Tambahkan', style: TextStyle(color: AppPallete.primary, fontWeight: FontWeight.bold)),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              }
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(32),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -198,6 +383,12 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                 Navigator.push(context, GroupSchedulePage.route(roomId: widget.roomId));
               },
             ),
+          if (!widget.isGroup)
+            IconButton(
+              icon: const Icon(Icons.group_add_outlined),
+              tooltip: 'Undang ke Grup',
+              onPressed: () => _showAddGroupBottomSheet(context),
+            ),
           IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
@@ -237,6 +428,38 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
 
                         final time =
                             '${message.createdAt.hour.toString().padLeft(2, '0')}:${message.createdAt.minute.toString().padLeft(2, '0')}';
+
+                        if (message.isSystemMessage) {
+                          String systemMessageText = message.content;
+                          if (message.senderId == currentUser.id) {
+                            systemMessageText = "Anda $systemMessageText";
+                          } else {
+                            final senderName = message.senderName?.split(' ').first ?? 'Seseorang';
+                            systemMessageText = "$senderName $systemMessageText";
+                          }
+
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            child: Center(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppPallete.surfaceContainerHighest.withValues(alpha: 0.5),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  systemMessageText,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppPallete.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),

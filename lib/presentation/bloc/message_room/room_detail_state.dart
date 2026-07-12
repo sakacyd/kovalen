@@ -23,3 +23,5 @@ final class RoomDetailFailure extends RoomDetailState {
   final String message;
   RoomDetailFailure(this.message);
 }
+
+final class AddUserToGroupSuccess extends RoomDetailState {}

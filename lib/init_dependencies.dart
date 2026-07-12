@@ -109,6 +109,7 @@ import 'package:kovalen/domain/repository/room_detail_repository.dart';
 import 'package:kovalen/domain/usecases/message_room/get_user_by_id.dart';
 import 'package:kovalen/domain/usecases/message_room/get_group_detail.dart';
 import 'package:kovalen/domain/usecases/message_room/update_group_profile.dart';
+import 'package:kovalen/domain/usecases/message_room/add_user_to_group.dart';
 import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
 
 part 'init_dependencies.main.dart';
