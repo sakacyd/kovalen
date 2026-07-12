@@ -80,6 +80,9 @@ class GroupScheduleRemoteDataSourceImpl implements GroupScheduleRemoteDataSource
           .update({'is_completed': true})
           .eq('id', scheduleId);
     } catch (e) {
+      if (e.toString().contains('row-level security policy') || e.toString().contains('RLS')) {
+        throw ServerException('Hanya user yang membuat jadwal yang dapat menyelesaikan jadwal');
+      }
       throw ServerException(e.toString());
     }
   }

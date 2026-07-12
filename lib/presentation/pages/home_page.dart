@@ -195,7 +195,8 @@ class _HomePageState extends State<HomePage> {
                                   builder: (context) => MessageRoomPage(
                                     roomId: group.id,
                                     name: group.name ?? 'Grup Belajar',
-                                    avatarUrl: null, // Since we don't have avatar yet for group
+                                    avatarUrl: null,
+                                    isGroup: group.type == 'group' // Since we don't have avatar yet for group
                                   ),
                                 ),
                               );
