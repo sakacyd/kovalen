@@ -124,7 +124,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Algoritma & Struktur Data membutuhkan partner.',
+                                  state.randomInterest != null 
+                                      ? '${state.randomInterest} membutuhkan partner.' 
+                                      : 'Temukan rekan belajar yang cocok dengan Anda.',
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         color: AppPallete.onPrimary.withValues(
@@ -196,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                                     roomId: group.id,
                                     name: group.name ?? 'Grup Belajar',
                                     avatarUrl: null,
-                                    isGroup: group.type == 'group' // Since we don't have avatar yet for group
+                                    isGroup: group.type == 'group'
                                   ),
                                 ),
                               );
@@ -212,6 +214,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                   ],
                 ),
+              );
+            } else if (state is HomeFailure) {
+              return Center(
+                child: Text('Gagal memuat beranda: ${state.message}', textAlign: TextAlign.center),
               );
             }
             return const Center(child: CircularProgressIndicator());

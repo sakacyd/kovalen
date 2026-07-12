@@ -18,6 +18,13 @@ class AdminGroupsLoaded extends AdminState {
   AdminGroupsLoaded(this.groups);
 }
 
+class AdminGroupDetailsLoaded extends AdminState {
+  final List<GroupSchedule> schedules;
+  final List<GroupActivity> activities;
+
+  AdminGroupDetailsLoaded({required this.schedules, required this.activities});
+}
+
 class AdminActionSuccess extends AdminState {
   final String message;
 

@@ -11,8 +11,9 @@ final class HomeSuccess extends HomeState {
   final User user;
   final HomeStats stats;
   final List<ChatRoom> activeGroups;
+  final String? randomInterest;
 
-  HomeSuccess(this.user, this.stats, this.activeGroups);
+  HomeSuccess(this.user, this.stats, this.activeGroups, {this.randomInterest});
 }
 
 final class HomeFailure extends HomeState {
@@ -20,42 +21,3 @@ final class HomeFailure extends HomeState {
 
   HomeFailure(this.message);
 }
-
-
-/* class HomeState {
-  final String userName;
-  final String userInitial;
-  final int activeGroups;
-  final int todayMatches;
-  final List<Map<String, String>> studyGroups;
-
-  HomeState({
-    required this.userName,
-    required this.userInitial,
-    required this.activeGroups,
-    required this.todayMatches,
-    required this.studyGroups,
-  });
-
-  factory HomeState.initial() {
-    return HomeState(
-      userName: 'Budi Santoso',
-      userInitial:
-          'BS', // Corresponds to the "AR" Avatar from Clean Minimalism HTML
-      activeGroups: 3,
-      todayMatches: 5,
-      studyGroups: [
-        {
-          'title': 'Kecerdasan Buatan',
-          'subtitle': 'Persiapan presentasi proyek akhir',
-          'time': '14:00',
-        },
-        {
-          'title': 'Basis Data Lanjut',
-          'subtitle': 'Review materi normalisasi dan optimasi query',
-          'time': '10:00',
-        },
-      ],
-    );
-  }
-} */

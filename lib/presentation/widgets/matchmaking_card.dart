@@ -9,6 +9,8 @@ class MatchmakingCard extends StatelessWidget {
   final int matchPercentage;
   final String imageUrl;
   final List<String> interests;
+  final double ratingScore;
+  final int ratingCount;
 
   const MatchmakingCard({
     super.key,
@@ -19,6 +21,8 @@ class MatchmakingCard extends StatelessWidget {
     required this.matchPercentage,
     required this.imageUrl,
     required this.interests,
+    this.ratingScore = 0.0,
+    this.ratingCount = 0,
   });
 
   @override
@@ -151,11 +155,28 @@ class MatchmakingCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        'Semester $semester',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppPallete.surface.withValues(alpha: 0.9),
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            'Semester $semester',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppPallete.surface.withValues(alpha: 0.9),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (ratingCount > 0) ...[
+                            const SizedBox(width: 8),
+                            const Icon(Icons.star, color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${ratingScore.toStringAsFixed(1)}($ratingCount)',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: AppPallete.surface.withValues(alpha: 0.9),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),

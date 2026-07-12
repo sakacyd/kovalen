@@ -73,7 +73,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     event.dataResult.fold(
       (failure) => emit(HomeFailure(failure.message)),
-      (data) => emit(HomeSuccess(event.user, data.stats, data.activeGroups)),
+      (data) => emit(HomeSuccess(
+        event.user,
+        data.stats,
+        data.activeGroups,
+        randomInterest: data.randomInterest,
+      )),
     );
   }
 }

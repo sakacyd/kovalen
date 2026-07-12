@@ -50,4 +50,14 @@ class AdminRepositoryImpl implements AdminRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> getGroupDetails({required String roomId}) async {
+    try {
+      final details = await remoteDataSource.getGroupDetails(roomId);
+      return right(details);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';
+import 'package:kovalen/presentation/pages/admin/group_monitoring_detail_page.dart';
 
 class GroupMonitoringPage extends StatefulWidget {
   const GroupMonitoringPage({super.key});
@@ -52,10 +53,14 @@ class _GroupMonitoringPageState extends State<GroupMonitoringPage> {
                     subtitle: Text('ID: ${group.id.substring(0, 8)}...'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      // TODO: Navigate to GroupSchedule & Logs page for this specific group
-                      // Wait for Stage 4 implementation.
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Detail jadwal dan rekaman grup akan tersedia di Tahap 4')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupMonitoringDetailPage(
+                            roomId: group.id,
+                            groupName: group.name ?? 'Grup Tanpa Nama',
+                          ),
+                        ),
                       );
                     },
                   ),

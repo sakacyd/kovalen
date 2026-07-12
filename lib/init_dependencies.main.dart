@@ -295,13 +295,16 @@ void _initAdmin() {
     ..registerFactory(() => GetAllGroups(serviceLocator()))
     ..registerFactory(() => ChangeUserRole(serviceLocator()))
     ..registerFactory(() => DeleteUser(serviceLocator()))
-    // bloc
-    ..registerLazySingleton(
+    ..registerFactory(() => GetGroupDetailsForAdmin(serviceLocator()))
+    
+    // Bloc
+    ..registerFactory(
       () => AdminBloc(
         getAllUsers: serviceLocator(),
         getAllGroups: serviceLocator(),
         changeUserRole: serviceLocator(),
         deleteUser: serviceLocator(),
+        getGroupDetailsForAdmin: serviceLocator(),
       ),
     );
 }

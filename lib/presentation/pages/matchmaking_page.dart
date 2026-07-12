@@ -159,6 +159,8 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                     matchPercentage: match.matchPercentage,
                     imageUrl: match.user.avatarUrl,
                     interests: match.interests.map((e) => e.name).toList(),
+                    ratingScore: match.user.ratingScore,
+                    ratingCount: match.user.ratingCount,
                   ),
                 ),
               ],

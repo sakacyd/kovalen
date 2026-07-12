@@ -5,6 +5,7 @@ import 'package:kovalen/core/common/entities/home_data.dart';
 import 'package:kovalen/data/models/chat_room_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
+import 'dart:math';
 
 abstract interface class HomeRemoteDataSource {
   Session? get currentUserSession;
@@ -98,10 +99,24 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
           .count(CountOption.exact);
       final matchesToday = todayMatchesRes.count;
 
+      final userInterests = await supabaseClient
+          .from('user_interests')
+          .select('interests!inner(name, interest_categories!inner(type))')
+          .eq('user_id', userId)
+          .eq('interests.interest_categories.type', 'academic');
+
+      String? randomInterestName;
+      if (userInterests.isNotEmpty) {
+        final random = Random();
+        final randomRow = userInterests[random.nextInt(userInterests.length)];
+        randomInterestName = randomRow['interests']['name'];
+      }
+
       return HomeStats(
         activeGroups: activeGroups,
         matchesToday: matchesToday,
         totalMatches: totalMatches,
+        randomInterest: randomInterestName,
       );
     } catch (e) {
       throw ServerException(e.toString());
@@ -135,6 +150,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         final homeData = HomeData(
           stats: stats,
           activeGroups: activeGroups,
+          randomInterest: stats.randomInterest,
         );
         if (!controller.isClosed) controller.add(homeData);
       } catch (e) {

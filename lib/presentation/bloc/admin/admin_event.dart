@@ -18,3 +18,9 @@ class AdminDeleteUserEvent extends AdminEvent {
 
   AdminDeleteUserEvent({required this.userId});
 }
+
+class AdminFetchGroupDetailsEvent extends AdminEvent {
+  final String roomId;
+
+  AdminFetchGroupDetailsEvent({required this.roomId});
+}
