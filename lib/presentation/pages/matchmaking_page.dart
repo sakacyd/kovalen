@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/theme/app_pallete.dart';
 import '../bloc/matchmaking_bloc.dart';
-import '../widgets/view_toggle.dart';
 import '../widgets/matchmaking_card.dart';
 import '../widgets/custom_app_bar.dart';
 import '../../core/common/entities/match_profile.dart';
@@ -16,7 +15,6 @@ class MatchmakingPage extends StatefulWidget {
 }
 
 class _MatchmakingPageState extends State<MatchmakingPage> {
-  bool _isCardView = true;
 
   @override
   void initState() {
@@ -44,32 +42,12 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
               });
             },
           ),
-          IconButton(
-            icon: Icon(
-              Icons.notifications_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {},
-          ),
           const SizedBox(width: 8),
         ],
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 16.0,
-            ),
-            child: ViewToggle(
-              isCardView: _isCardView,
-              onToggle: () {
-                setState(() {
-                  _isCardView = !_isCardView;
-                });
-              },
-            ),
-          ),
+          const SizedBox(height: 16),
           Expanded(
             child: BlocConsumer<MatchmakingBloc, MatchmakingState>(
               listener: (context, state) {
@@ -101,9 +79,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                   if (matches.isEmpty) {
                     return const Center(child: Text('No matches found'));
                   }
-                  return _isCardView
-                      ? _buildCardView(matches)
-                      : _buildMapView();
+                  return _buildCardView(matches);
                 }
                 return const SizedBox.shrink();
               },
@@ -168,7 +144,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildActionButton(
                 icon: Icons.close,
@@ -179,7 +155,6 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                   );
                 },
               ),
-              const SizedBox(width: 24),
               _buildActionButton(
                 icon: Icons.favorite,
                 color: AppPallete.primary,
@@ -223,12 +198,4 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
     );
   }
 
-  Widget _buildMapView() {
-    return Center(
-      child: Text(
-        'Map View Placeholder',
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-    );
-  }
 }

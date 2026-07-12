@@ -6,7 +6,6 @@ import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 import 'package:kovalen/presentation/pages/academic_profile_page.dart';
 import 'package:kovalen/presentation/pages/matching_preferences_page.dart';
-import 'package:kovalen/presentation/pages/credential_page.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/settings_item.dart';
 
@@ -39,91 +38,63 @@ class SettingsPage extends StatelessWidget {
           title: 'Pengaturan Akun',
           showAvatar: false,
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildProfileSummary(context),
-              const SizedBox(height: 24),
-              _buildSettingsGroup(
-                context,
-                title: 'Akun & Profil',
-                items: [
-                  SettingsItem(
-                    icon: Icons.person_outline,
-                    title: 'Profil Akademik',
-                    onTap: () {
-                      Navigator.push(context, AcademicProfilePage.route());
-                    },
-                  ),
-                  SettingsItem(
-                    icon: Icons.lock_outline,
-                    title: 'Kredensial',
-                    onTap: () {
-                      Navigator.push(context, CredentialPage.route());
-                    },
-                    showDivider: false,
-                  ),
-                ],
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildProfileSummary(context),
+                    const SizedBox(height: 24),
+                    _buildSettingsGroup(
+                      context,
+                      title: 'Akun & Profil',
+                      items: [
+                        SettingsItem(
+                          icon: Icons.person_outline,
+                          title: 'Profil Akademik',
+                          onTap: () {
+                            Navigator.push(context, AcademicProfilePage.route());
+                          },
+                        ),
+                        SettingsItem(
+                          icon: Icons.tune_outlined,
+                          title: 'Preferensi Pencocokan',
+                          onTap: () {
+                            Navigator.push(context, MatchingPreferencesPage.route());
+                          },
+                          showDivider: false,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 24),
-              _buildSettingsGroup(
-                context,
-                title: 'Preferensi',
-                items: [
-                  SettingsItem(
-                    icon: Icons.tune_outlined,
-                    title: 'Preferensi Pencocokan',
-                    onTap: () {
-                      Navigator.push(context, MatchingPreferencesPage.route());
-                    },
-                  ),
-                  SettingsItem(
-                    icon: Icons.notifications_none_outlined,
-                    title: 'Notifikasi',
-                    onTap: () {},
-                    showDivider: false,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              _buildSettingsGroup(
-                context,
-                title: 'Bantuan & Privasi',
-                items: [
-                  SettingsItem(
-                    icon: Icons.help_outline,
-                    title: 'Pusat Bantuan',
-                    onTap: () {},
-                  ),
-                  SettingsItem(
-                    icon: Icons.security_outlined,
-                    title: 'Kebijakan Privasi',
-                    onTap: () {},
-                    showDivider: false,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: ElevatedButton.icon(
                 onPressed: () {
                   context.read<ProfileSettingsBloc>().add(ProfileSettingsSignOut());
                 },
+                icon: const Icon(Icons.logout),
+                label: const Text('Keluar'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppPallete.surface,
                   foregroundColor: AppPallete.error,
                   elevation: 0,
+                  minimumSize: const Size(double.infinity, 50),
                   side: const BorderSide(color: AppPallete.error),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text('Keluar'),
               ),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+            const SizedBox(height: 32),
+          ],
         ),
       ),
     );

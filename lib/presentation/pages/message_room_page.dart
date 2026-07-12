@@ -33,8 +33,13 @@ class MessageRoomPage extends StatefulWidget {
     bool isGroup = false,
     String? partnerId,
   }) => MaterialPageRoute(
-    builder: (context) =>
-        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl, isGroup: isGroup, partnerId: partnerId),
+    builder: (context) => MessageRoomPage(
+      roomId: roomId,
+      name: name,
+      avatarUrl: avatarUrl,
+      isGroup: isGroup,
+      partnerId: partnerId,
+    ),
   );
 
   @override
@@ -96,13 +101,20 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                   if (state is RoomDetailFailure) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message, style: const TextStyle(color: AppPallete.error))),
+                      SnackBar(
+                        content: Text(
+                          state.message,
+                          style: const TextStyle(color: AppPallete.error),
+                        ),
+                      ),
                     );
                   } else if (state is AddUserToGroupSuccess) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Berhasil menambahkan ${widget.name} ke grup"),
+                        content: Text(
+                          "Berhasil menambahkan ${widget.name} ke grup",
+                        ),
                         backgroundColor: AppPallete.success,
                       ),
                     );
@@ -114,7 +126,8 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                   ),
                   child: Container(
                     constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(bottomSheetContext).size.height * 0.7,
+                      maxHeight:
+                          MediaQuery.of(bottomSheetContext).size.height * 0.7,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -158,15 +171,19 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                           child: BlocBuilder<MessagesBloc, MessagesState>(
                             builder: (context, messagesState) {
                               if (messagesState is MessagesSuccess) {
-                                final groupRooms = messagesState.rooms.where((r) => r.type == 'group').toList();
-                                
+                                final groupRooms = messagesState.rooms
+                                    .where((r) => r.type == 'group')
+                                    .toList();
+
                                 if (groupRooms.isEmpty) {
                                   return const Padding(
                                     padding: EdgeInsets.all(32),
                                     child: Center(
                                       child: Text(
                                         'Anda belum bergabung dengan grup manapun.',
-                                        style: TextStyle(color: AppPallete.onSurfaceVariant),
+                                        style: TextStyle(
+                                          color: AppPallete.onSurfaceVariant,
+                                        ),
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
@@ -180,13 +197,28 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                     final group = groupRooms[index];
                                     return ListTile(
                                       leading: CircleAvatar(
-                                        backgroundColor: AppPallete.surfaceContainer,
-                                        backgroundImage: group.avatarUrl != null && group.avatarUrl!.trim().startsWith('http')
-                                            ? NetworkImage(group.avatarUrl!.trim())
+                                        backgroundColor:
+                                            AppPallete.surfaceContainer,
+                                        backgroundImage:
+                                            group.avatarUrl != null &&
+                                                group.avatarUrl!
+                                                    .trim()
+                                                    .startsWith('http')
+                                            ? NetworkImage(
+                                                group.avatarUrl!.trim(),
+                                              )
                                             : null,
-                                        child: group.avatarUrl == null || !group.avatarUrl!.trim().startsWith('http')
+                                        child:
+                                            group.avatarUrl == null ||
+                                                !group.avatarUrl!
+                                                    .trim()
+                                                    .startsWith('http')
                                             ? Text(
-                                                (group.name?.isNotEmpty ?? false) ? group.name![0].toUpperCase() : 'G',
+                                                (group.name?.isNotEmpty ??
+                                                        false)
+                                                    ? group.name![0]
+                                                          .toUpperCase()
+                                                    : 'G',
                                                 style: const TextStyle(
                                                   color: AppPallete.onSurface,
                                                   fontWeight: FontWeight.bold,
@@ -206,30 +238,63 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                           context: context,
                                           builder: (dialogContext) {
                                             return AlertDialog(
-                                              backgroundColor: AppPallete.surface,
-                                              title: const Text('Konfirmasi', style: TextStyle(color: AppPallete.textPrimary)),
+                                              backgroundColor:
+                                                  AppPallete.surface,
+                                              title: const Text(
+                                                'Konfirmasi',
+                                                style: TextStyle(
+                                                  color: AppPallete.textPrimary,
+                                                ),
+                                              ),
                                               content: Text(
                                                 'Apakah Anda yakin ingin menambahkan ${widget.name} ke grup ${group.name}?',
-                                                style: const TextStyle(color: AppPallete.onSurfaceVariant),
+                                                style: const TextStyle(
+                                                  color: AppPallete
+                                                      .onSurfaceVariant,
+                                                ),
                                               ),
                                               actions: [
                                                 TextButton(
-                                                  onPressed: () => Navigator.pop(dialogContext),
-                                                  child: const Text('Batal', style: TextStyle(color: AppPallete.onSurfaceVariant)),
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                        dialogContext,
+                                                      ),
+                                                  child: const Text(
+                                                    'Batal',
+                                                    style: TextStyle(
+                                                      color: AppPallete
+                                                          .onSurfaceVariant,
+                                                    ),
+                                                  ),
                                                 ),
                                                 TextButton(
                                                   onPressed: () {
-                                                    Navigator.pop(dialogContext);
-                                                    if (widget.partnerId != null) {
-                                                      blocContext.read<RoomDetailBloc>().add(
-                                                        AddUserToGroupEvent(
-                                                          roomId: group.id,
-                                                          userId: widget.partnerId!,
-                                                        ),
-                                                      );
+                                                    Navigator.pop(
+                                                      dialogContext,
+                                                    );
+                                                    if (widget.partnerId !=
+                                                        null) {
+                                                      blocContext
+                                                          .read<
+                                                            RoomDetailBloc
+                                                          >()
+                                                          .add(
+                                                            AddUserToGroupEvent(
+                                                              roomId: group.id,
+                                                              userId: widget
+                                                                  .partnerId!,
+                                                            ),
+                                                          );
                                                     }
                                                   },
-                                                  child: const Text('Ya, Tambahkan', style: TextStyle(color: AppPallete.primary, fontWeight: FontWeight.bold)),
+                                                  child: const Text(
+                                                    'Ya, Tambahkan',
+                                                    style: TextStyle(
+                                                      color: AppPallete.primary,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
                                                 ),
                                               ],
                                             );
@@ -285,9 +350,14 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
 
             if (messagesState is MessagesSuccess) {
               try {
-                final room = messagesState.rooms.firstWhere((r) => r.id == widget.roomId);
-                currentName = room.name ?? room.otherUser?.fullName ?? widget.name;
-                currentAvatarUrl = room.type == 'group' ? room.avatarUrl : room.otherUser?.avatarUrl;
+                final room = messagesState.rooms.firstWhere(
+                  (r) => r.id == widget.roomId,
+                );
+                currentName =
+                    room.name ?? room.otherUser?.fullName ?? widget.name;
+                currentAvatarUrl = room.type == 'group'
+                    ? room.avatarUrl
+                    : room.otherUser?.avatarUrl;
               } catch (_) {
                 // Room not found, fallback to widget fields
               }
@@ -296,9 +366,15 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
             return GestureDetector(
               onTap: () {
                 if (widget.isGroup) {
-                  Navigator.push(context, GroupRoomDetailPage.route(roomId: widget.roomId));
+                  Navigator.push(
+                    context,
+                    GroupRoomDetailPage.route(roomId: widget.roomId),
+                  );
                 } else if (widget.partnerId != null) {
-                  Navigator.push(context, PersonalRoomDetailPage.route(userId: widget.partnerId!));
+                  Navigator.push(
+                    context,
+                    PersonalRoomDetailPage.route(userId: widget.partnerId!),
+                  );
                 }
               },
               child: Row(
@@ -310,7 +386,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                       shape: BoxShape.circle,
                       color: AppPallete.surfaceContainer,
                       border: Border.all(color: AppPallete.stroke),
-                      image: currentAvatarUrl != null && currentAvatarUrl.trim().startsWith('http')
+                      image:
+                          currentAvatarUrl != null &&
+                              currentAvatarUrl.trim().startsWith('http')
                           ? DecorationImage(
                               image: NetworkImage(currentAvatarUrl.trim()),
                               fit: BoxFit.cover,
@@ -318,10 +396,14 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                             )
                           : null,
                     ),
-                    child: currentAvatarUrl == null || !currentAvatarUrl.trim().startsWith('http')
+                    child:
+                        currentAvatarUrl == null ||
+                            !currentAvatarUrl.trim().startsWith('http')
                         ? Center(
                             child: Text(
-                              currentName.isNotEmpty ? currentName[0].toUpperCase() : '?',
+                              currentName.isNotEmpty
+                                  ? currentName[0].toUpperCase()
+                                  : '?',
                               style: const TextStyle(
                                 color: AppPallete.onSurface,
                                 fontWeight: FontWeight.bold,
@@ -380,7 +462,10 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
               icon: const Icon(Icons.calendar_month_outlined),
               tooltip: 'Jadwal Pertemuan',
               onPressed: () {
-                Navigator.push(context, GroupSchedulePage.route(roomId: widget.roomId));
+                Navigator.push(
+                  context,
+                  GroupSchedulePage.route(roomId: widget.roomId),
+                );
               },
             ),
           if (!widget.isGroup)
@@ -389,7 +474,7 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
               tooltip: 'Undang ke Grup',
               onPressed: () => _showAddGroupBottomSheet(context),
             ),
-          IconButton(icon: const Icon(Icons.more_vert), onPressed: () {}),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
@@ -434,17 +519,24 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                           if (message.senderId == currentUser.id) {
                             systemMessageText = "Anda $systemMessageText";
                           } else {
-                            final senderName = message.senderName?.split(' ').first ?? 'Seseorang';
-                            systemMessageText = "$senderName $systemMessageText";
+                            final senderName =
+                                message.senderName?.split(' ').first ??
+                                'Seseorang';
+                            systemMessageText =
+                                "$senderName $systemMessageText";
                           }
 
                           return Container(
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             child: Center(
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: AppPallete.surfaceContainerHighest.withValues(alpha: 0.5),
+                                  color: AppPallete.surfaceContainerHighest
+                                      .withValues(alpha: 0.5),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -482,9 +574,9 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                     color: AppPallete.surfaceContainer,
                                     image:
                                         message.senderAvatarUrl != null &&
-                                            message.senderAvatarUrl!.trim().startsWith(
-                                              'http',
-                                            )
+                                            message.senderAvatarUrl!
+                                                .trim()
+                                                .startsWith('http')
                                         ? DecorationImage(
                                             image: NetworkImage(
                                               message.senderAvatarUrl!.trim(),
@@ -496,13 +588,15 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                   ),
                                   child:
                                       message.senderAvatarUrl == null ||
-                                          !message.senderAvatarUrl!.trim().startsWith(
-                                            'http',
-                                          )
+                                          !message.senderAvatarUrl!
+                                              .trim()
+                                              .startsWith('http')
                                       ? Center(
                                           child: Text(
-                                            (message.senderName?.isNotEmpty ?? false)
-                                                ? message.senderName![0].toUpperCase()
+                                            (message.senderName?.isNotEmpty ??
+                                                    false)
+                                                ? message.senderName![0]
+                                                      .toUpperCase()
                                                 : '?',
                                             style: const TextStyle(
                                               fontSize: 10,

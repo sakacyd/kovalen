@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/common/cubits/bottom_nav_cubit.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/home_bloc.dart';
+import 'package:kovalen/presentation/bloc/messages_tab_cubit.dart';
 import 'package:kovalen/presentation/pages/message_room_page.dart';
 import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
@@ -182,10 +183,16 @@ class _HomePageState extends State<HomePage> {
                           'Grup Belajar Aktif',
                           style: Theme.of(context).textTheme.displaySmall,
                         ),
-                        Text(
-                          'Lihat Semua',
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: AppPallete.primary),
+                        GestureDetector(
+                          onTap: () {
+                            context.read<BottomNavCubit>().changeTab(2);
+                            context.read<MessagesTabCubit>().changeTab(1);
+                          },
+                          child: Text(
+                            'Lihat Semua',
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(color: AppPallete.primary),
+                          ),
                         ),
                       ],
                     ),

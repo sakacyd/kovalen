@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
 import '../../core/theme/app_pallete.dart';
 import '../bloc/messages_bloc.dart';
+import '../bloc/messages_tab_cubit.dart';
 import '../widgets/chat_list_item.dart';
 import '../widgets/custom_app_bar.dart';
 import 'message_room_page.dart';
@@ -15,17 +16,29 @@ class MessagesPage extends StatefulWidget {
   State<MessagesPage> createState() => _MessagesPageState();
 }
 
-class _MessagesPageState extends State<MessagesPage> {
+class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: context.read<MessagesTabCubit>().state,
+    );
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        context.read<MessagesTabCubit>().changeTab(_tabController.index);
+      }
+    });
     context.read<MessagesBloc>().add(LoadMessagesData());
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -83,8 +96,12 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
+    return BlocListener<MessagesTabCubit, int>(
+      listener: (context, state) {
+        if (_tabController.index != state) {
+          _tabController.animateTo(state);
+        }
+      },
       child: Scaffold(
         backgroundColor: AppPallete.background,
         appBar: const CustomAppBar(),
@@ -140,6 +157,7 @@ class _MessagesPageState extends State<MessagesPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: TabBar(
+                  controller: _tabController,
                   labelColor: AppPallete.primary,
                   unselectedLabelColor: AppPallete.textOutline,
                   indicatorColor: AppPallete.primary,
@@ -194,6 +212,7 @@ class _MessagesPageState extends State<MessagesPage> {
                             final groupRooms = state.rooms.where((r) => r.type == 'group').toList();
                             
                             return TabBarView(
+                              controller: _tabController,
                               children: [
                                 _buildChatList(personalRooms, 'Belum ada pesan personal'),
                                 _buildChatList(groupRooms, 'Belum ada pesan grup'),
