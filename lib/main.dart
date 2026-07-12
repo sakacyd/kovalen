@@ -20,6 +20,7 @@ import 'package:kovalen/presentation/bloc/admin/admin_bloc.dart';
 import 'package:kovalen/presentation/bloc/group_schedule/group_schedule_bloc.dart';
 import 'package:kovalen/presentation/bloc/group_activity/group_activity_bloc.dart';
 import 'package:kovalen/presentation/bloc/rating/rating_bloc.dart';
+import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
 import 'package:kovalen/presentation/pages/sign_in_page.dart';
 import 'package:kovalen/presentation/pages/onboarding_page.dart';
 
@@ -47,8 +48,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<GroupScheduleBloc>()),
         BlocProvider(create: (_) => serviceLocator<GroupActivityBloc>()),
         BlocProvider(create: (_) => serviceLocator<RatingBloc>()),
-        /*
-        BlocProvider(create: (_) => serviceLocator<SubmitReportBloc>()), */
+        BlocProvider(create: (_) => serviceLocator<RoomDetailBloc>()),
         BlocProvider(create: (_) => BottomNavCubit()),
       ],
       child: const MyApp(),

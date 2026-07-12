@@ -4,6 +4,7 @@ class ChatRoom {
   final String id;
   final String type; // 'personal' or 'group'
   final String? name;
+  final String? avatarUrl;
   final DateTime createdAt;
   
   // Custom properties for UI
@@ -15,6 +16,7 @@ class ChatRoom {
     required this.id,
     required this.type,
     this.name,
+    this.avatarUrl,
     required this.createdAt,
     this.lastMessage,
     this.lastMessageTime,

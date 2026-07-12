@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kovalen/core/theme/app_pallete.dart';
 import 'package:kovalen/presentation/bloc/message_room/message_room_bloc.dart';
+import 'package:kovalen/presentation/bloc/messages_bloc.dart';
 import 'package:kovalen/core/common/cubits/app_user_cubit.dart';
 import 'package:kovalen/presentation/pages/group_schedule_page.dart';
+import 'package:kovalen/presentation/pages/message_room/personal_room_detail_page.dart';
+import 'package:kovalen/presentation/pages/message_room/group_room_detail_page.dart';
 
 class MessageRoomPage extends StatefulWidget {
   final String roomId;
   final String name;
   final String? avatarUrl;
   final bool isGroup;
+  final String? partnerId;
 
   const MessageRoomPage({
     super.key,
@@ -17,6 +21,7 @@ class MessageRoomPage extends StatefulWidget {
     required this.name,
     this.avatarUrl,
     this.isGroup = false,
+    this.partnerId,
   });
 
   static route({
@@ -24,9 +29,10 @@ class MessageRoomPage extends StatefulWidget {
     required String name,
     String? avatarUrl,
     bool isGroup = false,
+    String? partnerId,
   }) => MaterialPageRoute(
     builder: (context) =>
-        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl, isGroup: isGroup),
+        MessageRoomPage(roomId: roomId, name: name, avatarUrl: avatarUrl, isGroup: isGroup, partnerId: partnerId),
   );
 
   @override
@@ -87,81 +93,101 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
           preferredSize: const Size.fromHeight(1.0),
           child: Container(color: AppPallete.stroke, height: 1.0),
         ),
-        title: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppPallete.surfaceContainer,
-                border: Border.all(color: AppPallete.stroke),
-                image:
-                    widget.avatarUrl != null &&
-                        widget.avatarUrl!.trim().startsWith('http')
-                    ? DecorationImage(
-                        image: NetworkImage(widget.avatarUrl!.trim()),
-                        fit: BoxFit.cover,
-                        onError: (exception, stackTrace) {},
-                      )
-                    : null,
-              ),
-              child:
-                  widget.avatarUrl == null ||
-                      !widget.avatarUrl!.trim().startsWith('http')
-                  ? Center(
-                      child: Text(
-                        widget.name.isNotEmpty
-                            ? widget.name[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(
-                          color: AppPallete.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        title: BlocBuilder<MessagesBloc, MessagesState>(
+          builder: (context, messagesState) {
+            String currentName = widget.name;
+            String? currentAvatarUrl = widget.avatarUrl;
+
+            if (messagesState is MessagesSuccess) {
+              try {
+                final room = messagesState.rooms.firstWhere((r) => r.id == widget.roomId);
+                currentName = room.name ?? room.otherUser?.fullName ?? widget.name;
+                currentAvatarUrl = room.type == 'group' ? room.avatarUrl : room.otherUser?.avatarUrl;
+              } catch (_) {
+                // Room not found, fallback to widget fields
+              }
+            }
+
+            return GestureDetector(
+              onTap: () {
+                if (widget.isGroup) {
+                  Navigator.push(context, GroupRoomDetailPage.route(roomId: widget.roomId));
+                } else if (widget.partnerId != null) {
+                  Navigator.push(context, PersonalRoomDetailPage.route(userId: widget.partnerId!));
+                }
+              },
+              child: Row(
                 children: [
-                  Text(
-                    widget.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppPallete.textPrimary,
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppPallete.surfaceContainer,
+                      border: Border.all(color: AppPallete.stroke),
+                      image: currentAvatarUrl != null && currentAvatarUrl.trim().startsWith('http')
+                          ? DecorationImage(
+                              image: NetworkImage(currentAvatarUrl.trim()),
+                              fit: BoxFit.cover,
+                              onError: (exception, stackTrace) {},
+                            )
+                          : null,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    child: currentAvatarUrl == null || !currentAvatarUrl.trim().startsWith('http')
+                        ? Center(
+                            child: Text(
+                              currentName.isNotEmpty ? currentName[0].toUpperCase() : '?',
+                              style: const TextStyle(
+                                color: AppPallete.onSurface,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : null,
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppPallete.success,
-                          shape: BoxShape.circle,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          currentName,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppPallete.textPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'Online',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppPallete.onSurfaceVariant,
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppPallete.success,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'Online',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: AppPallete.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            );
+          },
         ),
         actions: [
           if (widget.isGroup)
@@ -232,13 +258,13 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                     shape: BoxShape.circle,
                                     color: AppPallete.surfaceContainer,
                                     image:
-                                        widget.avatarUrl != null &&
-                                            widget.avatarUrl!.trim().startsWith(
+                                        message.senderAvatarUrl != null &&
+                                            message.senderAvatarUrl!.trim().startsWith(
                                               'http',
                                             )
                                         ? DecorationImage(
                                             image: NetworkImage(
-                                              widget.avatarUrl!.trim(),
+                                              message.senderAvatarUrl!.trim(),
                                             ),
                                             fit: BoxFit.cover,
                                             onError: (exception, stackTrace) {},
@@ -246,14 +272,14 @@ class _MessageRoomPageState extends State<MessageRoomPage> {
                                         : null,
                                   ),
                                   child:
-                                      widget.avatarUrl == null ||
-                                          !widget.avatarUrl!.trim().startsWith(
+                                      message.senderAvatarUrl == null ||
+                                          !message.senderAvatarUrl!.trim().startsWith(
                                             'http',
                                           )
                                       ? Center(
                                           child: Text(
-                                            widget.name.isNotEmpty
-                                                ? widget.name[0].toUpperCase()
+                                            (message.senderName?.isNotEmpty ?? false)
+                                                ? message.senderName![0].toUpperCase()
                                                 : '?',
                                             style: const TextStyle(
                                               fontSize: 10,

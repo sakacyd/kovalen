@@ -96,7 +96,7 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
     try {
       final response = await supabaseClient
           .from('messages')
-          .select('*')
+          .select('*, sender:users(full_name, avatar_url)')
           .eq('room_id', roomId)
           .order('created_at', ascending: true);
 
@@ -121,7 +121,7 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
             'sender_id': session.user.id,
             'content': content,
           })
-          .select()
+          .select('*, sender:users(full_name, avatar_url)')
           .single();
 
       return MessageModel.fromJson(response);

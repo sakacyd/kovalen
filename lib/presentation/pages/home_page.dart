@@ -8,6 +8,7 @@ import 'package:kovalen/presentation/bloc/profile_settings_bloc.dart';
 import 'package:kovalen/presentation/widgets/stats_card.dart';
 import 'package:kovalen/presentation/widgets/group_item.dart';
 import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
+import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,16 +28,28 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
-        listener: (context, state) {
-          if (state is UpdateProfileSettingsSuccess) {
-            context.read<HomeBloc>().add(LoadHomeData());
-          } else if (state is ProfileSettingsFailure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileSettingsBloc, ProfileSettingsState>(
+            listener: (context, state) {
+              if (state is UpdateProfileSettingsSuccess) {
+                context.read<HomeBloc>().add(LoadHomeData());
+              } else if (state is ProfileSettingsFailure) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(state.message)));
+              }
+            },
+          ),
+          BlocListener<RoomDetailBloc, RoomDetailState>(
+            listener: (context, state) {
+              if (state is GroupRoomDetailLoaded) {
+                // Refresh home data when room details change
+                context.read<HomeBloc>().add(LoadHomeData());
+              }
+            },
+          ),
+        ],
 
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
@@ -208,6 +221,7 @@ class _HomePageState extends State<HomePage> {
                               subtitle: 'Grup Aktif',
                               time: '',
                               isAccentColors: index % 2 != 0,
+                              imageUrl: group.avatarUrl,
                             ),
                           );
                         }),

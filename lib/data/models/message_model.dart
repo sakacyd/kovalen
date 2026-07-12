@@ -7,6 +7,8 @@ class MessageModel extends Message {
     required super.senderId,
     required super.content,
     required super.createdAt,
+    super.senderName,
+    super.senderAvatarUrl,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +18,8 @@ class MessageModel extends Message {
       senderId: json['sender_id'] as String,
       content: json['content'] as String,
       createdAt: DateTime.parse(json['created_at']),
+      senderName: json['sender']?['full_name'] as String?,
+      senderAvatarUrl: json['sender']?['avatar_url'] as String?,
     );
   }
 

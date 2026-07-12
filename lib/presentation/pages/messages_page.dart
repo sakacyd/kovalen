@@ -52,7 +52,7 @@ class _MessagesPageState extends State<MessagesPage> {
             ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}'
             : '';
         final preview = room.lastMessage ?? 'Belum ada pesan';
-        final imageUrl = room.otherUser?.avatarUrl;
+        final imageUrl = room.type == 'group' ? room.avatarUrl : room.otherUser?.avatarUrl;
         final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
         return ChatListItem(
@@ -72,6 +72,7 @@ class _MessagesPageState extends State<MessagesPage> {
                 name: name,
                 avatarUrl: imageUrl,
                 isGroup: room.type == 'group',
+                partnerId: room.otherUser?.id,
               ),
             );
           },

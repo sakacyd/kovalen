@@ -6,6 +6,7 @@ class GroupItem extends StatelessWidget {
   final String subtitle;
   final String time;
   final bool isAccentColors;
+  final String? imageUrl;
 
   const GroupItem({
     super.key,
@@ -13,6 +14,7 @@ class GroupItem extends StatelessWidget {
     required this.subtitle,
     required this.time,
     required this.isAccentColors,
+    this.imageUrl,
   });
 
   @override
@@ -36,12 +38,26 @@ class GroupItem extends StatelessWidget {
                   : AppPallete.primaryContainer,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(
-              Icons.group_outlined,
-              color: isAccentColors
-                  ? AppPallete.onSecondaryContainer
-                  : AppPallete.onPrimaryContainer,
-            ),
+            child: imageUrl != null && imageUrl!.trim().startsWith('http')
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      imageUrl!.trim(),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.group_outlined,
+                        color: isAccentColors
+                            ? AppPallete.onSecondaryContainer
+                            : AppPallete.onPrimaryContainer,
+                      ),
+                    ),
+                  )
+                : Icon(
+                    Icons.group_outlined,
+                    color: isAccentColors
+                        ? AppPallete.onSecondaryContainer
+                        : AppPallete.onPrimaryContainer,
+                  ),
           ),
           const SizedBox(width: 16),
           Expanded(

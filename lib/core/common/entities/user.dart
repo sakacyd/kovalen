@@ -21,6 +21,7 @@ class User {
   final int ratingCount;
   final String status;
   final DateTime? suspendedUntil;
+  final List<String> interests;
 
   User({
     required this.id,
@@ -45,6 +46,7 @@ class User {
     this.ratingCount = 0,
     this.status = 'active',
     this.suspendedUntil,
+    this.interests = const [],
   });
 
   bool get isProfileComplete {
@@ -74,6 +76,7 @@ class User {
     int? ratingCount,
     String? status,
     DateTime? suspendedUntil,
+    List<String>? interests,
   }) {
     return User(
       id: id ?? this.id,
@@ -98,6 +101,7 @@ class User {
       ratingCount: ratingCount ?? this.ratingCount,
       status: status ?? this.status,
       suspendedUntil: suspendedUntil ?? this.suspendedUntil,
+      interests: interests ?? this.interests,
     );
   }
 }

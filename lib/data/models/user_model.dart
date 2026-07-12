@@ -24,6 +24,7 @@ class UserModel extends User {
     super.ratingCount = 0,
     super.status = 'active',
     super.suspendedUntil,
+    super.interests = const [],
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -43,14 +44,28 @@ class UserModel extends User {
       gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
       universityId: json['university_id'] ?? '',
       studyProgramId: json['study_program_id'] ?? '',
-      universityName: json['university_name'],
-      studyProgramName: json['study_program_name'],
+      universityName: json['university_name'] ?? (json['university'] != null ? json['university']['name'] : null),
+      studyProgramName: json['study_program_name'] ?? (json['study_program'] != null ? json['study_program']['name'] : null),
       role: json['role'] ?? 'pelanggan',
       ratingScore: (json['rating_score'] as num?)?.toDouble() ?? 0.0,
       ratingCount: json['rating_count'] as int? ?? 0,
       status: json['status'] ?? 'active',
       suspendedUntil: json['suspended_until'] != null ? DateTime.parse(json['suspended_until']) : null,
+      interests: _parseInterests(json['user_interests']),
     );
+  }
+
+  static List<String> _parseInterests(dynamic userInterestsJson) {
+    if (userInterestsJson == null) return [];
+    if (userInterestsJson is List) {
+      return userInterestsJson.map((ui) {
+        if (ui is Map && ui['interests'] is Map) {
+          return ui['interests']['name'] as String;
+        }
+        return '';
+      }).where((s) => s.isNotEmpty).toList();
+    }
+    return [];
   }
 
   Map<String, dynamic> toJson() {
@@ -77,6 +92,7 @@ class UserModel extends User {
       'rating_count': ratingCount,
       'status': status,
       'suspended_until': suspendedUntil?.toIso8601String(),
+      'interests': interests,
     };
   }
 
@@ -104,6 +120,7 @@ class UserModel extends User {
     int? ratingCount,
     String? status,
     DateTime? suspendedUntil,
+    List<String>? interests,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -128,6 +145,7 @@ class UserModel extends User {
       ratingCount: ratingCount ?? this.ratingCount,
       status: status ?? this.status,
       suspendedUntil: suspendedUntil ?? this.suspendedUntil,
+      interests: interests ?? this.interests,
     );
   }
 }

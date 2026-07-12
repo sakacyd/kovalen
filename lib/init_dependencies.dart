@@ -103,4 +103,12 @@ import 'package:kovalen/domain/usecases/rating/get_room_participants.dart';
 import 'package:kovalen/domain/usecases/rating/rate_user.dart';
 import 'package:kovalen/presentation/bloc/rating/rating_bloc.dart';
 
+import 'package:kovalen/data/datasources/room_detail_remote_data_source.dart';
+import 'package:kovalen/data/repositories/room_detail_repository_impl.dart';
+import 'package:kovalen/domain/repository/room_detail_repository.dart';
+import 'package:kovalen/domain/usecases/message_room/get_user_by_id.dart';
+import 'package:kovalen/domain/usecases/message_room/get_group_detail.dart';
+import 'package:kovalen/domain/usecases/message_room/update_group_profile.dart';
+import 'package:kovalen/presentation/bloc/message_room/room_detail_bloc.dart';
+
 part 'init_dependencies.main.dart';

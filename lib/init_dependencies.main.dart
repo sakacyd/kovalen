@@ -12,6 +12,7 @@ Future<void> initDependencies() async {
   _initMatchmaking();
   _initMessages();
   _initMessageRoom();
+  _initRoomDetail();
   _initOnboarding();
   _initMatchingPreferences();
   _initAdmin();
@@ -250,6 +251,30 @@ void _initMessageRoom() {
       () => MessageRoomBloc(
         getMessageRoomMessages: serviceLocator(),
         sendMessageRoomMessage: serviceLocator(),
+      ),
+    );
+}
+
+void _initRoomDetail() {
+  serviceLocator
+    // datasource
+    ..registerFactory<RoomDetailRemoteDataSource>(
+      () => RoomDetailRemoteDataSourceImpl(serviceLocator()),
+    )
+    // repository
+    ..registerFactory<RoomDetailRepository>(
+      () => RoomDetailRepositoryImpl(serviceLocator()),
+    )
+    // usecases
+    ..registerFactory(() => GetUserById(serviceLocator()))
+    ..registerFactory(() => GetGroupDetail(serviceLocator()))
+    ..registerFactory(() => UpdateGroupProfile(serviceLocator()))
+    // bloc
+    ..registerFactory(
+      () => RoomDetailBloc(
+        getUserById: serviceLocator(),
+        getGroupDetail: serviceLocator(),
+        updateGroupProfile: serviceLocator(),
       ),
     );
 }

@@ -4,6 +4,8 @@ class Message {
   final String senderId;
   final String content;
   final DateTime createdAt;
+  final String? senderName;
+  final String? senderAvatarUrl;
 
   Message({
     required this.id,
@@ -11,5 +13,7 @@ class Message {
     required this.senderId,
     required this.content,
     required this.createdAt,
+    this.senderName,
+    this.senderAvatarUrl,
   });
 }
