@@ -38,7 +38,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
   String? _selectedGayaBelajar;
   String _avatarUrl = '';
   File? _avatarFile;
-  final Set<String> _selectedInterests = {};
+  final Set<String> _selectedAcademicInterests = {};
+  final Set<String> _selectedNonAcademicInterests = {};
   static const int _maxInterests = 5;
 
   @override
@@ -74,7 +75,13 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
 
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is ProfileSuccess) {
-      _selectedInterests.addAll(profileState.interests.map((e) => e.id));
+      for (var interest in profileState.interests) {
+        if (interest.category?.type == 'academic') {
+          _selectedAcademicInterests.add(interest.id);
+        } else {
+          _selectedNonAcademicInterests.add(interest.id);
+        }
+      }
     }
   }
 
@@ -86,17 +93,18 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     super.dispose();
   }
 
-  void _toggleInterest(String interestId) {
+  void _toggleInterest(String interestId, String typeName) {
     setState(() {
-      if (_selectedInterests.contains(interestId)) {
-        _selectedInterests.remove(interestId);
+      final targetSet = typeName == 'Akademik' ? _selectedAcademicInterests : _selectedNonAcademicInterests;
+      if (targetSet.contains(interestId)) {
+        targetSet.remove(interestId);
       } else {
-        if (_selectedInterests.length < _maxInterests) {
-          _selectedInterests.add(interestId);
+        if (targetSet.length < _maxInterests) {
+          targetSet.add(interestId);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Maksimal 5 minat yang dapat dipilih.'),
+            SnackBar(
+              content: Text('Maksimal $_maxInterests minat $typeName yang dapat dipilih.'),
             ),
           );
         }
@@ -122,9 +130,12 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
     // Compare interests
     final profileState = context.read<ProfileBloc>().state;
     if (profileState is ProfileSuccess) {
-      final initialInterests = profileState.interests.map((e) => e.id).toSet();
-      if (_selectedInterests.length != initialInterests.length ||
-          !_selectedInterests.containsAll(initialInterests)) {
+      final initialAcademic = profileState.interests.where((e) => e.category?.type == 'academic').map((e) => e.id).toSet();
+      final initialNonAcademic = profileState.interests.where((e) => e.category?.type != 'academic').map((e) => e.id).toSet();
+      if (_selectedAcademicInterests.length != initialAcademic.length ||
+          !_selectedAcademicInterests.containsAll(initialAcademic) ||
+          _selectedNonAcademicInterests.length != initialNonAcademic.length ||
+          !_selectedNonAcademicInterests.containsAll(initialNonAcademic)) {
         return true;
       }
     }
@@ -157,6 +168,20 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
         const SnackBar(
           content: Text('Nilai IPK harus berada di rentang 0.00 hingga 4.00'),
         ),
+      );
+      return;
+    }
+
+    if (_selectedAcademicInterests.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Minimal pilih 1 minat akademik')),
+      );
+      return;
+    }
+
+    if (_selectedNonAcademicInterests.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Minimal pilih 1 minat non-akademik')),
       );
       return;
     }
@@ -201,7 +226,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             tujuanBelajar: finalTujuanBelajar,
             gayaBelajar: _selectedGayaBelajar!,
             gpa: parsedGpa,
-            interests: _selectedInterests.toList(),
+            interests: [..._selectedAcademicInterests, ..._selectedNonAcademicInterests],
           ),
         );
       }
@@ -585,22 +610,25 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                   ],
                 ),
                 const SizedBox(height: 32),
+                const SizedBox(height: 32),
+                _buildSectionHeader('Minat Akademik', Icons.school),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      'Pilih Topik Minat Belajar',
+                      'Pilih Topik Minat Akademik',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
-                      '${_selectedInterests.length}/$_maxInterests Terpilih',
+                      '${_selectedAcademicInterests.length}/$_maxInterests Terpilih',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: _selectedInterests.length == _maxInterests
+                        color: _selectedAcademicInterests.length == _maxInterests
                             ? Theme.of(context).colorScheme.primary
                             : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -609,7 +637,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Pilih hingga $_maxInterests topik untuk memfokuskan pencarian studi Anda.',
+                  'Pilih minimal 1 hingga $_maxInterests topik akademik untuk memfokuskan pencarian studi Anda.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -618,7 +646,51 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                 BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
                   builder: (context, state) {
                     if (state is ProfileSettingsDataLoaded) {
-                      return _buildInterestsGroup(state.availableInterests);
+                      final academicInterests = {'Akademik': state.availableInterests['Akademik'] ?? <String, List<Interest>>{}};
+                      return _buildInterestsGroup(academicInterests);
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                ),
+                
+                const SizedBox(height: 32),
+                _buildSectionHeader('Minat Non-Akademik', Icons.palette_outlined),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      'Pilih Topik Minat Non-Akademik',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    Text(
+                      '${_selectedNonAcademicInterests.length}/$_maxInterests Terpilih',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: _selectedNonAcademicInterests.length == _maxInterests
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Pilih minimal 1 hingga $_maxInterests topik non-akademik yang sesuai dengan minat Anda.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                BlocBuilder<ProfileSettingsBloc, ProfileSettingsState>(
+                  builder: (context, state) {
+                    if (state is ProfileSettingsDataLoaded) {
+                      final nonAcademicInterests = {'Non Akademik': state.availableInterests['Non Akademik'] ?? <String, List<Interest>>{}};
+                      return _buildInterestsGroup(nonAcademicInterests);
                     }
                     return const Center(child: CircularProgressIndicator());
                   },
@@ -747,16 +819,6 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
-              child: Text(
-                typeName,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
             ...groupedByCategory.keys.map((catName) {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 24.0),
@@ -777,8 +839,8 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                       children: groupedByCategory[catName]!.map((interest) {
                         return SelectablePill(
                           label: interest.name,
-                          isSelected: _selectedInterests.contains(interest.id),
-                          onTap: () => _toggleInterest(interest.id),
+                          isSelected: _selectedAcademicInterests.contains(interest.id) || _selectedNonAcademicInterests.contains(interest.id),
+                          onTap: () => _toggleInterest(interest.id, typeName),
                         );
                       }).toList(),
                     ),
