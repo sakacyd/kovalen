@@ -229,16 +229,12 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
   }
 
   @override
-  Stream<List<MatchProfileModel>> watchNewMatches() async* {
+  Stream<bool> watchNewMatches() async* {
     try {
       final session = supabaseClient.auth.currentSession;
       if (session == null) throw ServerException('User not logged in');
-      final currentUserId = session.user.id;
 
-      // Initial yield
-      yield await getPotentialMatches();
-
-      final streamController = StreamController<List<MatchProfileModel>>();
+      final streamController = StreamController<bool>();
       final channel = supabaseClient.channel('public:matches_changes');
 
       streamController.onCancel = () {
@@ -247,22 +243,24 @@ class MatchmakingRemoteDataSourceImpl implements MatchmakingRemoteDataSource {
 
       channel
           .onPostgresChanges(
-            event: PostgresChangeEvent.all,
+            event: PostgresChangeEvent.insert,
             schema: 'public',
             table: 'swipes',
-            filter: PostgresChangeFilter(
-              type: PostgresChangeFilterType.eq,
-              column: 'target_user_id',
-              value: currentUserId,
-            ),
-            callback: (payload) async {
-              streamController.add(await getPotentialMatches());
+            callback: (payload) {
+              final newRecord = payload.newRecord;
+              if (newRecord['swiper_id'] == session.user.id ||
+                  newRecord['swiped_id'] == session.user.id) {
+                if (newRecord['is_liked'] == true) {
+                  // Simplification: trigger a check if it's a mutual match
+                  streamController.add(true);
+                }
+              }
             },
           )
           .subscribe();
 
       yield* streamController.stream;
-    } on AuthException catch (e) {
+    } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
