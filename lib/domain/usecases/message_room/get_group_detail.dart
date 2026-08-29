@@ -20,15 +20,13 @@ class GetGroupDetail implements UseCase<GetGroupDetailResult, String> {
   @override
   Future<Either<Failure, GetGroupDetailResult>> call(String params) async {
     final roomRes = await repository.getGroupDetail(params);
-    return roomRes.fold(
-      (l) => left(l),
-      (room) async {
-        final participantsRes = await repository.getGroupParticipants(params);
-        return participantsRes.fold(
-          (l) => left(l),
-          (participants) => right(GetGroupDetailResult(room: room, participants: participants)),
-        );
-      },
-    );
+    return roomRes.fold((l) => left(l), (room) async {
+      final participantsRes = await repository.getGroupParticipants(params);
+      return participantsRes.fold(
+        (l) => left(l),
+        (participants) =>
+            right(GetGroupDetailResult(room: room, participants: participants)),
+      );
+    });
   }
 }

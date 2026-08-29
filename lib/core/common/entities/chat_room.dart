@@ -6,7 +6,7 @@ class ChatRoom {
   final String? name;
   final String? avatarUrl;
   final DateTime createdAt;
-  
+
   // Custom properties for UI
   final String? lastMessage;
   final DateTime? lastMessageTime;

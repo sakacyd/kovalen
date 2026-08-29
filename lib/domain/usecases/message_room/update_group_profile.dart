@@ -17,13 +17,20 @@ class UpdateGroupProfileParams {
   });
 }
 
-class UpdateGroupProfile implements UseCase<ChatRoom, UpdateGroupProfileParams> {
+class UpdateGroupProfile
+    implements UseCase<ChatRoom, UpdateGroupProfileParams> {
   final RoomDetailRepository repository;
 
   UpdateGroupProfile(this.repository);
 
   @override
-  Future<Either<Failure, ChatRoom>> call(UpdateGroupProfileParams params) async {
-    return await repository.updateGroupProfile(params.roomId, params.name, params.avatarFile);
+  Future<Either<Failure, ChatRoom>> call(
+    UpdateGroupProfileParams params,
+  ) async {
+    return await repository.updateGroupProfile(
+      params.roomId,
+      params.name,
+      params.avatarFile,
+    );
   }
 }

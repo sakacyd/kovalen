@@ -86,7 +86,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (!hasConnection) {
         return left(Failure(Constants.noConnectionMessage));
       }
-      
+
       await authRemoteDataSource.changePassword(newPassword: newPassword);
       return right(null);
     } on ServerException catch (e) {
@@ -98,7 +98,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, User>> updateUserLocation({
-    required double latitude, 
+    required double latitude,
     required double longitude,
   }) async {
     return _getUser(

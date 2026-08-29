@@ -6,7 +6,7 @@ class AppPallete {
   static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color primaryContainer = Color(0xFF1A56DB);
   static const Color onPrimaryContainer = Color(0xFFD4DCFF);
-  
+
   static const Color secondary = Color(0xFF85522D);
   static const Color onSecondary = Color(0xFFFFFFFF);
   static const Color secondaryContainer = Color(0xFFFEBB8D);
@@ -26,7 +26,7 @@ class AppPallete {
   // Surface & Background Colors
   static const Color background = Color(0xFFF8F9FA);
   static const Color onBackground = Color(0xFF191C1D);
-  
+
   static const Color surface = Color(0xFFFFFFFF);
   static const Color onSurface = Color(0xFF191C1D);
   static const Color surfaceVariant = Color(0xFFE1E3E4);

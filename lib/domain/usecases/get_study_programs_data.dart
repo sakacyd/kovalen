@@ -11,9 +11,13 @@ class GetStudyProgramsData<T extends BaseUniversitiesStudyProgramsRepository>
   GetStudyProgramsData(this.repository);
 
   @override
-  Future<Either<Failure, List<StudyProgram>>> call(GetStudyProgramsDataParams params) async {
-    final result = await repository.getStudyProgramsByUniversityId(params.universityId);
-    
+  Future<Either<Failure, List<StudyProgram>>> call(
+    GetStudyProgramsDataParams params,
+  ) async {
+    final result = await repository.getStudyProgramsByUniversityId(
+      params.universityId,
+    );
+
     return result.map((programs) {
       final sortedPrograms = List<StudyProgram>.from(programs);
       sortedPrograms.sort((a, b) {
@@ -37,7 +41,8 @@ class GetStudyProgramsData<T extends BaseUniversitiesStudyProgramsRepository>
     if (lowerLevel == 's2') return 7;
     if (lowerLevel == 'sp-1') return 8;
     if (lowerLevel == 's3') return 9;
-    if (lowerLevel.contains('sp-2') || lowerLevel.contains('subspesialis')) return 10;
+    if (lowerLevel.contains('sp-2') || lowerLevel.contains('subspesialis'))
+      return 10;
     return 99;
   }
 }

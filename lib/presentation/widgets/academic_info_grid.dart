@@ -44,19 +44,16 @@ class AcademicInfoGrid extends StatelessWidget {
                 child: Text(
                   title.toUpperCase(),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppPallete.primary,
-                        letterSpacing: 0.5,
-                      ),
+                    color: AppPallete.primary,
+                    letterSpacing: 0.5,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
+          Text(value, style: Theme.of(context).textTheme.displayMedium),
         ],
       ),
     );

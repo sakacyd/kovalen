@@ -15,7 +15,8 @@ abstract interface class GroupScheduleRemoteDataSource {
   Future<void> completeSchedule(String scheduleId);
 }
 
-class GroupScheduleRemoteDataSourceImpl implements GroupScheduleRemoteDataSource {
+class GroupScheduleRemoteDataSourceImpl
+    implements GroupScheduleRemoteDataSource {
   final SupabaseClient supabaseClient;
 
   GroupScheduleRemoteDataSourceImpl(this.supabaseClient);
@@ -47,19 +48,30 @@ class GroupScheduleRemoteDataSourceImpl implements GroupScheduleRemoteDataSource
   }) async {
     try {
       final userId = supabaseClient.auth.currentUser!.id;
-      final response = await supabaseClient.from('group_schedules').insert({
-        'room_id': roomId,
-        'title': title,
-        'meeting_time': meetingTime.toUtc().toIso8601String(),
-        'location_name': locationName,
-        'created_by': userId,
-        if (locationUrl != null && locationUrl.isNotEmpty) 'location_url': locationUrl,
-      }).select().single();
+      final response = await supabaseClient
+          .from('group_schedules')
+          .insert({
+            'room_id': roomId,
+            'title': title,
+            'meeting_time': meetingTime.toUtc().toIso8601String(),
+            'location_name': locationName,
+            'created_by': userId,
+            if (locationUrl != null && locationUrl.isNotEmpty)
+              'location_url': locationUrl,
+          })
+          .select()
+          .single();
 
-      final formattedDate = DateFormat('EEEE, dd MMMM yyyy HH:mm', 'id_ID').format(meetingTime.toLocal());
-      final locationUrlString = (locationUrl != null && locationUrl.isNotEmpty) ? '\n🔗 Tautan: $locationUrl' : '';
-      final messageContent = 'membuat jadwal pertemuan baru:\n**$title**\n🕒 Waktu: $formattedDate\n📍 Lokasi: $locationName$locationUrlString';
-      
+      final formattedDate = DateFormat(
+        'EEEE, dd MMMM yyyy HH:mm',
+        'id_ID',
+      ).format(meetingTime.toLocal());
+      final locationUrlString = (locationUrl != null && locationUrl.isNotEmpty)
+          ? '\n🔗 Tautan: $locationUrl'
+          : '';
+      final messageContent =
+          'membuat jadwal pertemuan baru:\n**$title**\n🕒 Waktu: $formattedDate\n📍 Lokasi: $locationName$locationUrlString';
+
       await supabaseClient.from('messages').insert({
         'room_id': roomId,
         'sender_id': userId,
@@ -81,8 +93,11 @@ class GroupScheduleRemoteDataSourceImpl implements GroupScheduleRemoteDataSource
           .update({'is_completed': true})
           .eq('id', scheduleId);
     } catch (e) {
-      if (e.toString().contains('row-level security policy') || e.toString().contains('RLS')) {
-        throw ServerException('Hanya user yang membuat jadwal yang dapat menyelesaikan jadwal');
+      if (e.toString().contains('row-level security policy') ||
+          e.toString().contains('RLS')) {
+        throw ServerException(
+          'Hanya user yang membuat jadwal yang dapat menyelesaikan jadwal',
+        );
       }
       throw ServerException(e.toString());
     }

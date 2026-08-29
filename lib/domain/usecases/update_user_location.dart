@@ -22,8 +22,5 @@ class UpdateUserLocationParams {
   final double latitude;
   final double longitude;
 
-  UpdateUserLocationParams({
-    required this.latitude,
-    required this.longitude,
-  });
+  UpdateUserLocationParams({required this.latitude, required this.longitude});
 }

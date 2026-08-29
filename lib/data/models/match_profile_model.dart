@@ -11,10 +11,15 @@ class MatchProfileModel extends MatchProfile {
     super.matchPercentage,
   });
 
-  factory MatchProfileModel.fromJson(Map<String, dynamic> json, {int commonCount = 0, double distance = 0.0, int matchPercentage = 0}) {
+  factory MatchProfileModel.fromJson(
+    Map<String, dynamic> json, {
+    int commonCount = 0,
+    double distance = 0.0,
+    int matchPercentage = 0,
+  }) {
     // Expects json to represent a User and potentially a list of user_interests
     final userModel = UserModel.fromJson(json);
-    
+
     // Check for interests embedded in the response if fetched via a join
     List<InterestModel> interestsList = [];
     if (json['user_interests'] != null) {

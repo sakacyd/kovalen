@@ -8,7 +8,11 @@ abstract interface class RoomDetailRemoteDataSource {
   Future<UserModel> getUserById(String userId);
   Future<ChatRoomModel> getGroupDetail(String roomId);
   Future<List<UserModel>> getGroupParticipants(String roomId);
-  Future<ChatRoomModel> updateGroupProfile(String roomId, String name, File? avatarFile);
+  Future<ChatRoomModel> updateGroupProfile(
+    String roomId,
+    String name,
+    File? avatarFile,
+  );
   Future<void> addUserToGroup(String roomId, String userId);
 }
 
@@ -61,10 +65,14 @@ class RoomDetailRemoteDataSourceImpl implements RoomDetailRemoteDataSource {
     try {
       final response = await supabaseClient
           .from('chat_participants')
-          .select('users(*, university:universities(*), study_program:study_programs(*))')
+          .select(
+            'users(*, university:universities(*), study_program:study_programs(*))',
+          )
           .eq('room_id', roomId);
-          
-      return response.map<UserModel>((item) => UserModel.fromJson(item['users'])).toList();
+
+      return response
+          .map<UserModel>((item) => UserModel.fromJson(item['users']))
+          .toList();
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -73,23 +81,30 @@ class RoomDetailRemoteDataSourceImpl implements RoomDetailRemoteDataSource {
   }
 
   @override
-  Future<ChatRoomModel> updateGroupProfile(String roomId, String name, File? avatarFile) async {
+  Future<ChatRoomModel> updateGroupProfile(
+    String roomId,
+    String name,
+    File? avatarFile,
+  ) async {
     try {
       String? avatarUrl;
-      
+
       if (avatarFile != null) {
         final fileExtension = avatarFile.path.split('.').last;
-        final fileName = 'group_${roomId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+        final fileName =
+            'group_${roomId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
         final filePath = 'groups/$fileName';
-        
-        await supabaseClient.storage.from('avatars').upload(filePath, avatarFile);
-        avatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+
+        await supabaseClient.storage
+            .from('avatars')
+            .upload(filePath, avatarFile);
+        avatarUrl = supabaseClient.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
       }
 
-      final updateData = <String, dynamic>{
-        'name': name,
-      };
-      
+      final updateData = <String, dynamic>{'name': name};
+
       if (avatarUrl != null) {
         updateData['avatar_url'] = avatarUrl;
       }

@@ -9,13 +9,16 @@ class GetRoomParticipantsParams {
   GetRoomParticipantsParams({required this.roomId});
 }
 
-class GetRoomParticipants implements UseCase<List<User>, GetRoomParticipantsParams> {
+class GetRoomParticipants
+    implements UseCase<List<User>, GetRoomParticipantsParams> {
   final RatingRepository repository;
 
   GetRoomParticipants(this.repository);
 
   @override
-  Future<Either<Failure, List<User>>> call(GetRoomParticipantsParams params) async {
+  Future<Either<Failure, List<User>>> call(
+    GetRoomParticipantsParams params,
+  ) async {
     return await repository.getRoomParticipants(params.roomId);
   }
 }

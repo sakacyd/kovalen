@@ -21,6 +21,6 @@ final class MatchmakingFailure extends MatchmakingState {
 
 final class MatchmakingMatchFound extends MatchmakingState {
   final List<MatchProfile> matches;
-  
+
   MatchmakingMatchFound({required this.matches});
 }

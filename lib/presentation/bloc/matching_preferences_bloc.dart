@@ -48,19 +48,18 @@ class MatchingPreferencesBloc
       SaveMatchingPreferencesParams(maxDistance: event.maxDistance),
     );
 
-    res.fold(
-      (failure) => emit(MatchingPreferencesFailure(failure.message)),
-      (success) {
-        // Update user state inside cubit
-        final currentState = _appUserCubit.state;
-        if (currentState is AppUserLoggedIn) {
-          final updatedUser = currentState.user.copyWith(
-            maxDistancePreference: event.maxDistance,
-          );
-          _appUserCubit.updateUser(updatedUser);
-        }
-        emit(MatchingPreferencesSaved(event.maxDistance));
-      },
-    );
+    res.fold((failure) => emit(MatchingPreferencesFailure(failure.message)), (
+      success,
+    ) {
+      // Update user state inside cubit
+      final currentState = _appUserCubit.state;
+      if (currentState is AppUserLoggedIn) {
+        final updatedUser = currentState.user.copyWith(
+          maxDistancePreference: event.maxDistance,
+        );
+        _appUserCubit.updateUser(updatedUser);
+      }
+      emit(MatchingPreferencesSaved(event.maxDistance));
+    });
   }
 }

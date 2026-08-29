@@ -22,7 +22,9 @@ abstract interface class OnboardingRemoteDataSource {
   });
 
   Future<List<UniversityModel>> getUniversities();
-  Future<List<StudyProgramModel>> getStudyProgramsByUniversityId(String universityId);
+  Future<List<StudyProgramModel>> getStudyProgramsByUniversityId(
+    String universityId,
+  );
   Future<List<InterestModel>> getAvailableInterests();
 }
 
@@ -52,15 +54,20 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
       }
 
       final userId = session.user.id;
-      
+
       String finalAvatarUrl = avatarUrl;
       if (avatarFile != null) {
         final fileExtension = avatarFile.path.split('.').last;
-        final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+        final fileName =
+            '${userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
         final filePath = '$userId/$fileName';
-        
-        await supabaseClient.storage.from('avatars').upload(filePath, avatarFile);
-        finalAvatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+
+        await supabaseClient.storage
+            .from('avatars')
+            .upload(filePath, avatarFile);
+        finalAvatarUrl = supabaseClient.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
       }
 
       final response = await supabaseClient
@@ -90,14 +97,11 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
             .not('interest_id', 'in', uniqueInterestIds);
 
         // Upsert interests yang dipilih (tambah baru atau abaikan yang sudah ada)
-        final interestInserts = uniqueInterestIds.map((id) => {
-          'user_id': userId,
-          'interest_id': id,
-        }).toList();
-        
-        await supabaseClient
-            .from('user_interests')
-            .upsert(interestInserts);
+        final interestInserts = uniqueInterestIds
+            .map((id) => {'user_id': userId, 'interest_id': id})
+            .toList();
+
+        await supabaseClient.from('user_interests').upsert(interestInserts);
       } else {
         // Jika tidak ada interest yang dipilih, hapus semua
         await supabaseClient
@@ -106,9 +110,9 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
             .eq('user_id', userId);
       }
 
-      return UserModel.fromJson(response.first).copyWith(
-        email: session.user.email,
-      );
+      return UserModel.fromJson(
+        response.first,
+      ).copyWith(email: session.user.email);
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
@@ -129,7 +133,9 @@ class OnboardingRemoteDataSourceImpl implements OnboardingRemoteDataSource {
   }
 
   @override
-  Future<List<StudyProgramModel>> getStudyProgramsByUniversityId(String universityId) async {
+  Future<List<StudyProgramModel>> getStudyProgramsByUniversityId(
+    String universityId,
+  ) async {
     try {
       final response = await supabaseClient
           .from('study_programs')

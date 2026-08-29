@@ -34,16 +34,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileLoading());
     final userRes = await _getCurrentUser(NoParams());
 
-    await userRes.fold(
-      (l) async => emit(ProfileFailure(l.message)),
-      (user) async {
-        _appUserCubit.updateUser(user);
-        final interestsRes = await _getUserInterests(NoParams());
-        interestsRes.fold(
-          (l) => emit(ProfileFailure(l.message)), // Or just emit success with empty interests if we don't want to fail the whole profile
-          (interests) => emit(ProfileSuccess(user, interests: interests)),
-        );
-      },
-    );
+    await userRes.fold((l) async => emit(ProfileFailure(l.message)), (
+      user,
+    ) async {
+      _appUserCubit.updateUser(user);
+      final interestsRes = await _getUserInterests(NoParams());
+      interestsRes.fold(
+        (l) => emit(
+          ProfileFailure(l.message),
+        ), // Or just emit success with empty interests if we don't want to fail the whole profile
+        (interests) => emit(ProfileSuccess(user, interests: interests)),
+      );
+    });
   }
 }

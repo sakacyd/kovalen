@@ -12,8 +12,8 @@ class GroupSchedulePage extends StatefulWidget {
   const GroupSchedulePage({super.key, required this.roomId});
 
   static route({required String roomId}) => MaterialPageRoute(
-        builder: (context) => GroupSchedulePage(roomId: roomId),
-      );
+    builder: (context) => GroupSchedulePage(roomId: roomId),
+  );
 
   @override
   State<GroupSchedulePage> createState() => _GroupSchedulePageState();
@@ -30,7 +30,9 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
   @override
   void initState() {
     super.initState();
-    context.read<GroupScheduleBloc>().add(FetchActiveScheduleEvent(widget.roomId));
+    context.read<GroupScheduleBloc>().add(
+      FetchActiveScheduleEvent(widget.roomId),
+    );
   }
 
   @override
@@ -65,7 +67,9 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
   }
 
   void _submitSchedule() {
-    if (_formKey.currentState!.validate() && _selectedDate != null && _selectedTime != null) {
+    if (_formKey.currentState!.validate() &&
+        _selectedDate != null &&
+        _selectedTime != null) {
       final meetingTime = DateTime(
         _selectedDate!.year,
         _selectedDate!.month,
@@ -97,9 +101,13 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
       body: BlocConsumer<GroupScheduleBloc, GroupScheduleState>(
         listener: (context, state) {
           if (state is GroupScheduleError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is GroupScheduleActionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -109,21 +117,31 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
 
           if (state is GroupScheduleLoaded) {
             final schedule = state.schedule;
-            
+
             if (schedule != null) {
               // Menampilkan jadwal aktif
-              final timeFormatted = DateFormat('EEEE, dd MMMM yyyy HH:mm', 'id_ID').format(schedule.meetingTime);
+              final timeFormatted = DateFormat(
+                'EEEE, dd MMMM yyyy HH:mm',
+                'id_ID',
+              ).format(schedule.meetingTime);
               return Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Icon(Icons.event, size: 64, color: AppPallete.primary),
+                    const Icon(
+                      Icons.event,
+                      size: 64,
+                      color: AppPallete.primary,
+                    ),
                     const SizedBox(height: 16),
                     const Text(
                       'Jadwal Pertemuan Aktif',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Card(
@@ -132,18 +150,58 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Judul:', style: TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline)),
-                            Text(schedule.title, style: const TextStyle(fontSize: 16)),
+                            const Text(
+                              'Judul:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppPallete.textOutline,
+                              ),
+                            ),
+                            Text(
+                              schedule.title,
+                              style: const TextStyle(fontSize: 16),
+                            ),
                             const SizedBox(height: 12),
-                            const Text('Waktu:', style: TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline)),
-                            Text(timeFormatted, style: const TextStyle(fontSize: 16)),
+                            const Text(
+                              'Waktu:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppPallete.textOutline,
+                              ),
+                            ),
+                            Text(
+                              timeFormatted,
+                              style: const TextStyle(fontSize: 16),
+                            ),
                             const SizedBox(height: 12),
-                            const Text('Lokasi:', style: TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline)),
-                            Text(schedule.locationName, style: const TextStyle(fontSize: 16)),
-                            if (schedule.locationUrl != null && schedule.locationUrl!.isNotEmpty) ...[
+                            const Text(
+                              'Lokasi:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppPallete.textOutline,
+                              ),
+                            ),
+                            Text(
+                              schedule.locationName,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                            if (schedule.locationUrl != null &&
+                                schedule.locationUrl!.isNotEmpty) ...[
                               const SizedBox(height: 12),
-                              const Text('Tautan/Map URL:', style: TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline)),
-                              Text(schedule.locationUrl!, style: const TextStyle(fontSize: 14, color: Colors.blue)),
+                              const Text(
+                                'Tautan/Map URL:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppPallete.textOutline,
+                                ),
+                              ),
+                              Text(
+                                schedule.locationUrl!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.blue,
+                                ),
+                              ),
                             ],
                           ],
                         ),
@@ -162,10 +220,19 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          GroupActivityPage.route(scheduleId: schedule.id, roomId: schedule.roomId),
+                          GroupActivityPage.route(
+                            scheduleId: schedule.id,
+                            roomId: schedule.roomId,
+                          ),
                         );
                       },
-                      child: const Text('Selesaikan & Isi Rekaman', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      child: const Text(
+                        'Selesaikan & Isi Rekaman',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -181,7 +248,10 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                     children: [
                       const Text(
                         'Buat Jadwal Baru',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       const Text(
@@ -194,20 +264,28 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                           borderRadius: BorderRadius.circular(8),
                           side: const BorderSide(color: AppPallete.stroke),
                         ),
-                        leading: const Icon(Icons.calendar_today, color: AppPallete.primary),
-                        title: Text(_selectedDate == null || _selectedTime == null
-                            ? 'Pilih Waktu Pertemuan'
-                            : '${DateFormat('dd MMM yyyy').format(_selectedDate!)} ${_selectedTime!.format(context)}'),
+                        leading: const Icon(
+                          Icons.calendar_today,
+                          color: AppPallete.primary,
+                        ),
+                        title: Text(
+                          _selectedDate == null || _selectedTime == null
+                              ? 'Pilih Waktu Pertemuan'
+                              : '${DateFormat('dd MMM yyyy').format(_selectedDate!)} ${_selectedTime!.format(context)}',
+                        ),
                         onTap: _pickDateTime,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _titleController,
                         decoration: const InputDecoration(
-                          labelText: 'Judul Pertemuan (Mis: Belajar Matematika)',
+                          labelText:
+                              'Judul Pertemuan (Mis: Belajar Matematika)',
                           border: OutlineInputBorder(),
                         ),
-                        validator: (value) => value == null || value.isEmpty ? 'Judul tidak boleh kosong' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Judul tidak boleh kosong'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -216,7 +294,9 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                           labelText: 'Nama Lokasi (Mis: Perpustakaan, Zoom)',
                           border: OutlineInputBorder(),
                         ),
-                        validator: (value) => value == null || value.isEmpty ? 'Lokasi tidak boleh kosong' : null,
+                        validator: (value) => value == null || value.isEmpty
+                            ? 'Lokasi tidak boleh kosong'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       TextFormField(
@@ -237,7 +317,13 @@ class _GroupSchedulePageState extends State<GroupSchedulePage> {
                           ),
                         ),
                         onPressed: _submitSchedule,
-                        child: const Text('Buat Jadwal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        child: const Text(
+                          'Buat Jadwal',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ],
                   ),

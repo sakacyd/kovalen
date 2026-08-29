@@ -9,13 +9,16 @@ class GetActiveScheduleParams {
   GetActiveScheduleParams({required this.roomId});
 }
 
-class GetActiveSchedule implements UseCase<GroupSchedule?, GetActiveScheduleParams> {
+class GetActiveSchedule
+    implements UseCase<GroupSchedule?, GetActiveScheduleParams> {
   final GroupScheduleRepository repository;
 
   GetActiveSchedule(this.repository);
 
   @override
-  Future<Either<Failure, GroupSchedule?>> call(GetActiveScheduleParams params) async {
+  Future<Either<Failure, GroupSchedule?>> call(
+    GetActiveScheduleParams params,
+  ) async {
     return await repository.getActiveSchedule(params.roomId);
   }
 }

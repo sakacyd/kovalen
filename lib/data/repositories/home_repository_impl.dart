@@ -58,7 +58,7 @@ class HomeRepositoryImpl implements HomeRepository {
       if (!await connectionChecker.isConnected) {
         return left(Failure('No internet connection'));
       }
-      
+
       final stats = await homeRemoteDataSource.getHomeStats();
       return right(stats);
     } on ServerException catch (e) {
@@ -74,12 +74,15 @@ class HomeRepositoryImpl implements HomeRepository {
     }
 
     try {
-      yield* homeRemoteDataSource.watchHomeData().map((data) => right<Failure, HomeData>(data)).handleError((error) {
-        if (error is ServerException) {
-          return left(Failure(error.message));
-        }
-        return left(Failure(error.toString()));
-      });
+      yield* homeRemoteDataSource
+          .watchHomeData()
+          .map((data) => right<Failure, HomeData>(data))
+          .handleError((error) {
+            if (error is ServerException) {
+              return left(Failure(error.message));
+            }
+            return left(Failure(error.toString()));
+          });
     } on ServerException catch (e) {
       yield left(Failure(e.message));
     }

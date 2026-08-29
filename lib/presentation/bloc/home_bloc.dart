@@ -19,17 +19,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetCurrentUser _getCurrentUser;
   final WatchHomeData _watchHomeData;
   final AppUserCubit _appUserCubit;
-  
+
   StreamSubscription? _homeDataSubscription;
   HomeBloc({
     required GetCurrentUser getCurrentUser,
     required WatchHomeData watchHomeData,
     required AppUserCubit appUserCubit,
-  })
-    : _getCurrentUser = getCurrentUser,
-      _watchHomeData = watchHomeData,
-      _appUserCubit = appUserCubit,
-      super(HomeInitial()) {
+  }) : _getCurrentUser = getCurrentUser,
+       _watchHomeData = watchHomeData,
+       _appUserCubit = appUserCubit,
+       super(HomeInitial()) {
     on<HomeEvent>((event, emit) => emit(HomeLoading()));
     on<LoadHomeData>(_onHomeDataRequested);
     on<_UpdateHomeData>(_onUpdateHomeData);
@@ -61,7 +60,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _appUserCubit.updateUser(user);
 
     await _homeDataSubscription?.cancel();
-    
+
     _homeDataSubscription = _watchHomeData(NoParams()).listen((result) {
       add(_UpdateHomeData(user, result));
     });
@@ -73,12 +72,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     event.dataResult.fold(
       (failure) => emit(HomeFailure(failure.message)),
-      (data) => emit(HomeSuccess(
-        event.user,
-        data.stats,
-        data.activeGroups,
-        randomInterest: data.randomInterest,
-      )),
+      (data) => emit(
+        HomeSuccess(
+          event.user,
+          data.stats,
+          data.activeGroups,
+          randomInterest: data.randomInterest,
+        ),
+      ),
     );
   }
 }

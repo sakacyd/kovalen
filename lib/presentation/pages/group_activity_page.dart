@@ -10,11 +10,17 @@ import 'package:kovalen/presentation/widgets/rating_dialog.dart';
 class GroupActivityPage extends StatefulWidget {
   final String scheduleId;
   final String roomId;
-  
-  const GroupActivityPage({super.key, required this.scheduleId, required this.roomId});
 
-  static route({required String scheduleId, required String roomId}) => MaterialPageRoute(
-        builder: (context) => GroupActivityPage(scheduleId: scheduleId, roomId: roomId),
+  const GroupActivityPage({
+    super.key,
+    required this.scheduleId,
+    required this.roomId,
+  });
+
+  static route({required String scheduleId, required String roomId}) =>
+      MaterialPageRoute(
+        builder: (context) =>
+            GroupActivityPage(scheduleId: scheduleId, roomId: roomId),
       );
 
   @override
@@ -56,11 +62,15 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
       body: BlocConsumer<GroupActivityBloc, GroupActivityState>(
         listener: (context, state) {
           if (state is GroupActivityFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is GroupActivitySuccess) {
             // Tandai schedule sebagai complete
-            context.read<GroupScheduleBloc>().add(CompleteGroupScheduleEvent(widget.scheduleId));
-            
+            context.read<GroupScheduleBloc>().add(
+              CompleteGroupScheduleEvent(widget.scheduleId),
+            );
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Rekaman berhasil disimpan.')),
             );
@@ -96,7 +106,7 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
                     style: TextStyle(color: AppPallete.textOutline),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   TextFormField(
                     controller: _summaryController,
                     maxLines: 4,
@@ -105,10 +115,12 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
                       alignLabelWithHint: true,
                       border: OutlineInputBorder(),
                     ),
-                    validator: (value) => value == null || value.isEmpty ? 'Ringkasan tidak boleh kosong' : null,
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Ringkasan tidak boleh kosong'
+                        : null,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   TextFormField(
                     controller: _materialController,
                     maxLines: 3,
@@ -119,7 +131,7 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   TextFormField(
                     controller: _goalsController,
                     maxLines: 3,
@@ -130,7 +142,7 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppPallete.primary,
@@ -141,7 +153,13 @@ class _GroupActivityPageState extends State<GroupActivityPage> {
                       ),
                     ),
                     onPressed: _submitActivity,
-                    child: const Text('Simpan Rekaman', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    child: const Text(
+                      'Simpan Rekaman',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ],
               ),

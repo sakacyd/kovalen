@@ -34,11 +34,13 @@ class LocationService {
         ),
       );
 
-      await supabaseClient.from('users').update({
-        'latitude': position.latitude,
-        'longitude': position.longitude,
-      }).eq('id', session.user.id);
-      
+      await supabaseClient
+          .from('users')
+          .update({
+            'latitude': position.latitude,
+            'longitude': position.longitude,
+          })
+          .eq('id', session.user.id);
     } catch (e) {
       // Ignore location fetch errors silently for cold start
     }

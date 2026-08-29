@@ -86,18 +86,27 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
               hintText: widget.hint,
               filled: true,
               fillColor: Theme.of(context).colorScheme.surface,
-              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
             child: Row(
@@ -108,8 +117,8 @@ class _CustomDropdownState<T> extends State<CustomDropdown<T>> {
                     _getDisplayText(widget.value),
                     style: widget.value == null
                         ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.outline,
-                            )
+                            color: Theme.of(context).colorScheme.outline,
+                          )
                         : Theme.of(context).textTheme.bodyMedium,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -145,7 +154,8 @@ class _SearchDropdownModal<T> extends StatefulWidget {
   });
 
   @override
-  State<_SearchDropdownModal<T>> createState() => _SearchDropdownModalState<T>();
+  State<_SearchDropdownModal<T>> createState() =>
+      _SearchDropdownModalState<T>();
 }
 
 class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
@@ -194,8 +204,8 @@ class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
                   Text(
                     'Pilih ${widget.title}',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -211,7 +221,9 @@ class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
                     hintText: 'Cari ${widget.title}...',
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
-                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    fillColor: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none,
@@ -231,9 +243,7 @@ class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
               const SizedBox(height: 16),
               Expanded(
                 child: _filteredItems.isEmpty
-                    ? const Center(
-                        child: Text('Tidak ditemukan'),
-                      )
+                    ? const Center(child: Text('Tidak ditemukan'))
                     : ListView.builder(
                         controller: scrollController,
                         itemCount: _filteredItems.length,
@@ -245,17 +255,24 @@ class _SearchDropdownModalState<T> extends State<_SearchDropdownModal<T>> {
                           return ListTile(
                             title: Text(
                               text,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                     color: isSelected
                                         ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context).colorScheme.onSurface,
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                   ),
                             ),
                             trailing: isSelected
                                 ? Icon(
                                     Icons.check,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   )
                                 : null,
                             onTap: () {

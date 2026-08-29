@@ -8,9 +8,7 @@ final class AppUserInitial extends AppUserState {}
 final class AppUserLoggedIn extends AppUserState {
   final User user;
 
-  AppUserLoggedIn({
-    required this.user,
-  });
+  AppUserLoggedIn({required this.user});
 }
 
 final class AppUserLoggedOut extends AppUserState {}

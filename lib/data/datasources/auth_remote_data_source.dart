@@ -17,7 +17,10 @@ abstract interface class AuthRemoteDataSource {
 
   Future<UserModel?> getCurrentUser();
   Future<void> changePassword({required String newPassword});
-  Future<UserModel> updateUserLocation({required double latitude, required double longitude});
+  Future<UserModel> updateUserLocation({
+    required double latitude,
+    required double longitude,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -122,7 +125,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUserLocation({required double latitude, required double longitude}) async {
+  Future<UserModel> updateUserLocation({
+    required double latitude,
+    required double longitude,
+  }) async {
     try {
       final session = currentUserSession;
       if (session == null) throw ServerException('User not logged in');

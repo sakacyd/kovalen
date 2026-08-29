@@ -14,7 +14,10 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   final OnboardingRemoteDataSource onboardingRemoteDataSource;
   final ConnectionChecker connectionChecker;
 
-  const OnboardingRepositoryImpl(this.onboardingRemoteDataSource, this.connectionChecker);
+  const OnboardingRepositoryImpl(
+    this.onboardingRemoteDataSource,
+    this.connectionChecker,
+  );
 
   @override
   Future<Either<Failure, User>> updateUserData({
@@ -72,12 +75,15 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
   }
 
   @override
-  Future<Either<Failure, List<StudyProgram>>> getStudyProgramsByUniversityId(String universityId) async {
+  Future<Either<Failure, List<StudyProgram>>> getStudyProgramsByUniversityId(
+    String universityId,
+  ) async {
     try {
       if (!await connectionChecker.isConnected) {
         return left(Failure('No internet connection'));
       }
-      final programs = await onboardingRemoteDataSource.getStudyProgramsByUniversityId(universityId);
+      final programs = await onboardingRemoteDataSource
+          .getStudyProgramsByUniversityId(universityId);
       return right(programs);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -92,7 +98,8 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       if (!await connectionChecker.isConnected) {
         return left(Failure('No internet connection'));
       }
-      final interests = await onboardingRemoteDataSource.getAvailableInterests();
+      final interests = await onboardingRemoteDataSource
+          .getAvailableInterests();
       return right(interests);
     } on ServerException catch (e) {
       return left(Failure(e.message));

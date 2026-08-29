@@ -39,11 +39,19 @@ class ProfileHeader extends StatelessWidget {
               child: CircleAvatar(
                 radius: 64,
                 backgroundColor: AppPallete.surfaceContainerHighest,
-                backgroundImage: avatarUrl.trim().startsWith('http') ? NetworkImage(avatarUrl.trim()) : null,
-                onBackgroundImageError: avatarUrl.trim().startsWith('http') ? (exception, stackTrace) {} : null,
-                child: !avatarUrl.trim().startsWith('http') 
-                  ? const Icon(Icons.person, size: 48, color: AppPallete.onSurfaceVariant)
-                  : null,
+                backgroundImage: avatarUrl.trim().startsWith('http')
+                    ? NetworkImage(avatarUrl.trim())
+                    : null,
+                onBackgroundImageError: avatarUrl.trim().startsWith('http')
+                    ? (exception, stackTrace) {}
+                    : null,
+                child: !avatarUrl.trim().startsWith('http')
+                    ? const Icon(
+                        Icons.person,
+                        size: 48,
+                        color: AppPallete.onSurfaceVariant,
+                      )
+                    : null,
               ),
             ),
           ],
@@ -57,9 +65,9 @@ class ProfileHeader extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           university,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: AppPallete.onSurfaceVariant,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(color: AppPallete.onSurfaceVariant),
           textAlign: TextAlign.center,
         ),
         if (ratingCount > 0) ...[
@@ -71,7 +79,10 @@ class ProfileHeader extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 '${ratingScore.toStringAsFixed(1)} ($ratingCount ulasan)',
-                style: const TextStyle(fontWeight: FontWeight.bold, color: AppPallete.textOutline),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppPallete.textOutline,
+                ),
               ),
             ],
           ),

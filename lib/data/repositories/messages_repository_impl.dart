@@ -43,7 +43,10 @@ class MessagesRepositoryImpl implements MessagesRepository {
   }
 
   @override
-  Future<Either<Failure, Message>> sendMessage(String roomId, String content) async {
+  Future<Either<Failure, Message>> sendMessage(
+    String roomId,
+    String content,
+  ) async {
     try {
       final message = await remoteDataSource.sendMessage(roomId, content);
       return Right(message);

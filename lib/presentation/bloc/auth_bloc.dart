@@ -69,13 +69,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _userSignIn(
       UserSignInParams(email: event.email, password: event.password),
     );
-    await res.fold(
-      (l) async => emit(AuthFailure(l.message)),
-      (user) async {
-        if (!await _checkUserStatus(user, emit)) return;
-        _emitAuthSuccess(user, emit);
-      },
-    );
+    await res.fold((l) async => emit(AuthFailure(l.message)), (user) async {
+      if (!await _checkUserStatus(user, emit)) return;
+      _emitAuthSuccess(user, emit);
+    });
   }
 
   FutureOr<void> _isUserLoggedIn(
@@ -107,9 +104,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               permission = await Geolocator.requestPermission();
             }
 
-            if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+            if (permission == LocationPermission.whileInUse ||
+                permission == LocationPermission.always) {
               Position position = await Geolocator.getCurrentPosition();
-              
+
               final locRes = await _updateUserLocation(
                 UpdateUserLocationParams(
                   latitude: position.latitude,
@@ -165,16 +163,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _changePassword(
       ChangePasswordParams(newPassword: event.newPassword),
     );
-    res.fold(
-      (l) => emit(AuthFailure(l.message)),
-      (r) {
-        final currentUser = _appUserCubit.state;
-        if (currentUser is AppUserLoggedIn) {
-          emit(AuthSuccess(currentUser.user));
-        } else {
-          emit(AuthInitial());
-        }
-      },
-    );
+    res.fold((l) => emit(AuthFailure(l.message)), (r) {
+      final currentUser = _appUserCubit.state;
+      if (currentUser is AppUserLoggedIn) {
+        emit(AuthSuccess(currentUser.user));
+      } else {
+        emit(AuthInitial());
+      }
+    });
   }
 }

@@ -29,13 +29,13 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     required ChangeUserStatus changeUserStatus,
     required DeleteUser deleteUser,
     required GetGroupDetailsForAdmin getGroupDetailsForAdmin,
-  })  : _getAllUsers = getAllUsers,
-        _getAllGroups = getAllGroups,
-        _changeUserRole = changeUserRole,
-        _changeUserStatus = changeUserStatus,
-        _deleteUser = deleteUser,
-        _getGroupDetailsForAdmin = getGroupDetailsForAdmin,
-        super(AdminInitial()) {
+  }) : _getAllUsers = getAllUsers,
+       _getAllGroups = getAllGroups,
+       _changeUserRole = changeUserRole,
+       _changeUserStatus = changeUserStatus,
+       _deleteUser = deleteUser,
+       _getGroupDetailsForAdmin = getGroupDetailsForAdmin,
+       super(AdminInitial()) {
     on<AdminFetchUsersEvent>(_onFetchUsers);
     on<AdminFetchGroupsEvent>(_onFetchGroups);
     on<AdminFetchGroupDetailsEvent>(_onFetchGroupDetails);
@@ -44,7 +44,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminDeleteUserEvent>(_onDeleteUser);
   }
 
-  void _onFetchUsers(AdminFetchUsersEvent event, Emitter<AdminState> emit) async {
+  void _onFetchUsers(
+    AdminFetchUsersEvent event,
+    Emitter<AdminState> emit,
+  ) async {
     emit(AdminLoading());
     final result = await _getAllUsers(NoParams());
     result.fold(
@@ -53,7 +56,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     );
   }
 
-  void _onFetchGroups(AdminFetchGroupsEvent event, Emitter<AdminState> emit) async {
+  void _onFetchGroups(
+    AdminFetchGroupsEvent event,
+    Emitter<AdminState> emit,
+  ) async {
     emit(AdminLoading());
     final result = await _getAllGroups(NoParams());
     result.fold(
@@ -62,31 +68,38 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     );
   }
 
-  void _onFetchGroupDetails(AdminFetchGroupDetailsEvent event, Emitter<AdminState> emit) async {
+  void _onFetchGroupDetails(
+    AdminFetchGroupDetailsEvent event,
+    Emitter<AdminState> emit,
+  ) async {
     emit(AdminLoading());
     final result = await _getGroupDetailsForAdmin(event.roomId);
-    result.fold(
-      (failure) => emit(AdminError(failure.message)),
-      (details) {
-        final schedules = details['schedules'] as List<GroupSchedule>;
-        final activities = details['activities'] as List<GroupActivity>;
-        emit(AdminGroupDetailsLoaded(schedules: schedules, activities: activities));
-      },
-    );
+    result.fold((failure) => emit(AdminError(failure.message)), (details) {
+      final schedules = details['schedules'] as List<GroupSchedule>;
+      final activities = details['activities'] as List<GroupActivity>;
+      emit(
+        AdminGroupDetailsLoaded(schedules: schedules, activities: activities),
+      );
+    });
   }
 
-  void _onChangeRole(AdminChangeUserRoleEvent event, Emitter<AdminState> emit) async {
-    final result = await _changeUserRole(ChangeUserRoleParams(userId: event.userId, newRole: event.newRole));
-    result.fold(
-      (failure) => emit(AdminError(failure.message)),
-      (_) {
-        emit(AdminActionSuccess('Berhasil mengubah role pengguna.'));
-        add(AdminFetchUsersEvent()); // Refresh data
-      },
+  void _onChangeRole(
+    AdminChangeUserRoleEvent event,
+    Emitter<AdminState> emit,
+  ) async {
+    final result = await _changeUserRole(
+      ChangeUserRoleParams(userId: event.userId, newRole: event.newRole),
     );
+    result.fold((failure) => emit(AdminError(failure.message)), (_) {
+      emit(AdminActionSuccess('Berhasil mengubah role pengguna.'));
+      add(AdminFetchUsersEvent()); // Refresh data
+    });
   }
 
-  void _onChangeStatus(AdminChangeUserStatusEvent event, Emitter<AdminState> emit) async {
+  void _onChangeStatus(
+    AdminChangeUserStatusEvent event,
+    Emitter<AdminState> emit,
+  ) async {
     final result = await _changeUserStatus(
       ChangeUserStatusParams(
         userId: event.userId,
@@ -94,23 +107,20 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         suspendedUntil: event.suspendedUntil,
       ),
     );
-    result.fold(
-      (failure) => emit(AdminError(failure.message)),
-      (_) {
-        emit(AdminActionSuccess('Berhasil mengubah status pengguna.'));
-        add(AdminFetchUsersEvent()); // Refresh data
-      },
-    );
+    result.fold((failure) => emit(AdminError(failure.message)), (_) {
+      emit(AdminActionSuccess('Berhasil mengubah status pengguna.'));
+      add(AdminFetchUsersEvent()); // Refresh data
+    });
   }
 
-  void _onDeleteUser(AdminDeleteUserEvent event, Emitter<AdminState> emit) async {
+  void _onDeleteUser(
+    AdminDeleteUserEvent event,
+    Emitter<AdminState> emit,
+  ) async {
     final result = await _deleteUser(DeleteUserParams(userId: event.userId));
-    result.fold(
-      (failure) => emit(AdminError(failure.message)),
-      (_) {
-        emit(AdminActionSuccess('Berhasil menghapus pengguna.'));
-        add(AdminFetchUsersEvent()); // Refresh data
-      },
-    );
+    result.fold((failure) => emit(AdminError(failure.message)), (_) {
+      emit(AdminActionSuccess('Berhasil menghapus pengguna.'));
+      add(AdminFetchUsersEvent()); // Refresh data
+    });
   }
 }

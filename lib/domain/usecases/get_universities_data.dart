@@ -13,7 +13,7 @@ class GetUniversitiesData<T extends BaseUniversitiesStudyProgramsRepository>
   @override
   Future<Either<Failure, List<University>>> call(NoParams params) async {
     final result = await repository.getUniversities();
-    
+
     return result.map((universities) {
       final sortedUniversities = List<University>.from(universities);
       sortedUniversities.sort((a, b) {

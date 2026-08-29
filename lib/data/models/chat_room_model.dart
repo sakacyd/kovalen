@@ -13,7 +13,12 @@ class ChatRoomModel extends ChatRoom {
     super.otherUser,
   });
 
-  factory ChatRoomModel.fromJson(Map<String, dynamic> json, {String? lastMessage, DateTime? lastMessageTime, UserModel? otherUser}) {
+  factory ChatRoomModel.fromJson(
+    Map<String, dynamic> json, {
+    String? lastMessage,
+    DateTime? lastMessageTime,
+    UserModel? otherUser,
+  }) {
     return ChatRoomModel(
       id: json['id'] as String,
       type: json['type'] as String,

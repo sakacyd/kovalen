@@ -49,7 +49,7 @@ class _MainPageState extends State<MainPage> {
           builder: (context, index) {
             // Fallback in case index goes out of bounds when logging out / changing roles
             final currentIndex = index >= pages.length ? 0 : index;
-            
+
             return Scaffold(
               body: IndexedStack(index: currentIndex, children: pages),
               bottomNavigationBar: Container(
@@ -69,7 +69,9 @@ class _MainPageState extends State<MainPage> {
                       context.read<BottomNavCubit>().changeTab(i),
                   backgroundColor: Theme.of(context).colorScheme.surface,
                   elevation: 0,
-                  indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+                  indicatorColor: Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer,
                   destinations: [
                     NavigationDestination(
                       icon: Icon(
@@ -133,7 +135,7 @@ class _MainPageState extends State<MainPage> {
             );
           },
         );
-      }
+      },
     );
   }
 }

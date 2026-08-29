@@ -14,13 +14,17 @@ class MessageRoomRepositoryImpl implements MessageRoomRepository {
   MessageRoomRepositoryImpl(this.remoteDataSource, this.connectionChecker);
 
   @override
-  Stream<Either<Failure, List<Message>>> getMessageRoomMessages(String roomId) async* {
+  Stream<Either<Failure, List<Message>>> getMessageRoomMessages(
+    String roomId,
+  ) async* {
     if (!await connectionChecker.isConnected) {
       yield left(Failure(Constants.noConnectionMessage));
       return;
     }
     try {
-      await for (final messages in remoteDataSource.getMessageRoomMessages(roomId)) {
+      await for (final messages in remoteDataSource.getMessageRoomMessages(
+        roomId,
+      )) {
         yield right(messages);
       }
     } on ServerException catch (e) {
@@ -31,7 +35,10 @@ class MessageRoomRepositoryImpl implements MessageRoomRepository {
   }
 
   @override
-  Future<Either<Failure, Message>> sendMessage(String roomId, String content) async {
+  Future<Either<Failure, Message>> sendMessage(
+    String roomId,
+    String content,
+  ) async {
     try {
       if (!await connectionChecker.isConnected) {
         return left(Failure(Constants.noConnectionMessage));

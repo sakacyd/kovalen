@@ -9,7 +9,11 @@ abstract interface class AdminRemoteDataSource {
   Future<List<UserModel>> getAllUsers();
   Future<List<ChatRoomModel>> getAllGroups();
   Future<void> changeUserRole(String userId, String newRole);
-  Future<void> changeUserStatus(String userId, String status, DateTime? suspendedUntil);
+  Future<void> changeUserStatus(
+    String userId,
+    String status,
+    DateTime? suspendedUntil,
+  );
   Future<void> deleteUser(String userId);
   Future<Map<String, dynamic>> getGroupDetails(String roomId);
 }
@@ -32,7 +36,10 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   @override
   Future<List<ChatRoomModel>> getAllGroups() async {
     try {
-      final response = await supabaseClient.from('chat_rooms').select().eq('type', 'group');
+      final response = await supabaseClient
+          .from('chat_rooms')
+          .select()
+          .eq('type', 'group');
       return response.map((json) => ChatRoomModel.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(e.toString());
@@ -42,14 +49,21 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   @override
   Future<void> changeUserRole(String userId, String newRole) async {
     try {
-      await supabaseClient.from('users').update({'role': newRole}).eq('id', userId);
+      await supabaseClient
+          .from('users')
+          .update({'role': newRole})
+          .eq('id', userId);
     } catch (e) {
       throw ServerException(e.toString());
     }
   }
 
   @override
-  Future<void> changeUserStatus(String userId, String status, DateTime? suspendedUntil) async {
+  Future<void> changeUserStatus(
+    String userId,
+    String status,
+    DateTime? suspendedUntil,
+  ) async {
     try {
       final updateData = <String, dynamic>{
         'status': status,
@@ -78,20 +92,21 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
           .select()
           .eq('room_id', roomId)
           .order('created_at', ascending: false);
-          
+
       final activitiesRes = await supabaseClient
           .from('group_activities')
           .select()
           .eq('room_id', roomId)
           .order('created_at', ascending: false);
 
-      final schedules = schedulesRes.map((json) => GroupScheduleModel.fromJson(json)).toList();
-      final activities = activitiesRes.map((json) => GroupActivityModel.fromJson(json)).toList();
+      final schedules = schedulesRes
+          .map((json) => GroupScheduleModel.fromJson(json))
+          .toList();
+      final activities = activitiesRes
+          .map((json) => GroupActivityModel.fromJson(json))
+          .toList();
 
-      return {
-        'schedules': schedules,
-        'activities': activities,
-      };
+      return {'schedules': schedules, 'activities': activities};
     } catch (e) {
       throw ServerException(e.toString());
     }

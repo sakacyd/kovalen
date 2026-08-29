@@ -138,8 +138,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  state.randomInterest != null 
-                                      ? '${state.randomInterest} membutuhkan partner.' 
+                                  state.randomInterest != null
+                                      ? '${state.randomInterest} membutuhkan partner.'
                                       : 'Temukan rekan belajar yang cocok dengan Anda.',
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
@@ -201,13 +201,13 @@ class _HomePageState extends State<HomePage> {
                     if (state.activeGroups.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 32.0),
-                        child: Center(
-                          child: Text('Belum ada grup aktif'),
-                        ),
+                        child: Center(child: Text('Belum ada grup aktif')),
                       )
                     else
                       Column(
-                        children: List.generate(state.activeGroups.length, (index) {
+                        children: List.generate(state.activeGroups.length, (
+                          index,
+                        ) {
                           final group = state.activeGroups[index];
                           return GestureDetector(
                             onTap: () {
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                                     roomId: group.id,
                                     name: group.name ?? 'Grup Belajar',
                                     avatarUrl: null,
-                                    isGroup: group.type == 'group'
+                                    isGroup: group.type == 'group',
                                   ),
                                 ),
                               );
@@ -238,7 +238,10 @@ class _HomePageState extends State<HomePage> {
               );
             } else if (state is HomeFailure) {
               return Center(
-                child: Text('Gagal memuat beranda: ${state.message}', textAlign: TextAlign.center),
+                child: Text(
+                  'Gagal memuat beranda: ${state.message}',
+                  textAlign: TextAlign.center,
+                ),
               );
             }
             return const Center(child: CircularProgressIndicator());

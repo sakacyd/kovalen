@@ -17,6 +17,9 @@ class ChangeUserRole implements UseCase<void, ChangeUserRoleParams> {
 
   @override
   Future<Either<Failure, void>> call(ChangeUserRoleParams params) async {
-    return await repository.changeUserRole(userId: params.userId, newRole: params.newRole);
+    return await repository.changeUserRole(
+      userId: params.userId,
+      newRole: params.newRole,
+    );
   }
 }

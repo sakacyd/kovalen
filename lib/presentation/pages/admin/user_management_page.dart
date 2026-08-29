@@ -20,10 +20,17 @@ class _UserManagementPageState extends State<UserManagementPage> {
     context.read<AdminBloc>().add(AdminFetchUsersEvent());
   }
 
-  void _showRoleDialog(BuildContext context, User targetUser, String currentUserId, String currentUserRole) {
+  void _showRoleDialog(
+    BuildContext context,
+    User targetUser,
+    String currentUserId,
+    String currentUserRole,
+  ) {
     if (currentUserRole != 'owner') {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hanya Owner yang dapat mengubah role pengguna.')),
+        const SnackBar(
+          content: Text('Hanya Owner yang dapat mengubah role pengguna.'),
+        ),
       );
       return;
     }
@@ -45,7 +52,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 leading: const Icon(Icons.admin_panel_settings),
                 onTap: () {
                   context.read<AdminBloc>().add(
-                    AdminChangeUserRoleEvent(userId: targetUser.id, newRole: 'admin'),
+                    AdminChangeUserRoleEvent(
+                      userId: targetUser.id,
+                      newRole: 'admin',
+                    ),
                   );
                   Navigator.pop(context);
                 },
@@ -55,7 +65,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 leading: const Icon(Icons.person),
                 onTap: () {
                   context.read<AdminBloc>().add(
-                    AdminChangeUserRoleEvent(userId: targetUser.id, newRole: 'pelanggan'),
+                    AdminChangeUserRoleEvent(
+                      userId: targetUser.id,
+                      newRole: 'pelanggan',
+                    ),
                   );
                   Navigator.pop(context);
                 },
@@ -67,13 +80,20 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, User targetUser, String currentUserId, String currentUserRole) {
+  void _showDeleteDialog(
+    BuildContext context,
+    User targetUser,
+    String currentUserId,
+    String currentUserRole,
+  ) {
     if (targetUser.id == currentUserId) return;
     if (targetUser.role == 'owner') return;
-    
+
     if (currentUserRole == 'admin' && targetUser.role != 'pelanggan') {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Admin hanya dapat menghapus akun Pelanggan.')),
+        const SnackBar(
+          content: Text('Admin hanya dapat menghapus akun Pelanggan.'),
+        ),
       );
       return;
     }
@@ -83,7 +103,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Hapus Pengguna?'),
-          content: Text('Apakah Anda yakin ingin menghapus akun ${targetUser.fullName}? Tindakan ini tidak dapat dibatalkan.'),
+          content: Text(
+            'Apakah Anda yakin ingin menghapus akun ${targetUser.fullName}? Tindakan ini tidak dapat dibatalkan.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -104,13 +126,20 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  void _showStatusDialog(BuildContext context, User targetUser, String currentUserId, String currentUserRole) {
+  void _showStatusDialog(
+    BuildContext context,
+    User targetUser,
+    String currentUserId,
+    String currentUserRole,
+  ) {
     if (targetUser.id == currentUserId) return;
     if (targetUser.role == 'owner') return;
 
     if (currentUserRole == 'admin' && targetUser.role != 'pelanggan') {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Admin hanya dapat mengubah status Pelanggan.')),
+        const SnackBar(
+          content: Text('Admin hanya dapat mengubah status Pelanggan.'),
+        ),
       );
       return;
     }
@@ -129,7 +158,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   leading: const Icon(Icons.check_circle, color: Colors.green),
                   onTap: () {
                     context.read<AdminBloc>().add(
-                      AdminChangeUserStatusEvent(userId: targetUser.id, status: 'active', suspendedUntil: null),
+                      AdminChangeUserStatusEvent(
+                        userId: targetUser.id,
+                        status: 'active',
+                        suspendedUntil: null,
+                      ),
                     );
                     Navigator.pop(context);
                   },
@@ -140,7 +173,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   leading: const Icon(Icons.block, color: Colors.red),
                   onTap: () {
                     context.read<AdminBloc>().add(
-                      AdminChangeUserStatusEvent(userId: targetUser.id, status: 'banned', suspendedUntil: null),
+                      AdminChangeUserStatusEvent(
+                        userId: targetUser.id,
+                        status: 'banned',
+                        suspendedUntil: null,
+                      ),
                     );
                     Navigator.pop(context);
                   },
@@ -170,10 +207,30 @@ class _UserManagementPageState extends State<UserManagementPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildSuspendOption(context, targetUser, '1 Hari', const Duration(days: 1)),
-              _buildSuspendOption(context, targetUser, '3 Hari', const Duration(days: 3)),
-              _buildSuspendOption(context, targetUser, '7 Hari', const Duration(days: 7)),
-              _buildSuspendOption(context, targetUser, '30 Hari', const Duration(days: 30)),
+              _buildSuspendOption(
+                context,
+                targetUser,
+                '1 Hari',
+                const Duration(days: 1),
+              ),
+              _buildSuspendOption(
+                context,
+                targetUser,
+                '3 Hari',
+                const Duration(days: 3),
+              ),
+              _buildSuspendOption(
+                context,
+                targetUser,
+                '7 Hari',
+                const Duration(days: 7),
+              ),
+              _buildSuspendOption(
+                context,
+                targetUser,
+                '30 Hari',
+                const Duration(days: 30),
+              ),
             ],
           ),
         );
@@ -181,13 +238,22 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 
-  Widget _buildSuspendOption(BuildContext context, User targetUser, String label, Duration duration) {
+  Widget _buildSuspendOption(
+    BuildContext context,
+    User targetUser,
+    String label,
+    Duration duration,
+  ) {
     return ListTile(
       title: Text(label),
       onTap: () {
         final suspendedUntil = DateTime.now().add(duration);
         context.read<AdminBloc>().add(
-          AdminChangeUserStatusEvent(userId: targetUser.id, status: 'suspended', suspendedUntil: suspendedUntil),
+          AdminChangeUserStatusEvent(
+            userId: targetUser.id,
+            status: 'suspended',
+            suspendedUntil: suspendedUntil,
+          ),
         );
         Navigator.pop(context);
       },
@@ -195,12 +261,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   String _buildSubtitle(User user) {
-    String sub = 'Role: ${user.role} | Skor: ${user.ratingScore.toStringAsFixed(1)} (${user.ratingCount})';
+    String sub =
+        'Role: ${user.role} | Skor: ${user.ratingScore.toStringAsFixed(1)} (${user.ratingCount})';
     if (user.status == 'banned') {
       sub += '\nStatus: Banned';
     } else if (user.status == 'suspended' && user.suspendedUntil != null) {
       final formatter = DateFormat('dd MMM yyyy, HH:mm');
-      sub += '\nStatus: Suspended (s.d. ${formatter.format(user.suspendedUntil!.toLocal())})';
+      sub +=
+          '\nStatus: Suspended (s.d. ${formatter.format(user.suspendedUntil!.toLocal())})';
     } else {
       sub += '\nStatus: Active';
     }
@@ -212,7 +280,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
     final authState = context.watch<AppUserCubit>().state;
     String currentUserId = '';
     String currentUserRole = '';
-    
+
     if (authState is AppUserLoggedIn) {
       currentUserId = authState.user.id;
       currentUserRole = authState.user.role;
@@ -223,9 +291,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
       body: BlocConsumer<AdminBloc, AdminState>(
         listener: (context, state) {
           if (state is AdminError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is AdminActionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -239,11 +311,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final user = users[index];
-                
+
                 bool canManage = false;
-                if (currentUserRole == 'owner' && user.role != 'owner' && user.id != currentUserId) {
+                if (currentUserRole == 'owner' &&
+                    user.role != 'owner' &&
+                    user.id != currentUserId) {
                   canManage = true;
-                } else if (currentUserRole == 'admin' && user.role == 'pelanggan') {
+                } else if (currentUserRole == 'admin' &&
+                    user.role == 'pelanggan') {
                   canManage = true;
                 }
 
@@ -251,41 +326,73 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: user.avatarUrl.isNotEmpty ? NetworkImage(user.avatarUrl) : null,
-                      child: user.avatarUrl.isEmpty ? const Icon(Icons.person) : null,
+                      backgroundImage: user.avatarUrl.isNotEmpty
+                          ? NetworkImage(user.avatarUrl)
+                          : null,
+                      child: user.avatarUrl.isEmpty
+                          ? const Icon(Icons.person)
+                          : null,
                     ),
-                    title: Text(user.fullName.isNotEmpty ? user.fullName : 'Tanpa Nama'),
+                    title: Text(
+                      user.fullName.isNotEmpty ? user.fullName : 'Tanpa Nama',
+                    ),
                     subtitle: Text(_buildSubtitle(user)),
                     isThreeLine: true,
-                    trailing: canManage ? PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'role') {
-                          _showRoleDialog(context, user, currentUserId, currentUserRole);
-                        } else if (value == 'status') {
-                          _showStatusDialog(context, user, currentUserId, currentUserRole);
-                        } else if (value == 'delete') {
-                          _showDeleteDialog(context, user, currentUserId, currentUserRole);
-                        }
-                      },
-                      itemBuilder: (context) {
-                        final items = <PopupMenuEntry<String>>[];
-                        if (currentUserRole == 'owner') {
-                          items.add(const PopupMenuItem(
-                            value: 'role',
-                            child: Text('Ubah Role'),
-                          ));
-                        }
-                        items.add(const PopupMenuItem(
-                          value: 'status',
-                          child: Text('Ubah Status (Ban/Suspend)'),
-                        ));
-                        items.add(const PopupMenuItem(
-                          value: 'delete',
-                          child: Text('Hapus Permanen', style: TextStyle(color: Colors.red)),
-                        ));
-                        return items;
-                      },
-                    ) : null,
+                    trailing: canManage
+                        ? PopupMenuButton<String>(
+                            onSelected: (value) {
+                              if (value == 'role') {
+                                _showRoleDialog(
+                                  context,
+                                  user,
+                                  currentUserId,
+                                  currentUserRole,
+                                );
+                              } else if (value == 'status') {
+                                _showStatusDialog(
+                                  context,
+                                  user,
+                                  currentUserId,
+                                  currentUserRole,
+                                );
+                              } else if (value == 'delete') {
+                                _showDeleteDialog(
+                                  context,
+                                  user,
+                                  currentUserId,
+                                  currentUserRole,
+                                );
+                              }
+                            },
+                            itemBuilder: (context) {
+                              final items = <PopupMenuEntry<String>>[];
+                              if (currentUserRole == 'owner') {
+                                items.add(
+                                  const PopupMenuItem(
+                                    value: 'role',
+                                    child: Text('Ubah Role'),
+                                  ),
+                                );
+                              }
+                              items.add(
+                                const PopupMenuItem(
+                                  value: 'status',
+                                  child: Text('Ubah Status (Ban/Suspend)'),
+                                ),
+                              );
+                              items.add(
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text(
+                                    'Hapus Permanen',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              );
+                              return items;
+                            },
+                          )
+                        : null,
                   ),
                 );
               },
@@ -297,4 +404,3 @@ class _UserManagementPageState extends State<UserManagementPage> {
     );
   }
 }
-

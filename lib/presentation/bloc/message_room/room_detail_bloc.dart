@@ -33,7 +33,10 @@ class RoomDetailBloc extends Bloc<RoomDetailEvent, RoomDetailState> {
     on<AddUserToGroupEvent>(_onAddUserToGroupEvent);
   }
 
-  Future<void> _onFetchPersonalRoomDetail(FetchPersonalRoomDetailEvent event, Emitter<RoomDetailState> emit) async {
+  Future<void> _onFetchPersonalRoomDetail(
+    FetchPersonalRoomDetailEvent event,
+    Emitter<RoomDetailState> emit,
+  ) async {
     emit(RoomDetailLoading());
     final res = await _getUserById(event.userId);
     res.fold(
@@ -42,16 +45,24 @@ class RoomDetailBloc extends Bloc<RoomDetailEvent, RoomDetailState> {
     );
   }
 
-  Future<void> _onFetchGroupRoomDetail(FetchGroupRoomDetailEvent event, Emitter<RoomDetailState> emit) async {
+  Future<void> _onFetchGroupRoomDetail(
+    FetchGroupRoomDetailEvent event,
+    Emitter<RoomDetailState> emit,
+  ) async {
     emit(RoomDetailLoading());
     final res = await _getGroupDetail(event.roomId);
     res.fold(
       (l) => emit(RoomDetailFailure(l.message)),
-      (data) => emit(GroupRoomDetailLoaded(room: data.room, participants: data.participants)),
+      (data) => emit(
+        GroupRoomDetailLoaded(room: data.room, participants: data.participants),
+      ),
     );
   }
 
-  Future<void> _onUpdateGroupProfileEvent(UpdateGroupProfileEvent event, Emitter<RoomDetailState> emit) async {
+  Future<void> _onUpdateGroupProfileEvent(
+    UpdateGroupProfileEvent event,
+    Emitter<RoomDetailState> emit,
+  ) async {
     final currentState = state;
     emit(RoomDetailLoading());
 
@@ -72,7 +83,12 @@ class RoomDetailBloc extends Bloc<RoomDetailEvent, RoomDetailState> {
       },
       (room) {
         if (currentState is GroupRoomDetailLoaded) {
-          emit(GroupRoomDetailLoaded(room: room, participants: currentState.participants));
+          emit(
+            GroupRoomDetailLoaded(
+              room: room,
+              participants: currentState.participants,
+            ),
+          );
         } else {
           emit(GroupRoomDetailLoaded(room: room, participants: const []));
         }
@@ -80,7 +96,10 @@ class RoomDetailBloc extends Bloc<RoomDetailEvent, RoomDetailState> {
     );
   }
 
-  Future<void> _onAddUserToGroupEvent(AddUserToGroupEvent event, Emitter<RoomDetailState> emit) async {
+  Future<void> _onAddUserToGroupEvent(
+    AddUserToGroupEvent event,
+    Emitter<RoomDetailState> emit,
+  ) async {
     emit(RoomDetailLoading());
     final res = await _addUserToGroup(
       AddUserToGroupParams(roomId: event.roomId, userId: event.userId),

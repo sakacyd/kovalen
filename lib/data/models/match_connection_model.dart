@@ -16,7 +16,9 @@ class MatchConnectionModel extends MatchConnection {
       user1Id: json['user1_id'] as String,
       user2Id: json['user2_id'] as String,
       createdAt: DateTime.parse(json['created_at']),
-      matchedUser: json['users'] != null ? UserModel.fromJson(json['users']) : null,
+      matchedUser: json['users'] != null
+          ? UserModel.fromJson(json['users'])
+          : null,
     );
   }
 }

@@ -23,13 +23,18 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
     String? review,
   }) async {
     try {
-      final currentUserId = supabaseClient.auth.currentUser!.id;
+      final session = supabaseClient.auth.currentSession;
+      if (session == null) throw ServerException('User not logged in');
+      final currentUserId = session.user.id;
+      
       await supabaseClient.from('user_ratings').insert({
         'rater_id': currentUserId,
         'ratee_id': rateeId,
         'rating': rating,
         'review': review,
       });
+    } on PostgrestException catch (e) {
+      throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -38,12 +43,15 @@ class RatingRemoteDataSourceImpl implements RatingRemoteDataSource {
   @override
   Future<List<UserModel>> getRoomParticipants(String roomId) async {
     try {
-      final currentUserId = supabaseClient.auth.currentUser!.id;
+      final session = supabaseClient.auth.currentSession;
+      if (session == null) throw ServerException('User not logged in');
+      final currentUserId = session.user.id;
+      
       final response = await supabaseClient
           .from('chat_participants')
           .select('user_id, users(*)')
           .eq('room_id', roomId);
-      
+
       final List<UserModel> participants = [];
       for (var row in response) {
         if (row['users'] != null) {

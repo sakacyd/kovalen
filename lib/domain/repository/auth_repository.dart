@@ -8,7 +8,7 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
-  
+
   Future<Either<Failure, User>> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -16,12 +16,10 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, User>> currentUser();
 
-  Future<Either<Failure, void>> changePassword({
-    required String newPassword,
-  });
+  Future<Either<Failure, void>> changePassword({required String newPassword});
 
   Future<Either<Failure, User>> updateUserLocation({
-    required double latitude, 
+    required double latitude,
     required double longitude,
   });
 }

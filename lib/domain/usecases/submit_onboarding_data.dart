@@ -5,7 +5,8 @@ import 'package:kovalen/core/usecase/usecase.dart';
 import 'package:kovalen/core/common/entities/user.dart';
 import 'package:kovalen/domain/repository/onboarding_repository.dart';
 
-class SubmitOnboardingData implements UseCase<User, SubmitOnboardingDataParams> {
+class SubmitOnboardingData
+    implements UseCase<User, SubmitOnboardingDataParams> {
   final OnboardingRepository repository;
 
   SubmitOnboardingData(this.repository);

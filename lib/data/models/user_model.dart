@@ -10,6 +10,7 @@ class UserModel extends User {
     super.gender,
     super.tujuanBelajar,
     super.gayaBelajar,
+    super.hobi,
     super.maxDistancePreference = 15.0,
     required super.latitude,
     required super.longitude,
@@ -37,20 +38,30 @@ class UserModel extends User {
       gender: json['gender'],
       tujuanBelajar: json['tujuan_belajar'],
       gayaBelajar: json['gaya_belajar'],
-      maxDistancePreference: (json['max_distance_preference'] as num?)?.toDouble() ?? 15.0,
+      hobi: json['hobi'],
+      maxDistancePreference:
+          (json['max_distance_preference'] as num?)?.toDouble() ?? 15.0,
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
       longitude: (json['longitude'] as num?)?.toDouble() ?? 0.0,
       lastLocationUpdate: json['last_location_update'] ?? '',
       gpa: (json['gpa'] as num?)?.toDouble() ?? 0.0,
       universityId: json['university_id'] ?? '',
       studyProgramId: json['study_program_id'] ?? '',
-      universityName: json['university_name'] ?? (json['university'] != null ? json['university']['name'] : null),
-      studyProgramName: json['study_program_name'] ?? (json['study_program'] != null ? '${json['study_program']['education_level']} ${json['study_program']['name']}' : null),
+      universityName:
+          json['university_name'] ??
+          (json['university'] != null ? json['university']['name'] : null),
+      studyProgramName:
+          json['study_program_name'] ??
+          (json['study_program'] != null
+              ? '${json['study_program']['education_level']} ${json['study_program']['name']}'
+              : null),
       role: json['role'] ?? 'pelanggan',
       ratingScore: (json['rating_score'] as num?)?.toDouble() ?? 0.0,
       ratingCount: json['rating_count'] as int? ?? 0,
       status: json['status'] ?? 'active',
-      suspendedUntil: json['suspended_until'] != null ? DateTime.parse(json['suspended_until']) : null,
+      suspendedUntil: json['suspended_until'] != null
+          ? DateTime.parse(json['suspended_until'])
+          : null,
       interests: _parseInterests(json['user_interests']),
     );
   }
@@ -58,12 +69,15 @@ class UserModel extends User {
   static List<String> _parseInterests(dynamic userInterestsJson) {
     if (userInterestsJson == null) return [];
     if (userInterestsJson is List) {
-      return userInterestsJson.map((ui) {
-        if (ui is Map && ui['interests'] is Map) {
-          return ui['interests']['name'] as String;
-        }
-        return '';
-      }).where((s) => s.isNotEmpty).toList();
+      return userInterestsJson
+          .map((ui) {
+            if (ui is Map && ui['interests'] is Map) {
+              return ui['interests']['name'] as String;
+            }
+            return '';
+          })
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
     return [];
   }
@@ -78,9 +92,10 @@ class UserModel extends User {
       'gender': gender,
       'tujuan_belajar': tujuanBelajar,
       'gaya_belajar': gayaBelajar,
+      'hobi': hobi,
       'max_distance_preference': maxDistancePreference,
       'latitude': latitude,
-      'longitude': longitude, 
+      'longitude': longitude,
       'last_location_update': lastLocationUpdate,
       'gpa': gpa,
       'university_id': universityId,
@@ -106,6 +121,7 @@ class UserModel extends User {
     String? gender,
     String? tujuanBelajar,
     String? gayaBelajar,
+    String? hobi,
     double? maxDistancePreference,
     double? latitude,
     double? longitude,
@@ -131,7 +147,9 @@ class UserModel extends User {
       gender: gender ?? this.gender,
       tujuanBelajar: tujuanBelajar ?? this.tujuanBelajar,
       gayaBelajar: gayaBelajar ?? this.gayaBelajar,
-      maxDistancePreference: maxDistancePreference ?? this.maxDistancePreference,
+      hobi: hobi ?? this.hobi,
+      maxDistancePreference:
+          maxDistancePreference ?? this.maxDistancePreference,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       lastLocationUpdate: lastLocationUpdate ?? this.lastLocationUpdate,

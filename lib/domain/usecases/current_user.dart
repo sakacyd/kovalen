@@ -13,5 +13,3 @@ class CurrentUser implements UseCase<User, NoParams> {
     return await authRepository.currentUser();
   }
 }
-
-

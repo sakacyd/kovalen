@@ -17,6 +17,7 @@ abstract interface class ProfileSettingsRemoteDataSource {
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
+    required String hobi,
     required double gpa,
     required List<String> interestIds,
   });
@@ -28,7 +29,8 @@ abstract interface class ProfileSettingsRemoteDataSource {
   Future<void> signOut();
 }
 
-class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSource {
+class ProfileSettingsRemoteDataSourceImpl
+    implements ProfileSettingsRemoteDataSource {
   final SupabaseClient supabaseClient;
 
   ProfileSettingsRemoteDataSourceImpl(this.supabaseClient);
@@ -44,6 +46,7 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
+    required String hobi,
     required double gpa,
     required List<String> interestIds,
   }) async {
@@ -58,11 +61,16 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
       String finalAvatarUrl = avatarUrl;
       if (avatarFile != null) {
         final fileExtension = avatarFile.path.split('.').last;
-        final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+        final fileName =
+            '${userId}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
         final filePath = '$userId/$fileName';
-        
-        await supabaseClient.storage.from('avatars').upload(filePath, avatarFile);
-        finalAvatarUrl = supabaseClient.storage.from('avatars').getPublicUrl(filePath);
+
+        await supabaseClient.storage
+            .from('avatars')
+            .upload(filePath, avatarFile);
+        finalAvatarUrl = supabaseClient.storage
+            .from('avatars')
+            .getPublicUrl(filePath);
       }
 
       final response = await supabaseClient
@@ -76,6 +84,7 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
             'gender': gender,
             'tujuan_belajar': tujuanBelajar,
             'gaya_belajar': gayaBelajar,
+            'hobi': hobi,
             'gpa': gpa,
           })
           .eq('id', userId)
@@ -92,14 +101,11 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
             .not('interest_id', 'in', uniqueInterestIds);
 
         // Upsert interests yang dipilih (tambah baru atau abaikan yang sudah ada)
-        final interestInserts = uniqueInterestIds.map((id) => {
-          'user_id': userId,
-          'interest_id': id,
-        }).toList();
-        
-        await supabaseClient
-            .from('user_interests')
-            .upsert(interestInserts);
+        final interestInserts = uniqueInterestIds
+            .map((id) => {'user_id': userId, 'interest_id': id})
+            .toList();
+
+        await supabaseClient.from('user_interests').upsert(interestInserts);
       } else {
         // Jika tidak ada interest yang dipilih, hapus semua
         await supabaseClient
@@ -108,9 +114,9 @@ class ProfileSettingsRemoteDataSourceImpl implements ProfileSettingsRemoteDataSo
             .eq('user_id', userId);
       }
 
-      return UserModel.fromJson(response.first).copyWith(
-        email: session.user.email,
-      );
+      return UserModel.fromJson(
+        response.first,
+      ).copyWith(email: session.user.email);
     } on AuthException catch (e) {
       throw ServerException(e.message);
     } catch (e) {

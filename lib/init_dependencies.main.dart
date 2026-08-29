@@ -194,7 +194,9 @@ void _initMessages() {
     // usecases
     ..registerFactory(() => WatchChatRooms(serviceLocator()))
     // bloc
-    ..registerLazySingleton(() => MessagesBloc(watchChatRooms: serviceLocator()));
+    ..registerLazySingleton(
+      () => MessagesBloc(watchChatRooms: serviceLocator()),
+    );
 }
 
 void _initOnboarding() {
@@ -289,10 +291,8 @@ void _initMatchingPreferences() {
     )
     // repository
     ..registerFactory<MatchingPreferencesRepository>(
-      () => MatchingPreferencesRepositoryImpl(
-        serviceLocator(),
-        serviceLocator(),
-      ),
+      () =>
+          MatchingPreferencesRepositoryImpl(serviceLocator(), serviceLocator()),
     )
     // usecases
     ..registerFactory(() => GetMatchingPreferences(serviceLocator()))
@@ -324,7 +324,6 @@ void _initAdmin() {
     ..registerFactory(() => ChangeUserStatus(serviceLocator()))
     ..registerFactory(() => DeleteUser(serviceLocator()))
     ..registerFactory(() => GetGroupDetailsForAdmin(serviceLocator()))
-    
     // Bloc
     ..registerFactory(
       () => AdminBloc(
@@ -376,9 +375,7 @@ void _initGroupActivity() {
     ..registerFactory(() => CreateGroupActivity(serviceLocator()))
     // bloc
     ..registerLazySingleton(
-      () => GroupActivityBloc(
-        createGroupActivity: serviceLocator(),
-      ),
+      () => GroupActivityBloc(createGroupActivity: serviceLocator()),
     );
 }
 
@@ -403,7 +400,6 @@ void _initRating() {
       ),
     );
 }
-
 
 /* void _initAssignment() {
   serviceLocator

@@ -11,7 +11,9 @@ class GroupScheduleRepositoryImpl implements GroupScheduleRepository {
   GroupScheduleRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, GroupSchedule?>> getActiveSchedule(String roomId) async {
+  Future<Either<Failure, GroupSchedule?>> getActiveSchedule(
+    String roomId,
+  ) async {
     try {
       final schedule = await remoteDataSource.getActiveSchedule(roomId);
       return right(schedule);

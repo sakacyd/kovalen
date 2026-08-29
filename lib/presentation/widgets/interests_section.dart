@@ -4,10 +4,7 @@ import '../../../../core/theme/app_pallete.dart';
 class InterestsSection extends StatelessWidget {
   final List<String> interests;
 
-  const InterestsSection({
-    super.key,
-    required this.interests,
-  });
+  const InterestsSection({super.key, required this.interests});
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +25,19 @@ class InterestsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Minat Saya',
-            style: Theme.of(context).textTheme.displaySmall,
-          ),
+          Text('Minat Saya', style: Theme.of(context).textTheme.displaySmall),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: interests.map((interest) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
-                  color: AppPallete.surfaceContainerHighest, 
+                  color: AppPallete.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(color: AppPallete.stroke),
                 ),

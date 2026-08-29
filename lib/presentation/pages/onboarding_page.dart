@@ -69,7 +69,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   void _toggleInterest(String interestId, String typeName) {
     setState(() {
-      final targetSet = typeName == 'Akademik' ? _selectedAcademicInterests : _selectedNonAcademicInterests;
+      final targetSet = typeName == 'Akademik'
+          ? _selectedAcademicInterests
+          : _selectedNonAcademicInterests;
       if (targetSet.contains(interestId)) {
         targetSet.remove(interestId);
       } else {
@@ -78,7 +80,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Maksimal $_maxInterests minat $typeName yang dapat dipilih.'),
+              content: Text(
+                'Maksimal $_maxInterests minat $typeName yang dapat dipilih.',
+              ),
             ),
           );
         }
@@ -148,9 +152,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         if (_customTujuanBelajarController.text.trim().isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text(
-                'Lengkapi tujuan belajar lainnya terlebih dahulu',
-              ),
+              content: Text('Lengkapi tujuan belajar lainnya terlebih dahulu'),
             ),
           );
           return;
@@ -161,7 +163,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       if (_selectedAcademicInterests.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Lengkapi pilihan minat akademik terlebih dahulu (minimal 1)'),
+            content: Text(
+              'Lengkapi pilihan minat akademik terlebih dahulu (minimal 1)',
+            ),
           ),
         );
         return;
@@ -171,7 +175,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       if (_selectedNonAcademicInterests.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Lengkapi pilihan minat non-akademik terlebih dahulu (minimal 1)'),
+            content: Text(
+              'Lengkapi pilihan minat non-akademik terlebih dahulu (minimal 1)',
+            ),
           ),
         );
         return;
@@ -195,7 +201,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
           tujuanBelajar: finalTujuanBelajar,
           gayaBelajar: _selectedGayaBelajar!,
           gpa: parsedGpa,
-          interests: [..._selectedAcademicInterests, ..._selectedNonAcademicInterests],
+          interests: [
+            ..._selectedAcademicInterests,
+            ..._selectedNonAcademicInterests,
+          ],
         ),
       );
     }
@@ -708,7 +717,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             BlocBuilder<OnboardingBloc, OnboardingState>(
               builder: (context, state) {
                 if (state is OnboardingDataLoaded) {
-                  final academicInterests = {'Akademik': state.availableInterests['Akademik'] ?? <String, List<Interest>>{}};
+                  final academicInterests = {
+                    'Akademik':
+                        state.availableInterests['Akademik'] ??
+                        <String, List<Interest>>{},
+                  };
                   return _buildInterestsGroup(academicInterests);
                 }
                 return const Center(child: CircularProgressIndicator());
@@ -762,7 +775,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             BlocBuilder<OnboardingBloc, OnboardingState>(
               builder: (context, state) {
                 if (state is OnboardingDataLoaded) {
-                  final nonAcademicInterests = {'Non Akademik': state.availableInterests['Non Akademik'] ?? <String, List<Interest>>{}};
+                  final nonAcademicInterests = {
+                    'Non Akademik':
+                        state.availableInterests['Non Akademik'] ??
+                        <String, List<Interest>>{},
+                  };
                   return _buildInterestsGroup(nonAcademicInterests);
                 }
                 return const Center(child: CircularProgressIndicator());
@@ -906,7 +923,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       children: groupedByCategory[catName]!.map((interest) {
                         return SelectablePill(
                           label: interest.name,
-                          isSelected: _selectedAcademicInterests.contains(interest.id) || _selectedNonAcademicInterests.contains(interest.id),
+                          isSelected:
+                              _selectedAcademicInterests.contains(
+                                interest.id,
+                              ) ||
+                              _selectedNonAcademicInterests.contains(
+                                interest.id,
+                              ),
                           onTap: () => _toggleInterest(interest.id, typeName),
                         );
                       }).toList(),

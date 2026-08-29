@@ -5,7 +5,7 @@ class MatchProfile {
   final User user;
   final List<Interest> interests;
   final int commonInterestsCount;
-  final double distanceInKm; 
+  final double distanceInKm;
   final int matchPercentage;
 
   MatchProfile({

@@ -18,7 +18,8 @@ import 'package:kovalen/domain/repository/profile_settings_repository.dart';
 part 'profile_settings_event.dart';
 part 'profile_settings_state.dart';
 
-class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsState> {
+class ProfileSettingsBloc
+    extends Bloc<ProfileSettingsEvent, ProfileSettingsState> {
   final AppUserCubit _appUserCubit;
   final UpdateUserProfile _updateUserProfile;
   final GetUniversitiesData<ProfileSettingsRepository> _getUniversitiesData;
@@ -30,8 +31,10 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     required AppUserCubit appUserCubit,
     required UpdateUserProfile updateUserProfile,
     required GetUniversitiesData<ProfileSettingsRepository> getUniversitiesData,
-    required GetStudyProgramsData<ProfileSettingsRepository> getStudyProgramsData,
-    required GetAvailableInterests<ProfileSettingsRepository> getAvailableInterests,
+    required GetStudyProgramsData<ProfileSettingsRepository>
+    getStudyProgramsData,
+    required GetAvailableInterests<ProfileSettingsRepository>
+    getAvailableInterests,
     required UserSignOut userSignOut,
   }) : _appUserCubit = appUserCubit,
        _updateUserProfile = updateUserProfile,
@@ -63,6 +66,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
         gender: event.gender,
         tujuanBelajar: event.tujuanBelajar,
         gayaBelajar: event.gayaBelajar,
+        hobi: event.hobi,
         gpa: event.gpa,
         interestIds: event.interests,
       ),
@@ -88,13 +92,10 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
   ) async {
     final res = await _userSignOut(NoParams());
 
-    res.fold(
-      (l) => emit(ProfileSettingsFailure(l.message)),
-      (r) {
-        _appUserCubit.updateUser(null);
-        emit(ProfileSettingsInitial());
-      },
-    );
+    res.fold((l) => emit(ProfileSettingsFailure(l.message)), (r) {
+      _appUserCubit.updateUser(null);
+      emit(ProfileSettingsInitial());
+    });
   }
 
   FutureOr<void> _onLoadUniversities(
@@ -103,7 +104,7 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
   ) async {
     final res = await _getUniversitiesData(NoParams());
     final interestsRes = await _getAvailableInterests(NoParams());
-    
+
     Map<String, Map<String, List<Interest>>> availableInterests = {};
     interestsRes.fold(
       (failure) => null,
@@ -115,15 +116,19 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     ) {
       final currentState = state;
       if (currentState is ProfileSettingsDataLoaded) {
-        emit(currentState.copyWith(
-          universities: universities,
-          availableInterests: availableInterests,
-        ));
+        emit(
+          currentState.copyWith(
+            universities: universities,
+            availableInterests: availableInterests,
+          ),
+        );
       } else {
-        emit(ProfileSettingsDataLoaded(
-          universities: universities,
-          availableInterests: availableInterests,
-        ));
+        emit(
+          ProfileSettingsDataLoaded(
+            universities: universities,
+            availableInterests: availableInterests,
+          ),
+        );
       }
     });
   }
@@ -135,13 +140,18 @@ class ProfileSettingsBloc extends Bloc<ProfileSettingsEvent, ProfileSettingsStat
     final res = await _getStudyProgramsData(
       GetStudyProgramsDataParams(universityId: event.universityId),
     );
-    res.fold((failure) => emit(ProfileSettingsFailure(failure.message)), (programs) {
+    res.fold((failure) => emit(ProfileSettingsFailure(failure.message)), (
+      programs,
+    ) {
       final currentState = state;
       if (currentState is ProfileSettingsDataLoaded) {
         emit(currentState.copyWith(studyPrograms: programs));
       } else {
         emit(
-          ProfileSettingsDataLoaded(universities: const [], studyPrograms: programs),
+          ProfileSettingsDataLoaded(
+            universities: const [],
+            studyPrograms: programs,
+          ),
         );
       }
     });

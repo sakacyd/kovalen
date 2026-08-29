@@ -73,7 +73,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
       final response = await supabaseClient
           .from('user_interests')
-          .select('interests(id, name, category_id, interest_categories(id, name, type))')
+          .select(
+            'interests(id, name, category_id, interest_categories(id, name, type))',
+          )
           .eq('user_id', session.user.id);
 
       final List<InterestModel> interests = [];

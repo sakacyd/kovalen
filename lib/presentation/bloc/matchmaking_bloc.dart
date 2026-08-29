@@ -20,14 +20,14 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
     required GetPotentialMatches getPotentialMatches,
     required SwipeUser swipeUser,
     required WatchNewMatches watchNewMatches,
-  })  : _getPotentialMatches = getPotentialMatches,
-        _swipeUser = swipeUser,
-        _watchNewMatches = watchNewMatches,
-        super(MatchmakingInitial()) {
+  }) : _getPotentialMatches = getPotentialMatches,
+       _swipeUser = swipeUser,
+       _watchNewMatches = watchNewMatches,
+       super(MatchmakingInitial()) {
     on<LoadMatchmakingData>(_onLoadMatchmakingData);
     on<SwipeUserEvent>(_onSwipeUser);
     on<MatchmakingNewMatchReceived>(_onMatchmakingNewMatchReceived);
-    
+
     _subscribeToNewMatches();
   }
 
@@ -57,9 +57,9 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
     Emitter<MatchmakingState> emit,
   ) async {
     emit(MatchmakingLoading());
-    
+
     final res = await _getPotentialMatches(NoParams());
-    
+
     res.fold(
       (failure) => emit(MatchmakingFailure(message: failure.message)),
       (matches) => emit(MatchmakingSuccess(matches: matches)),
@@ -75,15 +75,19 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
       final matches = (state is MatchmakingSuccess)
           ? (state as MatchmakingSuccess).matches
           : (state as MatchmakingMatchFound).matches;
-          
-      final remainingMatches = matches.where((m) => m.user.id != event.swipedId).toList();
-      
+
+      final remainingMatches = matches
+          .where((m) => m.user.id != event.swipedId)
+          .toList();
+
       // Emit state to update UI instantly (optimistic update)
       emit(MatchmakingSuccess(matches: remainingMatches));
-      
+
       // Perform API call in background
-      final res = await _swipeUser(SwipeUserParams(swipedId: event.swipedId, isLiked: event.isLiked));
-      
+      final res = await _swipeUser(
+        SwipeUserParams(swipedId: event.swipedId, isLiked: event.isLiked),
+      );
+
       // If error, could revert, but typical apps just show error or log
       res.fold(
         (failure) {
@@ -91,7 +95,7 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
         },
         (isMatch) {
           if (isMatch) {
-            // Toast will be triggered either here or by the realtime stream. 
+            // Toast will be triggered either here or by the realtime stream.
             // In case realtime stream is delayed, this optimistic check will still show the toast.
             emit(MatchmakingMatchFound(matches: remainingMatches));
             // Automatically reset to normal success state after
@@ -110,7 +114,7 @@ class MatchmakingBloc extends Bloc<MatchmakingEvent, MatchmakingState> {
       final matches = (state is MatchmakingSuccess)
           ? (state as MatchmakingSuccess).matches
           : (state as MatchmakingMatchFound).matches;
-          
+
       emit(MatchmakingMatchFound(matches: matches));
       emit(MatchmakingSuccess(matches: matches));
     }

@@ -33,7 +33,9 @@ class RoomDetailRepositoryImpl implements RoomDetailRepository {
   }
 
   @override
-  Future<Either<Failure, List<User>>> getGroupParticipants(String roomId) async {
+  Future<Either<Failure, List<User>>> getGroupParticipants(
+    String roomId,
+  ) async {
     try {
       final participants = await remoteDataSource.getGroupParticipants(roomId);
       return right(participants);
@@ -43,9 +45,17 @@ class RoomDetailRepositoryImpl implements RoomDetailRepository {
   }
 
   @override
-  Future<Either<Failure, ChatRoom>> updateGroupProfile(String roomId, String name, File? avatarFile) async {
+  Future<Either<Failure, ChatRoom>> updateGroupProfile(
+    String roomId,
+    String name,
+    File? avatarFile,
+  ) async {
     try {
-      final room = await remoteDataSource.updateGroupProfile(roomId, name, avatarFile);
+      final room = await remoteDataSource.updateGroupProfile(
+        roomId,
+        name,
+        avatarFile,
+      );
       return right(room);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -53,7 +63,10 @@ class RoomDetailRepositoryImpl implements RoomDetailRepository {
   }
 
   @override
-  Future<Either<Failure, void>> addUserToGroup(String roomId, String userId) async {
+  Future<Either<Failure, void>> addUserToGroup(
+    String roomId,
+    String userId,
+  ) async {
     try {
       await remoteDataSource.addUserToGroup(roomId, userId);
       return right(null);

@@ -32,7 +32,10 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> changeUserRole({required String userId, required String newRole}) async {
+  Future<Either<Failure, void>> changeUserRole({
+    required String userId,
+    required String newRole,
+  }) async {
     try {
       await remoteDataSource.changeUserRole(userId, newRole);
       return right(null);
@@ -42,7 +45,11 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> changeUserStatus({required String userId, required String status, DateTime? suspendedUntil}) async {
+  Future<Either<Failure, void>> changeUserStatus({
+    required String userId,
+    required String status,
+    DateTime? suspendedUntil,
+  }) async {
     try {
       await remoteDataSource.changeUserStatus(userId, status, suspendedUntil);
       return right(null);
@@ -62,7 +69,9 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, dynamic>>> getGroupDetails({required String roomId}) async {
+  Future<Either<Failure, Map<String, dynamic>>> getGroupDetails({
+    required String roomId,
+  }) async {
     try {
       final details = await remoteDataSource.getGroupDetails(roomId);
       return right(details);

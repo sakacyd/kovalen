@@ -90,9 +90,7 @@ class _MyAppState extends State<MyApp> {
             return const SignInPage();
           }
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         },
       ),

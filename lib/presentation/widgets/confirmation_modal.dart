@@ -46,15 +46,13 @@ class ConfirmationModal extends StatelessWidget {
       surfaceTintColor: Colors.transparent,
       title: Text(
         title,
-        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-              fontSize: 20,
-            ),
+        style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 20),
       ),
       content: Text(
         content,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppPallete.onSurfaceVariant,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: AppPallete.onSurfaceVariant),
       ),
       actions: [
         TextButton(

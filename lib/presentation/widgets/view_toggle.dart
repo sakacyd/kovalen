@@ -36,7 +36,7 @@ class ViewToggle extends StatelessWidget {
                             color: AppPallete.onSurface.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
-                          )
+                          ),
                         ]
                       : null,
                 ),
@@ -46,14 +46,18 @@ class ViewToggle extends StatelessWidget {
                     Icon(
                       Icons.view_carousel_outlined,
                       size: 18,
-                      color: isCardView ? AppPallete.primary : AppPallete.textSecondary,
+                      color: isCardView
+                          ? AppPallete.primary
+                          : AppPallete.textSecondary,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Card View',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: isCardView ? AppPallete.primary : AppPallete.textSecondary,
-                          ),
+                        color: isCardView
+                            ? AppPallete.primary
+                            : AppPallete.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -74,7 +78,7 @@ class ViewToggle extends StatelessWidget {
                             color: AppPallete.onSurface.withValues(alpha: 0.05),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
-                          )
+                          ),
                         ]
                       : null,
                 ),
@@ -84,14 +88,18 @@ class ViewToggle extends StatelessWidget {
                     Icon(
                       Icons.map_outlined,
                       size: 18,
-                      color: !isCardView ? AppPallete.primary : AppPallete.textSecondary,
+                      color: !isCardView
+                          ? AppPallete.primary
+                          : AppPallete.textSecondary,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Map View',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: !isCardView ? AppPallete.primary : AppPallete.textSecondary,
-                          ),
+                        color: !isCardView
+                            ? AppPallete.primary
+                            : AppPallete.textSecondary,
+                      ),
                     ),
                   ],
                 ),

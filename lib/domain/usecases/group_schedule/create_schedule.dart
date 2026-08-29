@@ -26,7 +26,9 @@ class CreateSchedule implements UseCase<GroupSchedule, CreateScheduleParams> {
   CreateSchedule(this.repository);
 
   @override
-  Future<Either<Failure, GroupSchedule>> call(CreateScheduleParams params) async {
+  Future<Either<Failure, GroupSchedule>> call(
+    CreateScheduleParams params,
+  ) async {
     return await repository.createSchedule(
       roomId: params.roomId,
       title: params.title,

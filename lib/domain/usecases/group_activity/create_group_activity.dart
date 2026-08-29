@@ -20,13 +20,16 @@ class CreateGroupActivityParams {
   });
 }
 
-class CreateGroupActivity implements UseCase<GroupActivity, CreateGroupActivityParams> {
+class CreateGroupActivity
+    implements UseCase<GroupActivity, CreateGroupActivityParams> {
   final GroupActivityRepository repository;
 
   CreateGroupActivity(this.repository);
 
   @override
-  Future<Either<Failure, GroupActivity>> call(CreateGroupActivityParams params) async {
+  Future<Either<Failure, GroupActivity>> call(
+    CreateGroupActivityParams params,
+  ) async {
     return await repository.createActivity(
       scheduleId: params.scheduleId,
       roomId: params.roomId,

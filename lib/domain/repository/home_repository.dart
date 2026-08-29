@@ -9,8 +9,8 @@ import 'package:kovalen/core/common/entities/home_data.dart';
 abstract interface class HomeRepository implements BaseUserRepository {
   @override
   Future<Either<Failure, User>> getCurrentUser();
-  
+
   Future<Either<Failure, HomeStats>> getHomeStats();
-  
+
   Stream<Either<Failure, HomeData>> watchHomeData();
 }

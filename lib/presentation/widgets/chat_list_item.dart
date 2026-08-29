@@ -32,9 +32,7 @@ class ChatListItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: AppPallete.stroke),
-          ),
+          border: Border(bottom: BorderSide(color: AppPallete.stroke)),
         ),
         child: Row(
           children: [
@@ -44,18 +42,22 @@ class ChatListItem extends StatelessWidget {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppPallete.secondaryContainer,
-                  backgroundImage: imageUrl != null && imageUrl!.trim().startsWith('http') 
-                      ? NetworkImage(imageUrl!.trim()) 
+                  backgroundImage:
+                      imageUrl != null && imageUrl!.trim().startsWith('http')
+                      ? NetworkImage(imageUrl!.trim())
                       : null,
-                  onBackgroundImageError: imageUrl != null && imageUrl!.trim().startsWith('http') 
+                  onBackgroundImageError:
+                      imageUrl != null && imageUrl!.trim().startsWith('http')
                       ? (exception, stackTrace) {}
                       : null,
-                  child: (imageUrl == null || !imageUrl!.trim().startsWith('http')) && initials != null
+                  child:
+                      (imageUrl == null ||
+                              !imageUrl!.trim().startsWith('http')) &&
+                          initials != null
                       ? Text(
                           initials!,
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: AppPallete.textSecondary,
-                          ),
+                          style: Theme.of(context).textTheme.displaySmall
+                              ?.copyWith(color: AppPallete.textSecondary),
                         )
                       : null,
                 ),
@@ -69,10 +71,7 @@ class ChatListItem extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: AppPallete.success,
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppPallete.surface,
-                          width: 2,
-                        ),
+                        border: Border.all(color: AppPallete.surface, width: 2),
                       ),
                     ),
                   ),
@@ -90,9 +89,9 @@ class ChatListItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            fontSize: 16,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.displaySmall?.copyWith(fontSize: 16),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -101,8 +100,12 @@ class ChatListItem extends StatelessWidget {
                       Text(
                         time,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: unreadCount > 0 ? AppPallete.primary : AppPallete.textOutline,
-                          fontWeight: unreadCount > 0 ? FontWeight.bold : FontWeight.w500,
+                          color: unreadCount > 0
+                              ? AppPallete.primary
+                              : AppPallete.textOutline,
+                          fontWeight: unreadCount > 0
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                         ),
                       ),
                     ],
@@ -121,10 +124,15 @@ class ChatListItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           messagePreview,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: unreadCount > 0 ? AppPallete.textPrimary : AppPallete.textSecondary,
-                            fontWeight: unreadCount > 0 ? FontWeight.w500 : FontWeight.w400,
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: unreadCount > 0
+                                    ? AppPallete.textPrimary
+                                    : AppPallete.textSecondary,
+                                fontWeight: unreadCount > 0
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -142,9 +150,8 @@ class ChatListItem extends StatelessWidget {
                           ),
                           child: Text(
                             unreadCount.toString(),
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppPallete.surface,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: AppPallete.surface),
                           ),
                         ),
                       ],

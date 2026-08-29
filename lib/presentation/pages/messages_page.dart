@@ -16,7 +16,8 @@ class MessagesPage extends StatefulWidget {
   State<MessagesPage> createState() => _MessagesPageState();
 }
 
-class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderStateMixin {
+class _MessagesPageState extends State<MessagesPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
 
@@ -48,13 +49,13 @@ class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderSt
       return Center(
         child: Text(
           emptyMessage,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: AppPallete.textOutline,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(color: AppPallete.textOutline),
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: rooms.length,
@@ -65,7 +66,9 @@ class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderSt
             ? '${room.lastMessageTime!.hour.toString().padLeft(2, '0')}:${room.lastMessageTime!.minute.toString().padLeft(2, '0')}'
             : '';
         final preview = room.lastMessage ?? 'Belum ada pesan';
-        final imageUrl = room.type == 'group' ? room.avatarUrl : room.otherUser?.avatarUrl;
+        final imageUrl = room.type == 'group'
+            ? room.avatarUrl
+            : room.otherUser?.avatarUrl;
         final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
 
         return ChatListItem(
@@ -126,9 +129,8 @@ class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderSt
                     style: Theme.of(context).textTheme.bodyMedium,
                     decoration: InputDecoration(
                       hintText: 'Cari kontak atau pesan...',
-                      hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppPallete.textOutline,
-                      ),
+                      hintStyle: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(color: AppPallete.textOutline),
                       prefixIcon: const Icon(
                         Icons.search,
                         color: AppPallete.textOutline,
@@ -208,14 +210,24 @@ class _MessagesPageState extends State<MessagesPage> with SingleTickerProviderSt
                             return Center(child: Text(state.message));
                           } else if (state is MessagesSuccess) {
                             // Filter chats based on type
-                            final personalRooms = state.rooms.where((r) => r.type == 'personal').toList();
-                            final groupRooms = state.rooms.where((r) => r.type == 'group').toList();
-                            
+                            final personalRooms = state.rooms
+                                .where((r) => r.type == 'personal')
+                                .toList();
+                            final groupRooms = state.rooms
+                                .where((r) => r.type == 'group')
+                                .toList();
+
                             return TabBarView(
                               controller: _tabController,
                               children: [
-                                _buildChatList(personalRooms, 'Belum ada pesan personal'),
-                                _buildChatList(groupRooms, 'Belum ada pesan grup'),
+                                _buildChatList(
+                                  personalRooms,
+                                  'Belum ada pesan personal',
+                                ),
+                                _buildChatList(
+                                  groupRooms,
+                                  'Belum ada pesan grup',
+                                ),
                               ],
                             );
                           }

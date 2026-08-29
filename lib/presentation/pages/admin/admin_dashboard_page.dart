@@ -34,7 +34,7 @@ class AdminDashboardPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               _buildMenuCard(
                 context,
                 title: 'Manajemen Pengguna',
@@ -43,7 +43,9 @@ class AdminDashboardPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const UserManagementPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const UserManagementPage(),
+                    ),
                   );
                 },
               ),
@@ -56,7 +58,9 @@ class AdminDashboardPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => const GroupMonitoringPage()),
+                    MaterialPageRoute(
+                      builder: (_) => const GroupMonitoringPage(),
+                    ),
                   );
                 },
               ),
@@ -83,7 +87,9 @@ class AdminDashboardPage extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
           ),
           boxShadow: [
             BoxShadow(
@@ -98,7 +104,9 @@ class AdminDashboardPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: Icon(

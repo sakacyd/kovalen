@@ -21,8 +21,5 @@ class UserSignInParams {
   final String email;
   final String password;
 
-  UserSignInParams({
-    required this.email,
-    required this.password,
-  });
+  UserSignInParams({required this.email, required this.password});
 }

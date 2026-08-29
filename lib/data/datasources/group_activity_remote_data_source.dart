@@ -12,7 +12,8 @@ abstract interface class GroupActivityRemoteDataSource {
   });
 }
 
-class GroupActivityRemoteDataSourceImpl implements GroupActivityRemoteDataSource {
+class GroupActivityRemoteDataSourceImpl
+    implements GroupActivityRemoteDataSource {
   final SupabaseClient supabaseClient;
 
   GroupActivityRemoteDataSourceImpl(this.supabaseClient);
@@ -26,18 +27,27 @@ class GroupActivityRemoteDataSourceImpl implements GroupActivityRemoteDataSource
     String? nextGoals,
   }) async {
     try {
-      final response = await supabaseClient.from('group_activities').insert({
-        'schedule_id': scheduleId,
-        'room_id': roomId,
-        'activity_summary': activitySummary,
-        if (materialCovered != null && materialCovered.isNotEmpty) 'material_covered': materialCovered,
-        if (nextGoals != null && nextGoals.isNotEmpty) 'next_goals': nextGoals,
-      }).select().single();
+      final response = await supabaseClient
+          .from('group_activities')
+          .insert({
+            'schedule_id': scheduleId,
+            'room_id': roomId,
+            'activity_summary': activitySummary,
+            if (materialCovered != null && materialCovered.isNotEmpty)
+              'material_covered': materialCovered,
+            if (nextGoals != null && nextGoals.isNotEmpty)
+              'next_goals': nextGoals,
+          })
+          .select()
+          .single();
 
       return GroupActivityModel.fromJson(response);
     } catch (e) {
-      if (e.toString().contains('row-level security policy') || e.toString().contains('RLS')) {
-        throw ServerException('Hanya user yang membuat jadwal yang dapat menyelesaikan jadwal');
+      if (e.toString().contains('row-level security policy') ||
+          e.toString().contains('RLS')) {
+        throw ServerException(
+          'Hanya user yang membuat jadwal yang dapat menyelesaikan jadwal',
+        );
       }
       throw ServerException(e.toString());
     }

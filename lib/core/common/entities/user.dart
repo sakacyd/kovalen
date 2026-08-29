@@ -7,6 +7,7 @@ class User {
   final String? gender;
   final String? tujuanBelajar;
   final String? gayaBelajar;
+  final String? hobi;
   final double maxDistancePreference;
   final double latitude;
   final double longitude;
@@ -32,6 +33,7 @@ class User {
     this.gender,
     this.tujuanBelajar,
     this.gayaBelajar,
+    this.hobi,
     this.maxDistancePreference = 15.0,
     required this.latitude,
     required this.longitude,
@@ -50,7 +52,12 @@ class User {
   });
 
   bool get isProfileComplete {
-    return universityId.isNotEmpty && studyProgramId.isNotEmpty && semester > 0 && gender != null && tujuanBelajar != null && gayaBelajar != null;
+    return universityId.isNotEmpty &&
+        studyProgramId.isNotEmpty &&
+        semester > 0 &&
+        gender != null &&
+        tujuanBelajar != null &&
+        gayaBelajar != null;
   }
 
   User copyWith({
@@ -87,7 +94,8 @@ class User {
       gender: gender ?? this.gender,
       tujuanBelajar: tujuanBelajar ?? this.tujuanBelajar,
       gayaBelajar: gayaBelajar ?? this.gayaBelajar,
-      maxDistancePreference: maxDistancePreference ?? this.maxDistancePreference,
+      maxDistancePreference:
+          maxDistancePreference ?? this.maxDistancePreference,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       lastLocationUpdate: lastLocationUpdate ?? this.lastLocationUpdate,

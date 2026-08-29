@@ -11,10 +11,9 @@ part 'messages_state.dart';
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final WatchChatRooms _watchChatRooms;
 
-  MessagesBloc({
-    required WatchChatRooms watchChatRooms,
-  })  : _watchChatRooms = watchChatRooms,
-        super(MessagesInitial()) {
+  MessagesBloc({required WatchChatRooms watchChatRooms})
+    : _watchChatRooms = watchChatRooms,
+      super(MessagesInitial()) {
     on<LoadMessagesData>(_onLoadMessagesData);
   }
 
@@ -23,14 +22,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Emitter<MessagesState> emit,
   ) async {
     emit(MessagesLoading());
-    
+
     await emit.forEach(
       _watchChatRooms(NoParams()),
       onData: (res) => res.fold(
         (failure) => MessagesFailure(message: failure.message),
         (rooms) => MessagesSuccess(rooms: rooms),
       ),
-      onError: (error, stackTrace) => MessagesFailure(message: error.toString()),
+      onError: (error, stackTrace) =>
+          MessagesFailure(message: error.toString()),
     );
   }
 }

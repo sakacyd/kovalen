@@ -26,7 +26,9 @@ class _GroupMonitoringPageState extends State<GroupMonitoringPage> {
       body: BlocConsumer<AdminBloc, AdminState>(
         listener: (context, state) {
           if (state is AdminError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -47,8 +49,13 @@ class _GroupMonitoringPageState extends State<GroupMonitoringPage> {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      child: Icon(Icons.groups, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      child: Icon(
+                        Icons.groups,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
                     title: Text(group.name ?? 'Grup Tanpa Nama'),
                     subtitle: Text('ID: ${group.id.substring(0, 8)}...'),

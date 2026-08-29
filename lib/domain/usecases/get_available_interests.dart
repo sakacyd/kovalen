@@ -11,15 +11,19 @@ class GetAvailableInterests<T extends BaseUniversitiesStudyProgramsRepository>
   GetAvailableInterests(this.repository);
 
   @override
-  Future<Either<Failure, Map<String, Map<String, List<Interest>>>>> call(NoParams params) async {
+  Future<Either<Failure, Map<String, Map<String, List<Interest>>>>> call(
+    NoParams params,
+  ) async {
     final result = await repository.getAvailableInterests();
-    
+
     return result.map((interests) {
       final Map<String, Map<String, List<Interest>>> groupedByType = {};
 
       for (var interest in interests) {
         final type = interest.category?.type ?? 'other';
-        final typeName = type == 'academic' ? 'Akademik' : (type == 'non_academic' ? 'Non Akademik' : type);
+        final typeName = type == 'academic'
+            ? 'Akademik'
+            : (type == 'non_academic' ? 'Non Akademik' : type);
         final catName = interest.category?.name ?? 'Lainnya';
 
         if (!groupedByType.containsKey(typeName)) {
@@ -33,7 +37,9 @@ class GetAvailableInterests<T extends BaseUniversitiesStudyProgramsRepository>
 
       for (var typeKey in groupedByType.keys) {
         for (var catKey in groupedByType[typeKey]!.keys) {
-          groupedByType[typeKey]![catKey]!.sort((a, b) => a.name.compareTo(b.name));
+          groupedByType[typeKey]![catKey]!.sort(
+            (a, b) => a.name.compareTo(b.name),
+          );
         }
       }
 

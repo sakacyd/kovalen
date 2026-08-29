@@ -39,7 +39,9 @@ class _SignUpPageState extends State<SignUpPage> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -53,7 +55,11 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.school, color: Theme.of(context).colorScheme.primary, size: 40),
+                  Icon(
+                    Icons.school,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 40,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Kovalen',
@@ -70,7 +76,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-
 
                   CustomTextField(
                     label: 'Email',
@@ -118,7 +123,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 48,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -127,9 +134,16 @@ class _SignUpPageState extends State<SignUpPage> {
                               ? null
                               : () {
                                   if (formKey.currentState!.validate()) {
-                                    if (passwordController.text != confirmPasswordController.text) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Password dan Konfirmasi Password tidak cocok')),
+                                    if (passwordController.text !=
+                                        confirmPasswordController.text) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Password dan Konfirmasi Password tidak cocok',
+                                          ),
+                                        ),
                                       );
                                       return;
                                     }
@@ -190,7 +204,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         TextSpan(
                           text: 'Masuk sekarang',
                           style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               Navigator.pop(context);

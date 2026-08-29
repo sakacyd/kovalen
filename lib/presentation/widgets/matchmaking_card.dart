@@ -39,7 +39,7 @@ class MatchmakingCard extends StatelessWidget {
             color: AppPallete.onSurface.withValues(alpha: 0.08),
             offset: const Offset(0, 4),
             blurRadius: 16,
-          )
+          ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
@@ -63,20 +63,26 @@ class MatchmakingCard extends StatelessWidget {
                           minScale: 0.5,
                           maxScale: 4,
                           child: imageUrl.trim().startsWith('http')
-                            ? Image.network(
-                                imageUrl,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(color: AppPallete.surfaceVariant);
-                                },
-                              )
-                            : Container(color: AppPallete.surfaceVariant),
+                              ? Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: AppPallete.surfaceVariant,
+                                    );
+                                  },
+                                )
+                              : Container(color: AppPallete.surfaceVariant),
                         ),
                         Positioned(
                           top: -16,
                           right: -16,
                           child: IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white, size: 32),
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 32,
+                            ),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ),
@@ -89,103 +95,118 @@ class MatchmakingCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   imageUrl.trim().startsWith('http')
-                    ? Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(color: AppPallete.surfaceVariant);
-                        },
-                      )
-                    : Container(color: AppPallete.surfaceVariant),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppPallete.onSurface.withValues(alpha: 0.7),
-                          AppPallete.onSurface.withValues(alpha: 0.2),
-                          Colors.transparent,
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(color: AppPallete.surfaceVariant);
+                          },
+                        )
+                      : Container(color: AppPallete.surfaceVariant),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppPallete.onSurface.withValues(alpha: 0.7),
+                            AppPallete.onSurface.withValues(alpha: 0.2),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                // Compatibility Badge
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppPallete.primary,
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(
-                        color: AppPallete.primaryContainer,
+                  // Compatibility Badge
+                  Positioned(
+                    top: 16,
+                    right: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.psychology, size: 14, color: AppPallete.surface),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$matchPercentage% Cocok',
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      decoration: BoxDecoration(
+                        color: AppPallete.primary,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: AppPallete.primaryContainer),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.psychology,
+                            size: 14,
                             color: AppPallete.surface,
                           ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$matchPercentage% Cocok',
+                            style: Theme.of(context).textTheme.labelLarge
+                                ?.copyWith(color: AppPallete.surface),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Basic Info
+                  Positioned(
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          name,
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                color: AppPallete.surface,
+                                fontSize: 24, // Adjusted for card size
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              'Semester $semester',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: AppPallete.surface.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                            if (ratingCount > 0) ...[
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${ratingScore.toStringAsFixed(1)}($ratingCount)',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: AppPallete.surface.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ),
-                // Basic Info
-                Positioned(
-                  bottom: 16,
-                  left: 16,
-                  right: 16,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          color: AppPallete.surface,
-                          fontSize: 24, // Adjusted for card size
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            'Semester $semester',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppPallete.surface.withValues(alpha: 0.9),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (ratingCount > 0) ...[
-                            const SizedBox(width: 8),
-                            const Icon(Icons.star, color: Colors.amber, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${ratingScore.toStringAsFixed(1)}($ratingCount)',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppPallete.surface.withValues(alpha: 0.9),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
           ),
           // Details Section
           Expanded(
@@ -194,77 +215,94 @@ class MatchmakingCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.account_balance_outlined, size: 20, color: AppPallete.textSecondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        university,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.account_balance_outlined,
+                          size: 20,
+                          color: AppPallete.textSecondary,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.school_outlined, size: 20, color: AppPallete.textSecondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        major,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
+                        const SizedBox(width: 8),
+                        Text(
+                          university,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w500),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on_outlined, size: 20, color: AppPallete.textSecondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        distance,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(color: AppPallete.stroke),
-                  const SizedBox(height: 16),
-                  Text(
-                    'MINAT AKADEMIK',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      letterSpacing: 1.2,
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: interests.map((interest) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppPallete.secondaryContainer.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: AppPallete.secondaryContainer.withValues(alpha: 0.3),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.school_outlined,
+                          size: 20,
+                          color: AppPallete.textSecondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          major,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 20,
+                          color: AppPallete.textSecondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          distance,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(color: AppPallete.stroke),
+                    const SizedBox(height: 16),
+                    Text(
+                      'MINAT AKADEMIK',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.labelSmall?.copyWith(letterSpacing: 1.2),
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: interests.map((interest) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                        ),
-                        child: Text(
-                          interest,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                          decoration: BoxDecoration(
+                            color: AppPallete.secondaryContainer.withValues(
+                              alpha: 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(
+                              color: AppPallete.secondaryContainer.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            interest,
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ),
-            ),
             ),
           ),
         ],

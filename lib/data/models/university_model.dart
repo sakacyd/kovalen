@@ -16,11 +16,7 @@ class UniversityModel extends University {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'institution_code': institutionCode,
-      'name': name,
-    };
+    return {'id': id, 'institution_code': institutionCode, 'name': name};
   }
 
   UniversityModel copyWith({

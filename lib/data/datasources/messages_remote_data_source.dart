@@ -30,13 +30,15 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
           .select('room_id')
           .eq('user_id', currentUserId);
 
-      final List<String> roomIds = (participantRooms as List).map((e) => e['room_id'] as String).toList();
+      final List<String> roomIds = (participantRooms as List)
+          .map((e) => e['room_id'] as String)
+          .toList();
       if (roomIds.isEmpty) return [];
 
       // 2. Fetch rooms
       final roomsResponse = await supabaseClient
           .from('chat_rooms')
-          .select('*, chat_participants(user_id, users(*)), messages(*)')
+          .select('*, chat_participants(user_id, users(*)), messages(content, created_at)')
           .inFilter('id', roomIds)
           .order('created_at', ascending: false);
 
@@ -44,7 +46,8 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
       for (var roomData in roomsResponse) {
         // Find other user in 'personal' chat
         UserModel? otherUser;
-        if (roomData['type'] == 'personal' && roomData['chat_participants'] != null) {
+        if (roomData['type'] == 'personal' &&
+            roomData['chat_participants'] != null) {
           final participants = roomData['chat_participants'] as List;
           for (var p in participants) {
             if (p['user_id'] != currentUserId && p['users'] != null) {
@@ -61,18 +64,24 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
           final messages = roomData['messages'] as List;
           if (messages.isNotEmpty) {
             // Sort by created_at desc to get the latest
-            messages.sort((a, b) => DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at'])));
+            messages.sort(
+              (a, b) => DateTime.parse(
+                b['created_at'],
+              ).compareTo(DateTime.parse(a['created_at'])),
+            );
             lastMessage = messages.first['content'];
             lastMessageTime = DateTime.parse(messages.first['created_at']);
           }
         }
 
-        rooms.add(ChatRoomModel.fromJson(
-          roomData,
-          lastMessage: lastMessage,
-          lastMessageTime: lastMessageTime,
-          otherUser: otherUser,
-        ));
+        rooms.add(
+          ChatRoomModel.fromJson(
+            roomData,
+            lastMessage: lastMessage,
+            lastMessageTime: lastMessageTime,
+            otherUser: otherUser,
+          ),
+        );
       }
 
       // Sort rooms by last message time
@@ -101,7 +110,7 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
           .order('created_at', ascending: true);
 
       return (response as List).map((m) => MessageModel.fromJson(m)).toList();
-    } on AuthException catch (e) {
+    } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
@@ -125,7 +134,7 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
           .single();
 
       return MessageModel.fromJson(response);
-    } on AuthException catch (e) {
+    } on PostgrestException catch (e) {
       throw ServerException(e.message);
     } catch (e) {
       throw ServerException(e.toString());
@@ -137,36 +146,44 @@ class MessagesRemoteDataSourceImpl implements MessagesRemoteDataSource {
     try {
       final session = supabaseClient.auth.currentSession;
       if (session == null) throw ServerException('User not logged in');
-      
+
       // Emit the initial state
       yield await getChatRooms();
 
       // Listen for changes
       final streamController = StreamController<List<ChatRoomModel>>();
       final channel = supabaseClient.channel('public:chat_rooms_changes');
+      
+      streamController.onCancel = () {
+        supabaseClient.removeChannel(channel);
+      };
 
-      channel.onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'chat_participants',
-        callback: (payload) async {
-          streamController.add(await getChatRooms());
-        }
-      ).onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'chat_rooms',
-        callback: (payload) async {
-          streamController.add(await getChatRooms());
-        }
-      ).onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'messages',
-        callback: (payload) async {
-          streamController.add(await getChatRooms());
-        }
-      ).subscribe();
+      channel
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'chat_participants',
+            callback: (payload) async {
+              streamController.add(await getChatRooms());
+            },
+          )
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'chat_rooms',
+            callback: (payload) async {
+              streamController.add(await getChatRooms());
+            },
+          )
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: 'public',
+            table: 'messages',
+            callback: (payload) async {
+              streamController.add(await getChatRooms());
+            },
+          )
+          .subscribe();
 
       yield* streamController.stream;
     } on AuthException catch (e) {

@@ -90,7 +90,11 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
       // Count today's matches
       final now = DateTime.now();
-      final startOfDay = DateTime(now.year, now.month, now.day).toUtc().toIso8601String();
+      final startOfDay = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).toUtc().toIso8601String();
       final todayMatchesRes = await supabaseClient
           .from('matches')
           .select('id')
@@ -135,13 +139,13 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     Future<void> emitData() async {
       try {
         final stats = await getHomeStats();
-        
+
         final groupRooms = await supabaseClient
             .from('chat_participants')
             .select('chat_rooms!inner(*)')
             .eq('user_id', userId)
             .eq('chat_rooms.type', 'group');
-        
+
         final List<ChatRoomModel> activeGroups = groupRooms.map((row) {
           final roomData = row['chat_rooms'];
           return ChatRoomModel.fromJson(roomData);
@@ -154,7 +158,8 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         );
         if (!controller.isClosed) controller.add(homeData);
       } catch (e) {
-        if (!controller.isClosed) controller.addError(ServerException(e.toString()));
+        if (!controller.isClosed)
+          controller.addError(ServerException(e.toString()));
       }
     }
 
@@ -162,23 +167,29 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     emitData();
 
     // Listen to changes
-    final chatSub = supabaseClient.channel('public:chat_participants').onPostgresChanges(
-      event: PostgresChangeEvent.all,
-      schema: 'public',
-      table: 'chat_participants',
-      callback: (payload) {
-        emitData();
-      },
-    ).subscribe();
+    final chatSub = supabaseClient
+        .channel('public:chat_participants')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'chat_participants',
+          callback: (payload) {
+            emitData();
+          },
+        )
+        .subscribe();
 
-    final matchesSub = supabaseClient.channel('public:matches').onPostgresChanges(
-      event: PostgresChangeEvent.all,
-      schema: 'public',
-      table: 'matches',
-      callback: (payload) {
-        emitData();
-      },
-    ).subscribe();
+    final matchesSub = supabaseClient
+        .channel('public:matches')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'matches',
+          callback: (payload) {
+            emitData();
+          },
+        )
+        .subscribe();
 
     controller.onCancel = () {
       supabaseClient.removeChannel(chatSub);

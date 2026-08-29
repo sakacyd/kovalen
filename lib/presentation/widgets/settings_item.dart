@@ -24,18 +24,9 @@ class SettingsItem extends StatelessWidget {
             horizontal: 16,
             vertical: 4,
           ),
-          leading: Icon(
-            icon,
-            color: AppPallete.primary,
-          ),
-          title: Text(
-            title,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          trailing: const Icon(
-            Icons.chevron_right,
-            color: AppPallete.outline,
-          ),
+          leading: Icon(icon, color: AppPallete.primary),
+          title: Text(title, style: Theme.of(context).textTheme.bodyLarge),
+          trailing: const Icon(Icons.chevron_right, color: AppPallete.outline),
           onTap: onTap,
         ),
         if (showDivider)

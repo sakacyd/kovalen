@@ -13,24 +13,32 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
   RatingBloc({
     required RateUser rateUser,
     required GetRoomParticipants getRoomParticipants,
-  })  : _rateUser = rateUser,
-        _getRoomParticipants = getRoomParticipants,
-        super(RatingInitial()) {
+  }) : _rateUser = rateUser,
+       _getRoomParticipants = getRoomParticipants,
+       super(RatingInitial()) {
     on<FetchRoomParticipantsEvent>(_onFetchRoomParticipants);
     on<SubmitUserRatingEvent>(_onSubmitUserRating);
   }
 
-  void _onFetchRoomParticipants(FetchRoomParticipantsEvent event, Emitter<RatingState> emit) async {
+  void _onFetchRoomParticipants(
+    FetchRoomParticipantsEvent event,
+    Emitter<RatingState> emit,
+  ) async {
     emit(RatingLoading());
-    final result = await _getRoomParticipants(GetRoomParticipantsParams(roomId: event.roomId));
-    
+    final result = await _getRoomParticipants(
+      GetRoomParticipantsParams(roomId: event.roomId),
+    );
+
     result.fold(
       (failure) => emit(RatingError(failure.message)),
       (participants) => emit(RoomParticipantsLoaded(participants)),
     );
   }
 
-  void _onSubmitUserRating(SubmitUserRatingEvent event, Emitter<RatingState> emit) async {
+  void _onSubmitUserRating(
+    SubmitUserRatingEvent event,
+    Emitter<RatingState> emit,
+  ) async {
     final currentState = state;
     List<User> participants = [];
     if (currentState is RoomParticipantsLoaded) {
@@ -38,21 +46,20 @@ class RatingBloc extends Bloc<RatingEvent, RatingState> {
     }
 
     emit(RatingLoading());
-    final result = await _rateUser(RateUserParams(
-      rateeId: event.rateeId,
-      rating: event.rating,
-      review: event.review,
-    ));
-
-    result.fold(
-      (failure) => emit(RatingError(failure.message)),
-      (_) {
-        emit(RatingSuccess('Berhasil memberikan rating!'));
-        // Restore participants state after rating so user can rate others
-        if (participants.isNotEmpty) {
-          emit(RoomParticipantsLoaded(participants));
-        }
-      },
+    final result = await _rateUser(
+      RateUserParams(
+        rateeId: event.rateeId,
+        rating: event.rating,
+        review: event.review,
+      ),
     );
+
+    result.fold((failure) => emit(RatingError(failure.message)), (_) {
+      emit(RatingSuccess('Berhasil memberikan rating!'));
+      // Restore participants state after rating so user can rate others
+      if (participants.isNotEmpty) {
+        emit(RoomParticipantsLoaded(participants));
+      }
+    });
   }
 }

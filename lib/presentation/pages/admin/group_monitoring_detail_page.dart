@@ -15,14 +15,17 @@ class GroupMonitoringDetailPage extends StatefulWidget {
   });
 
   @override
-  State<GroupMonitoringDetailPage> createState() => _GroupMonitoringDetailPageState();
+  State<GroupMonitoringDetailPage> createState() =>
+      _GroupMonitoringDetailPageState();
 }
 
 class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AdminBloc>().add(AdminFetchGroupDetailsEvent(roomId: widget.roomId));
+    context.read<AdminBloc>().add(
+      AdminFetchGroupDetailsEvent(roomId: widget.roomId),
+    );
   }
 
   String _formatDate(String dateStr) {
@@ -54,7 +57,9 @@ class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
         body: BlocConsumer<AdminBloc, AdminState>(
           listener: (context, state) {
             if (state is AdminError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -77,17 +82,29 @@ class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
                               margin: const EdgeInsets.only(bottom: 12),
                               child: ListTile(
                                 leading: Icon(
-                                  schedule.isCompleted ? Icons.check_circle : Icons.schedule,
-                                  color: schedule.isCompleted ? Colors.green : Colors.orange,
+                                  schedule.isCompleted
+                                      ? Icons.check_circle
+                                      : Icons.schedule,
+                                  color: schedule.isCompleted
+                                      ? Colors.green
+                                      : Colors.orange,
                                 ),
                                 title: Text(schedule.title),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 4),
-                                    Text('Dibuat: ${_formatDate(schedule.createdAt.toString())}'),
-                                    if (schedule.locationUrl != null && schedule.locationUrl!.isNotEmpty)
-                                      Text('Lokasi: ${schedule.locationUrl}', style: const TextStyle(color: Colors.blue)),
+                                    Text(
+                                      'Dibuat: ${_formatDate(schedule.createdAt.toString())}',
+                                    ),
+                                    if (schedule.locationUrl != null &&
+                                        schedule.locationUrl!.isNotEmpty)
+                                      Text(
+                                        'Lokasi: ${schedule.locationUrl}',
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -97,7 +114,9 @@ class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
 
                   // Tab Rekaman Aktivitas
                   state.activities.isEmpty
-                      ? const Center(child: Text('Belum ada rekaman aktivitas grup.'))
+                      ? const Center(
+                          child: Text('Belum ada rekaman aktivitas grup.'),
+                        )
                       : ListView.builder(
                           padding: const EdgeInsets.all(16),
                           itemCount: state.activities.length,
@@ -112,24 +131,43 @@ class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
                                   children: [
                                     Text(
                                       'Aktivitas',
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(activity.activitySummary),
                                     const SizedBox(height: 12),
-                                    if (activity.materialCovered != null && activity.materialCovered!.isNotEmpty) ...[
+                                    if (activity.materialCovered != null &&
+                                        activity
+                                            .materialCovered!
+                                            .isNotEmpty) ...[
                                       Text(
                                         'Materi',
-                                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(activity.materialCovered!),
                                       const SizedBox(height: 12),
                                     ],
-                                    if (activity.nextGoals != null && activity.nextGoals!.isNotEmpty) ...[
+                                    if (activity.nextGoals != null &&
+                                        activity.nextGoals!.isNotEmpty) ...[
                                       Text(
                                         'Target Berikutnya',
-                                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(activity.nextGoals!),
@@ -137,7 +175,12 @@ class _GroupMonitoringDetailPageState extends State<GroupMonitoringDetailPage> {
                                     ],
                                     Text(
                                       'Waktu Rekaman: ${_formatDate(activity.createdAt.toString())}',
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppPallete.textSecondary),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: AppPallete.textSecondary,
+                                          ),
                                     ),
                                   ],
                                 ),

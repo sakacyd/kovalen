@@ -6,7 +6,7 @@ import 'package:kovalen/core/common/entities/user.dart';
 
 class RatingDialog extends StatefulWidget {
   final String roomId;
-  
+
   const RatingDialog({super.key, required this.roomId});
 
   @override
@@ -67,9 +67,13 @@ class _RatingDialogState extends State<RatingDialog> {
         child: BlocConsumer<RatingBloc, RatingState>(
           listener: (context, state) {
             if (state is RatingSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             } else if (state is RatingError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -82,7 +86,7 @@ class _RatingDialogState extends State<RatingDialog> {
 
             if (state is RoomParticipantsLoaded) {
               final participants = state.participants;
-              
+
               if (participants.isEmpty) {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
@@ -92,7 +96,7 @@ class _RatingDialogState extends State<RatingDialog> {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: const Text('Tutup'),
-                    )
+                    ),
                   ],
                 );
               }
@@ -108,23 +112,31 @@ class _RatingDialogState extends State<RatingDialog> {
                 children: [
                   Text(
                     'Nilai ${currentUserToRate.fullName}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${_currentIndex + 1} dari ${participants.length} anggota',
-                    style: const TextStyle(color: AppPallete.textOutline, fontSize: 12),
+                    style: const TextStyle(
+                      color: AppPallete.textOutline,
+                      fontSize: 12,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Bintang Rating
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(5, (index) {
                       return IconButton(
                         icon: Icon(
-                          index < _currentRating ? Icons.star : Icons.star_border,
+                          index < _currentRating
+                              ? Icons.star
+                              : Icons.star_border,
                           color: Colors.amber,
                           size: 32,
                         ),
@@ -137,7 +149,7 @@ class _RatingDialogState extends State<RatingDialog> {
                     }),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Feedback Text Field
                   TextField(
                     controller: _reviewController,
@@ -148,7 +160,7 @@ class _RatingDialogState extends State<RatingDialog> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -164,7 +176,10 @@ class _RatingDialogState extends State<RatingDialog> {
                             Navigator.of(context).pop();
                           }
                         },
-                        child: const Text('Lewati', style: TextStyle(color: AppPallete.textOutline)),
+                        child: const Text(
+                          'Lewati',
+                          style: TextStyle(color: AppPallete.textOutline),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       ElevatedButton(
@@ -172,8 +187,13 @@ class _RatingDialogState extends State<RatingDialog> {
                           backgroundColor: AppPallete.primary,
                           foregroundColor: Colors.white,
                         ),
-                        onPressed: () => _submitRating(currentUserToRate, participants),
-                        child: Text(_currentIndex == participants.length - 1 ? 'Selesai' : 'Lanjut'),
+                        onPressed: () =>
+                            _submitRating(currentUserToRate, participants),
+                        child: Text(
+                          _currentIndex == participants.length - 1
+                              ? 'Selesai'
+                              : 'Lanjut',
+                        ),
                       ),
                     ],
                   ),

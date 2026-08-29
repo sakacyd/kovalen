@@ -8,6 +8,10 @@ abstract interface class RoomDetailRepository {
   Future<Either<Failure, User>> getUserById(String userId);
   Future<Either<Failure, ChatRoom>> getGroupDetail(String roomId);
   Future<Either<Failure, List<User>>> getGroupParticipants(String roomId);
-  Future<Either<Failure, ChatRoom>> updateGroupProfile(String roomId, String name, File? avatarFile);
+  Future<Either<Failure, ChatRoom>> updateGroupProfile(
+    String roomId,
+    String name,
+    File? avatarFile,
+  );
   Future<Either<Failure, void>> addUserToGroup(String roomId, String userId);
 }

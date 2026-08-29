@@ -16,10 +16,6 @@ class InterestCategoryModel extends InterestCategory {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'type': type,
-    };
+    return {'id': id, 'name': name, 'type': type};
   }
 }

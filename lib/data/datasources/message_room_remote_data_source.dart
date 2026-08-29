@@ -20,7 +20,7 @@ class MessageRoomRemoteDataSourceImpl implements MessageRoomRemoteDataSource {
           .from('chat_participants')
           .select('user_id, users(full_name, avatar_url)')
           .eq('room_id', roomId);
-          
+
       final Map<String, dynamic> userCache = {};
       for (var p in participants) {
         final user = p['users'];

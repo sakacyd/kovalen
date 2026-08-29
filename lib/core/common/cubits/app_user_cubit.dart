@@ -30,23 +30,23 @@ class AppUserCubit extends Cubit<AppUserState> {
         .stream(primaryKey: ['id'])
         .eq('id', user.id)
         .listen((List<Map<String, dynamic>> data) async {
-      if (data.isNotEmpty) {
-        final newRecord = data.first;
-        final status = newRecord['status'] as String?;
-        final suspendedUntilStr = newRecord['suspended_until'] as String?;
+          if (data.isNotEmpty) {
+            final newRecord = data.first;
+            final status = newRecord['status'] as String?;
+            final suspendedUntilStr = newRecord['suspended_until'] as String?;
 
-        if (status == 'banned') {
-          await Supabase.instance.client.auth.signOut();
-          updateUser(null);
-        } else if (status == 'suspended' && suspendedUntilStr != null) {
-          final suspendedUntil = DateTime.parse(suspendedUntilStr);
-          if (suspendedUntil.isAfter(DateTime.now())) {
-            await Supabase.instance.client.auth.signOut();
-            updateUser(null);
+            if (status == 'banned') {
+              await Supabase.instance.client.auth.signOut();
+              updateUser(null);
+            } else if (status == 'suspended' && suspendedUntilStr != null) {
+              final suspendedUntil = DateTime.parse(suspendedUntilStr);
+              if (suspendedUntil.isAfter(DateTime.now())) {
+                await Supabase.instance.client.auth.signOut();
+                updateUser(null);
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   @override

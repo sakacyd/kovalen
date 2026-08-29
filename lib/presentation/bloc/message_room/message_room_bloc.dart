@@ -15,9 +15,9 @@ class MessageRoomBloc extends Bloc<MessageRoomEvent, MessageRoomState> {
   MessageRoomBloc({
     required GetMessageRoomMessages getMessageRoomMessages,
     required SendMessageRoomMessage sendMessageRoomMessage,
-  })  : _getMessageRoomMessages = getMessageRoomMessages,
-        _sendMessageRoomMessage = sendMessageRoomMessage,
-        super(MessageRoomInitial()) {
+  }) : _getMessageRoomMessages = getMessageRoomMessages,
+       _sendMessageRoomMessage = sendMessageRoomMessage,
+       super(MessageRoomInitial()) {
     on<LoadMessageRoomMessages>(_onLoadMessages);
     on<SendMessageRoomMessageEvent>(_onSendMessage);
   }
@@ -55,19 +55,19 @@ class MessageRoomBloc extends Bloc<MessageRoomEvent, MessageRoomState> {
     }
 
     final res = await _sendMessageRoomMessage(
-      SendMessageRoomMessageParams(roomId: event.roomId, content: event.content),
+      SendMessageRoomMessageParams(
+        roomId: event.roomId,
+        content: event.content,
+      ),
     );
 
-    res.fold(
-      (l) => emit(MessageRoomFailure(l.message)),
-      (newMessage) {
-        if (currentState is MessageRoomSuccess) {
-          emit(MessageRoomSuccess([...currentMessages, newMessage]));
-        } else {
-          // If we weren't in success state, we shouldn't really be sending, but just in case:
-          emit(MessageRoomSuccess([newMessage]));
-        }
-      },
-    );
+    res.fold((l) => emit(MessageRoomFailure(l.message)), (newMessage) {
+      if (currentState is MessageRoomSuccess) {
+        emit(MessageRoomSuccess([...currentMessages, newMessage]));
+      } else {
+        // If we weren't in success state, we shouldn't really be sending, but just in case:
+        emit(MessageRoomSuccess([newMessage]));
+      }
+    });
   }
 }

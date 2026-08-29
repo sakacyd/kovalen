@@ -8,11 +8,7 @@ class RateUserParams {
   final int rating;
   final String? review;
 
-  RateUserParams({
-    required this.rateeId,
-    required this.rating,
-    this.review,
-  });
+  RateUserParams({required this.rateeId, required this.rating, this.review});
 }
 
 class RateUser implements UseCase<void, RateUserParams> {

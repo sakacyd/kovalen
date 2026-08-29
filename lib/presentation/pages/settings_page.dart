@@ -10,9 +10,8 @@ import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 import 'package:kovalen/presentation/widgets/settings_item.dart';
 
 class SettingsPage extends StatelessWidget {
-  static Route route() => MaterialPageRoute(
-        builder: (context) => const SettingsPage(),
-      );
+  static Route route() =>
+      MaterialPageRoute(builder: (context) => const SettingsPage());
 
   const SettingsPage({super.key});
 
@@ -27,17 +26,14 @@ class SettingsPage extends StatelessWidget {
             (route) => false,
           );
         } else if (state is ProfileSettingsFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: Scaffold(
         backgroundColor: AppPallete.background,
-        appBar: const CustomAppBar(
-          title: 'Pengaturan Akun',
-          showAvatar: false,
-        ),
+        appBar: const CustomAppBar(title: 'Pengaturan Akun', showAvatar: false),
         body: Column(
           children: [
             Expanded(
@@ -56,14 +52,20 @@ class SettingsPage extends StatelessWidget {
                           icon: Icons.person_outline,
                           title: 'Profil Akademik',
                           onTap: () {
-                            Navigator.push(context, AcademicProfilePage.route());
+                            Navigator.push(
+                              context,
+                              AcademicProfilePage.route(),
+                            );
                           },
                         ),
                         SettingsItem(
                           icon: Icons.tune_outlined,
                           title: 'Preferensi Pencocokan',
                           onTap: () {
-                            Navigator.push(context, MatchingPreferencesPage.route());
+                            Navigator.push(
+                              context,
+                              MatchingPreferencesPage.route(),
+                            );
                           },
                           showDivider: false,
                         ),
@@ -77,7 +79,9 @@ class SettingsPage extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  context.read<ProfileSettingsBloc>().add(ProfileSettingsSignOut());
+                  context.read<ProfileSettingsBloc>().add(
+                    ProfileSettingsSignOut(),
+                  );
                 },
                 icon: const Icon(Icons.logout),
                 label: const Text('Keluar'),
@@ -120,7 +124,8 @@ class SettingsPage extends StatelessWidget {
                   backgroundImage: user.avatarUrl.trim().startsWith('http')
                       ? NetworkImage(user.avatarUrl.trim())
                       : null,
-                  onBackgroundImageError: user.avatarUrl.trim().startsWith('http')
+                  onBackgroundImageError:
+                      user.avatarUrl.trim().startsWith('http')
                       ? (exception, stackTrace) {}
                       : null,
                   child: !user.avatarUrl.trim().startsWith('http')
@@ -144,8 +149,8 @@ class SettingsPage extends StatelessWidget {
                       Text(
                         user.email,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppPallete.onSurfaceVariant,
-                            ),
+                          color: AppPallete.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -170,9 +175,9 @@ class SettingsPage extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppPallete.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
+            color: AppPallete.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 8),
         Container(
@@ -181,9 +186,7 @@ class SettingsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: AppPallete.stroke),
           ),
-          child: Column(
-            children: items,
-          ),
+          child: Column(children: items),
         ),
       ],
     );

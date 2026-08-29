@@ -7,9 +7,8 @@ import 'package:kovalen/presentation/widgets/custom_app_bar.dart';
 class MatchingPreferencesPage extends StatefulWidget {
   const MatchingPreferencesPage({super.key});
 
-  static Route route() => MaterialPageRoute(
-    builder: (context) => const MatchingPreferencesPage(),
-  );
+  static Route route() =>
+      MaterialPageRoute(builder: (context) => const MatchingPreferencesPage());
 
   @override
   State<MatchingPreferencesPage> createState() =>
@@ -56,15 +55,22 @@ class _MatchingPreferencesPageState extends State<MatchingPreferencesPage> {
           }
         },
         builder: (context, state) {
-          if (state is MatchingPreferencesLoading && _distancePreference == 15.0) {
+          if (state is MatchingPreferencesLoading &&
+              _distancePreference == 15.0) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if ((state is MatchingPreferencesLoaded || state is MatchingPreferencesSaved) &&
-              _distancePreference != (state is MatchingPreferencesLoaded ? state.maxDistance : (state as MatchingPreferencesSaved).maxDistance) &&
+          if ((state is MatchingPreferencesLoaded ||
+                  state is MatchingPreferencesSaved) &&
+              _distancePreference !=
+                  (state is MatchingPreferencesLoaded
+                      ? state.maxDistance
+                      : (state as MatchingPreferencesSaved).maxDistance) &&
               _distancePreference == 15.0) {
             // Safe initial set if we didn't get to listener somehow, usually listener handles it.
-            _distancePreference = (state is MatchingPreferencesLoaded ? state.maxDistance : (state as MatchingPreferencesSaved).maxDistance);
+            _distancePreference = (state is MatchingPreferencesLoaded
+                ? state.maxDistance
+                : (state as MatchingPreferencesSaved).maxDistance);
           }
 
           return Padding(
@@ -74,9 +80,9 @@ class _MatchingPreferencesPageState extends State<MatchingPreferencesPage> {
               children: [
                 Text(
                   'Jarak Maksimum',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(

@@ -15,7 +15,6 @@ class MatchmakingPage extends StatefulWidget {
 }
 
 class _MatchmakingPageState extends State<MatchmakingPage> {
-
   @override
   void initState() {
     super.initState();
@@ -34,7 +33,9 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              Navigator.push(context, MatchingPreferencesPage.route()).then((_) {
+              Navigator.push(context, MatchingPreferencesPage.route()).then((
+                _,
+              ) {
                 // Ensure context is still mounted if using Stateful widget or just read safely
                 if (context.mounted) {
                   context.read<MatchmakingBloc>().add(LoadMatchmakingData());
@@ -71,11 +72,12 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                   );
                 } else if (state is MatchmakingFailure) {
                   return Center(child: Text(state.message));
-                } else if (state is MatchmakingSuccess || state is MatchmakingMatchFound) {
-                  final matches = (state is MatchmakingSuccess) 
-                      ? state.matches 
+                } else if (state is MatchmakingSuccess ||
+                    state is MatchmakingMatchFound) {
+                  final matches = (state is MatchmakingSuccess)
+                      ? state.matches
                       : (state as MatchmakingMatchFound).matches;
-                      
+
                   if (matches.isEmpty) {
                     return const Center(child: Text('No matches found'));
                   }
@@ -129,8 +131,7 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
                     name: match.user.fullName,
                     semester: match.user.semester.toString(),
                     university:
-                        match.user.universityName ??
-                        match.user.universityId,
+                        match.user.universityName ?? match.user.universityId,
                     major:
                         match.user.studyProgramName ??
                         match.user.studyProgramId,
@@ -200,5 +201,4 @@ class _MatchmakingPageState extends State<MatchmakingPage> {
       ),
     );
   }
-
 }
