@@ -25,7 +25,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
-    required String hobi,
+
     required double gpa,
     required List<String> interestIds,
   }) async {
@@ -40,7 +40,7 @@ class ProfileSettingsRepositoryImpl implements ProfileSettingsRepository {
         gender: gender,
         tujuanBelajar: tujuanBelajar,
         gayaBelajar: gayaBelajar,
-        hobi: hobi,
+
         gpa: gpa,
         interestIds: interestIds,
       );

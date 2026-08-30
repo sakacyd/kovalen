@@ -10,7 +10,7 @@ class UserModel extends User {
     super.gender,
     super.tujuanBelajar,
     super.gayaBelajar,
-    super.hobi,
+
     super.maxDistancePreference = 15.0,
     required super.latitude,
     required super.longitude,
@@ -38,7 +38,7 @@ class UserModel extends User {
       gender: json['gender'],
       tujuanBelajar: json['tujuan_belajar'],
       gayaBelajar: json['gaya_belajar'],
-      hobi: json['hobi'],
+
       maxDistancePreference:
           (json['max_distance_preference'] as num?)?.toDouble() ?? 15.0,
       latitude: (json['latitude'] as num?)?.toDouble() ?? 0.0,
@@ -92,7 +92,7 @@ class UserModel extends User {
       'gender': gender,
       'tujuan_belajar': tujuanBelajar,
       'gaya_belajar': gayaBelajar,
-      'hobi': hobi,
+
       'max_distance_preference': maxDistancePreference,
       'latitude': latitude,
       'longitude': longitude,
@@ -121,7 +121,7 @@ class UserModel extends User {
     String? gender,
     String? tujuanBelajar,
     String? gayaBelajar,
-    String? hobi,
+
     double? maxDistancePreference,
     double? latitude,
     double? longitude,
@@ -147,7 +147,7 @@ class UserModel extends User {
       gender: gender ?? this.gender,
       tujuanBelajar: tujuanBelajar ?? this.tujuanBelajar,
       gayaBelajar: gayaBelajar ?? this.gayaBelajar,
-      hobi: hobi ?? this.hobi,
+
       maxDistancePreference:
           maxDistancePreference ?? this.maxDistancePreference,
       latitude: latitude ?? this.latitude,

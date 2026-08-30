@@ -22,7 +22,7 @@ class UpdateUserProfile implements UseCase<User, UpdateUserProfileParams> {
       gender: params.gender,
       tujuanBelajar: params.tujuanBelajar,
       gayaBelajar: params.gayaBelajar,
-      hobi: params.hobi,
+
       gpa: params.gpa,
       interestIds: params.interestIds,
     );
@@ -39,7 +39,7 @@ class UpdateUserProfileParams {
   final String gender;
   final String tujuanBelajar;
   final String gayaBelajar;
-  final String hobi;
+
   final double gpa;
   final List<String> interestIds;
 
@@ -53,7 +53,7 @@ class UpdateUserProfileParams {
     required this.gender,
     required this.tujuanBelajar,
     required this.gayaBelajar,
-    required this.hobi,
+
     required this.gpa,
     required this.interestIds,
   });

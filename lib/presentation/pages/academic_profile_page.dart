@@ -27,7 +27,7 @@ class AcademicProfilePage extends StatefulWidget {
 class _AcademicProfilePageState extends State<AcademicProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _hobiController = TextEditingController();
+
   final _gpaController = TextEditingController();
   final _customTujuanBelajarController = TextEditingController();
 
@@ -70,7 +70,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             appUserState.user.tujuanBelajar ?? '';
       }
       _selectedGayaBelajar = appUserState.user.gayaBelajar;
-      _hobiController.text = appUserState.user.hobi!;
+
       _gpaController.text = appUserState.user.gpa.toString();
       _avatarUrl = appUserState.user.avatarUrl;
 
@@ -140,7 +140,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                     appUserState.user.tujuanBelajar
               : _selectedTujuanBelajar != appUserState.user.tujuanBelajar) ||
           _selectedGayaBelajar != appUserState.user.gayaBelajar ||
-          _hobiController.text != appUserState.user.hobi ||
+
           _gpaController.text != appUserState.user.gpa.toString() ||
           _avatarUrl != appUserState.user.avatarUrl;
     }
@@ -251,7 +251,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
             gender: _selectedGender!,
             tujuanBelajar: finalTujuanBelajar,
             gayaBelajar: _selectedGayaBelajar!,
-            hobi: _hobiController.text,
+
             gpa: parsedGpa,
             interests: [
               ..._selectedAcademicInterests,
@@ -391,13 +391,7 @@ class _AcademicProfilePageState extends State<AcademicProfilePage> {
                       ),
                     ],
                   ),
-                  CustomTextField(
-                    label: 'Hobi / Minat',
-                    hint: 'Masukkan hobi atau minat Anda',
-                    controller: _hobiController,
-                    icon: Icons.badge_outlined,
-                  ),
-                  const SizedBox(height: 32),
+
                   _buildSectionHeader(
                     'Latar Belakang Akademik',
                     Icons.school_outlined,

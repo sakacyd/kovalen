@@ -19,7 +19,7 @@ abstract interface class ProfileSettingsRepository
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
-    required String hobi,
+
     required double gpa,
     required List<String> interestIds,
   });

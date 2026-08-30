@@ -66,7 +66,7 @@ class ProfileSettingsBloc
         gender: event.gender,
         tujuanBelajar: event.tujuanBelajar,
         gayaBelajar: event.gayaBelajar,
-        hobi: event.hobi,
+
         gpa: event.gpa,
         interestIds: event.interests,
       ),

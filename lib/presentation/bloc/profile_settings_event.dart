@@ -13,7 +13,7 @@ class UpdateProfileSettingsData extends ProfileSettingsEvent {
   final String gender;
   final String tujuanBelajar;
   final String gayaBelajar;
-  final String hobi;
+
   final double gpa;
   final List<String> interests;
 
@@ -27,7 +27,7 @@ class UpdateProfileSettingsData extends ProfileSettingsEvent {
     required this.gender,
     required this.tujuanBelajar,
     required this.gayaBelajar,
-    required this.hobi,
+
     required this.gpa,
     required this.interests,
   });

@@ -55,10 +55,9 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.school,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 40,
+                  Image.asset(
+                    'assets/logos/logo.png',
+                    height: 48,
                   ),
                   const SizedBox(height: 16),
                   Text(

@@ -17,7 +17,7 @@ abstract interface class ProfileSettingsRemoteDataSource {
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
-    required String hobi,
+
     required double gpa,
     required List<String> interestIds,
   });
@@ -46,7 +46,7 @@ class ProfileSettingsRemoteDataSourceImpl
     required String gender,
     required String tujuanBelajar,
     required String gayaBelajar,
-    required String hobi,
+
     required double gpa,
     required List<String> interestIds,
   }) async {
@@ -84,7 +84,7 @@ class ProfileSettingsRemoteDataSourceImpl
             'gender': gender,
             'tujuan_belajar': tujuanBelajar,
             'gaya_belajar': gayaBelajar,
-            'hobi': hobi,
+
             'gpa': gpa,
           })
           .eq('id', userId)

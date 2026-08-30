@@ -1,5 +1,5 @@
 name: kovalen
-description: "A new Flutter project."
+description: "Aplikasi pencarian teman belajar dan grup studi berbasis minat akademik."
 publish_to: "none"
 
 version: 1.0.0+1
@@ -31,9 +31,15 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.2
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/logo.png"
 
 flutter:
   uses-material-design: true
   assets:
     - .env
-  #  - assets/
+    - assets/logos/logo.png

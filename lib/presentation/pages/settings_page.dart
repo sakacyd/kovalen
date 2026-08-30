@@ -180,12 +180,13 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: AppPallete.surface,
+        Material(
+          color: AppPallete.surface,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppPallete.stroke),
+            side: const BorderSide(color: AppPallete.stroke),
           ),
+          clipBehavior: Clip.antiAlias,
           child: Column(children: items),
         ),
       ],

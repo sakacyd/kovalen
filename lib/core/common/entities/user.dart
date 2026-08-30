@@ -7,7 +7,7 @@ class User {
   final String? gender;
   final String? tujuanBelajar;
   final String? gayaBelajar;
-  final String? hobi;
+
   final double maxDistancePreference;
   final double latitude;
   final double longitude;
@@ -33,7 +33,7 @@ class User {
     this.gender,
     this.tujuanBelajar,
     this.gayaBelajar,
-    this.hobi,
+
     this.maxDistancePreference = 15.0,
     required this.latitude,
     required this.longitude,
